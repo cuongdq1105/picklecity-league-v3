@@ -1,25 +1,9 @@
-# PickleCity Tournament Manager V2.3 Draw
+# PickleCity Tournament Manager V2.4
 
-Bản sạch để cập nhật một lần.
+- Khóa danh sách
+- Bốc thăm nháp / bốc lại
+- Chế độ quay tên ẩn hạng A/B
+- Lưu nháp, chốt kết quả, công bố bảng đấu
+- Public view không hiển thị hạng
 
-Có:
-- Sửa VĐV
-- Xóa VĐV khỏi danh sách
-- Xác nhận/hoàn tác thanh toán
-- Phân hạng nội bộ chỉ BTC thấy
-- Danh sách công khai ẩn hạng
-- Bốc thăm ghép cặp
-- Ghép cân bằng trình hoặc ngẫu nhiên hoàn toàn
-- Chia bảng tự động
-- Copy/In kết quả bốc thăm
-
-Test sau deploy:
-- /api/ping phải trả version: 2.3-draw
-
-Cloudflare:
-- Build command: npm install && npm run build
-- Output: dist
-- D1 Binding: DB -> picklecity-db
-
-Mật khẩu BTC: PTC2026
-STK: 202.202.6868
+Test: /api/ping -> version 2.4-draw-lock-publish
