@@ -1,19 +1,17 @@
-# PickleCity Tournament Manager V4.9.8 Bracket 3 Groups
+# PickleCity Tournament Manager V4.9.9 Bracket UI
 
-Bản cập nhật nhánh tứ kết theo yêu cầu BTC.
+Bản cập nhật giao diện Nhánh tứ kết giống mockup đã thống nhất.
 
-## Công thức nhánh tứ kết
-
-- Tứ kết 1: A1 vs Best3-2
-- Tứ kết 2: B1 vs Best3-1
-- Tứ kết 3: C1 vs A2
-- Tứ kết 4: B2 vs C2
-
-Trong đó:
-- A1/B1/C1 là đội hạng 1 các bảng A/B/C.
-- A2/B2/C2 là đội hạng 2 các bảng A/B/C.
-- Best3-1 là đội hạng 3 có thành tích tốt nhất.
-- Best3-2 là đội hạng 3 có thành tích tốt thứ hai.
+## Đã sửa
+- Giao diện nhánh tứ kết dạng card đẹp, dễ nhìn.
+- Hiển thị công thức:
+  - QF1: A1 vs Best3-2
+  - QF2: B1 vs Best3-1
+  - QF3: C1 vs A2
+  - QF4: B2 vs C2
+- Có phần giải thích Best3-1 / Best3-2.
+- Có nút Tạo lại nhánh.
+- Vẫn giữ khu nhập kết quả tứ kết bên dưới.
 
 ## Test sau deploy
-/api/ping => version: 4.9.8-bracket-3-groups
+/api/ping => version: 4.9.9-bracket-ui
