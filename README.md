@@ -1,12 +1,12 @@
-# PickleCity Tournament Manager V3.0.1 Fix Settings
+# PickleCity Tournament Manager V3.0.2 Fix BTC Imports
 
 Bản vá lỗi:
-- Sửa lỗi `setTForm is not defined`
-- Tab BTC chạy lại bình thường
-- Giữ mục Cấu hình giải đấu trong BTC
+- Sửa lỗi tab BTC không chạy do thiếu import icon Settings / CalendarDays / GitBranch.
+- Giữ bản vá setTForm.
+- Giữ mục Cấu hình giải đấu trong BTC.
 
 Test sau deploy:
-- /api/ping phải trả version: 3.0.1-fix-settings
+- /api/ping phải trả version: 3.0.2-fix-btc-imports
 
 Cloudflare:
 - Build command: npm install && npm run build
