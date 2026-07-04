@@ -1,14 +1,13 @@
-# PickleCity Tournament Manager V2.6.1 Finalize Public
+# PickleCity Tournament Manager V2.7 Public Phone Contact
 
-Sửa lỗi:
-- Nút **Chốt** hoạt động ngay sau khi bốc thăm nháp, không bắt buộc phải bấm Lưu nháp trước.
-- Nút **Công bố** cũng có thể lưu/chốt kết quả đang hiển thị.
-- Bảng đấu công khai sau khi công bố **ẩn hạng VĐV A/B/C**, chỉ hiện tên VĐV.
-- Giữ cơ chế bốc thăm theo tất cả VĐV hoặc chỉ VĐV đã xác nhận.
-- Giữ cơ chế chia bảng: cân bằng bảng, chia lần lượt, chia ngẫu nhiên.
+Tính năng mới:
+- Tab công bố bảng đấu công khai hiển thị số điện thoại đầy đủ của VĐV sau khi đã ghép cặp/chia bảng.
+- Thêm nút “Gọi” để VĐV/partner liên hệ nhanh với nhau trên điện thoại.
+- Phần công bố vẫn ẩn hạng A/B/C, chỉ hiện tên + số điện thoại + nút gọi.
+- Giữ các chức năng bốc thăm, chốt, công bố, khóa danh sách và Dashboard BTC.
 
 Test sau deploy:
-- /api/ping phải trả version: 2.6.1-finalize-public
+- /api/ping phải trả version: 2.7-public-phone-call
 
 Cloudflare:
 - Build command: npm install && npm run build
