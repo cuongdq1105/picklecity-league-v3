@@ -32,8 +32,69 @@ export function makeRoundRobin(teams){
 function addMinutes(timeText, mins){ if(!timeText) return ""; const m=String(timeText).match(/(\d{1,2}):(\d{2})/); if(!m)return timeText; const d=new Date(2000,0,1,Number(m[1]),Number(m[2])); d.setMinutes(d.getMinutes()+mins); return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`; }
 
 export function makeSchedule(groups,options={}){
-  const all=[]; const courtCount=Math.max(1,Number(options.courtCount||3)); const startTime=options.startTime||"08:00"; const minutesPerMatch=Math.max(5,Number(options.minutesPerMatch||20)); let index=0;
-  (groups||[]).forEach(g=>makeRoundRobin(g.teams||[]).forEach((matches,ri)=>matches.forEach((m,mi)=>{const court=(index%courtCount)+1; const slot=Math.floor(index/courtCount); all.push({id:`${g.name}-${ri+1}-${mi+1}-${index+1}`,type:"GROUP",status:"SCHEDULED",group:g.name,round:ri+1,match:mi+1,court,time:addMinutes(startTime,slot*minutesPerMatch),home:m.home,away:m.away,games:[{home:"",away:"",saved:false}],winner:""}); index++;})));
+  const all=[];
+  const courtCount=Math.max(1,Number(options.courtCount||3));
+  const startTime=options.startTime||"08:00";
+  const minutesPerMatch=Math.max(5,Number(options.minutesPerMatch||20));
+
+  // Xếp lịch xen kẽ theo cùng cung giờ:
+  // Nếu có 3 sân và 3 bảng thì mỗi slot cố gắng có: Sân 1 - Bảng A, Sân 2 - Bảng B, Sân 3 - Bảng C.
+  // Sau đó mới quay vòng tiếp. Không để Bảng A đánh liên tục rồi mới tới B/C.
+  const queues=(groups||[]).map((g,gi)=>{
+    const matches=[];
+    makeRoundRobin(g.teams||[]).forEach((round,ri)=>{
+      round.forEach((m,mi)=>matches.push({
+        group:g.name,
+        groupIndex:gi,
+        round:ri+1,
+        match:mi+1,
+        home:m.home,
+        away:m.away
+      }));
+    });
+    return {group:g.name, groupIndex:gi, matches};
+  });
+
+  let index=0;
+  let slot=0;
+  while(queues.some(q=>q.matches.length>0)){
+    const time=addMinutes(startTime, slot*minutesPerMatch);
+
+    // Ưu tiên mỗi bảng một trận trong cùng slot.
+    for(let court=1; court<=courtCount; court++){
+      const preferredIndex=(slot*courtCount + (court-1)) % Math.max(1,queues.length);
+
+      let chosen=-1;
+      // Ưu tiên bảng tương ứng với sân/cung giờ.
+      for(let offset=0; offset<queues.length; offset++){
+        const qi=(preferredIndex + offset) % queues.length;
+        if(queues[qi].matches.length>0){
+          chosen=qi;
+          break;
+        }
+      }
+      if(chosen<0) continue;
+
+      const m=queues[chosen].matches.shift();
+      all.push({
+        id:`${m.group}-${m.round}-${m.match}-${index+1}`,
+        type:"GROUP",
+        status:"SCHEDULED",
+        group:m.group,
+        round:m.round,
+        match:m.match,
+        court,
+        time,
+        home:m.home,
+        away:m.away,
+        games:[{home:"",away:"",saved:false}],
+        winner:""
+      });
+      index++;
+    }
+    slot++;
+  }
+
   return all;
 }
 
