@@ -1,12 +1,12 @@
 
-import { Trophy, CreditCard, Users, Copy, CheckCircle2, Landmark, QrCode } from "lucide-react";
+import { Trophy, CreditCard, Users, Copy, CheckCircle2, Landmark, QrCode, ShieldCheck, Bell } from "lucide-react";
 import { money } from "../utils/format";
 
 const BANK = {
   account: "2022026868",
   owner: "TRẦN THỊ HOÀI THANH",
   bank: "Vietcombank",
-  qr: "/qr-vcb-real.png"
+  qr: "/qr-vcb-compact.png"
 };
 
 function copyText(text) {
@@ -15,9 +15,9 @@ function copyText(text) {
 
 export default function Register({ tournament, form, setForm, onSubmit }) {
   const fee = Number(tournament?.fee || 0);
-  const payContent = `${form.full_name || "HO TEN"} ${form.phone || "SDT"}`.trim();
+  const payContent = `${form.full_name || "Họ tên"} ${form.phone || "Số điện thoại"}`.trim();
 
-  return <main className="grid registerGridV495">
+  return <main className="grid registerGridV497">
     <section className="card tournamentInfoCard">
       <div className="card-title"><Trophy/> Giải đang mở</div>
       {tournament ? <>
@@ -40,64 +40,77 @@ export default function Register({ tournament, form, setForm, onSubmit }) {
       </> : <p>Đang tải...</p>}
     </section>
 
-    <section className="card paymentCardV495">
-      <div className="paymentHeaderV495">
+    <section className="card paymentCardV497">
+      <div className="paymentTopV497">
         <div>
           <div className="card-title"><CreditCard/> Thanh toán lệ phí</div>
-          <p>Quét QR hoặc chuyển khoản theo thông tin bên dưới.</p>
+          <p><ShieldCheck size={16}/> Chuyển khoản đúng thông tin để BTC xác nhận nhanh.</p>
         </div>
-        <div className="feePillV495">{money(fee)}</div>
+        <div className="feePillV497">{money(fee)}</div>
       </div>
 
-      <div className="paymentLayoutV495">
-        <div className="qrFrameV495">
-          <div className="qrLabelV495"><QrCode size={16}/> QR chuyển khoản</div>
-          <img src={BANK.qr} alt="QR chuyển khoản Vietcombank"/>
+      <div className="paymentMainV497">
+        <div className="qrBlockV497">
+          <div className="bankLogoV497"><Landmark size={22}/> VIETCOMBANK</div>
+          <p>Quét QR để chuyển khoản nhanh</p>
+          <div className="qrFrameV497">
+            <img src={BANK.qr} alt="QR chuyển khoản Vietcombank"/>
+          </div>
         </div>
 
-        <div className="bankInfoV495">
-          <div className="bankTitleV495"><Landmark size={18}/> {BANK.bank}</div>
-
-          <div className="payRowV495">
-            <span>Số tài khoản</span>
-            <b>{BANK.account}</b>
-            <button type="button" onClick={()=>copyText(BANK.account)}><Copy size={14}/> Copy</button>
-          </div>
-
-          <div className="payRowV495">
-            <span>Chủ tài khoản</span>
-            <b>{BANK.owner}</b>
-          </div>
-
-          <div className="payRowV495 highlight">
-            <span>Nội dung CK</span>
-            <b>{payContent}</b>
-            <button type="button" onClick={()=>copyText(payContent)}><Copy size={14}/> Copy</button>
-          </div>
-
-          <div className="paymentStepsV495">
-            <p><CheckCircle2 size={15}/> Bước 1: Chuyển khoản đúng lệ phí.</p>
-            <p><CheckCircle2 size={15}/> Bước 2: Nội dung ghi <b>Họ tên + SĐT</b>.</p>
-            <p><CheckCircle2 size={15}/> Bước 3: Tích “Tôi đã chuyển khoản” rồi đăng ký.</p>
-          </div>
+        <div className="bankPanelV497">
+          <PaymentRow label="Số tài khoản" value={BANK.account} copy />
+          <PaymentRow label="Chủ tài khoản" value={BANK.owner} />
+          <PaymentRow label="Ngân hàng" value={BANK.bank + " – NAPAS 247"} />
         </div>
       </div>
 
-      <div className="paymentWarningV495">
-        BTC sẽ kiểm tra tài khoản và xác nhận thanh toán trên danh sách. Sau khi chuyển khoản, vui lòng chụp màn hình giao dịch để đối chiếu khi cần.
+      <div className="transferBoxV497">
+        <div>
+          <h3>Nội dung chuyển khoản</h3>
+          <p>Ghi đúng nội dung để BTC xác nhận nhanh chóng</p>
+        </div>
+        <div className="transferValueV497">
+          <b>{payContent}</b>
+          <button type="button" onClick={()=>copyText(payContent)}><Copy size={15}/> Sao chép</button>
+        </div>
+        <p className="exampleV497">Ví dụ: <b>Nguyễn Văn A 0901234567</b></p>
       </div>
+
+      <div className="noteBoxV497">
+        <Bell size={18}/>
+        <div>
+          <b>Lưu ý</b>
+          <ul>
+            <li>Sau khi chuyển khoản, vui lòng chụp màn hình giao dịch.</li>
+            <li>BTC sẽ xác nhận trong thời gian sớm nhất.</li>
+          </ul>
+        </div>
+      </div>
+
+      <label className="paidConfirmV497">
+        <input type="checkbox" checked={form.marked_paid} onChange={e=>setForm({...form,marked_paid:e.target.checked})}/>
+        <span><CheckCircle2 size={24}/> Tôi đã chuyển khoản</span>
+      </label>
     </section>
 
-    <section className="card registerFormCardV495">
+    <section className="card registerFormCardV497">
       <div className="card-title"><Users/> Form đăng ký</div>
       {Number(tournament?.list_locked)===1 ? <div className="lockedBox">🔒 Danh sách đã khóa. Vui lòng liên hệ BTC.</div> :
       <form onSubmit={onSubmit}>
         <label>Họ và tên<input required value={form.full_name} onChange={e=>setForm({...form,full_name:e.target.value})}/></label>
         <label>Số điện thoại<input required value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})}/></label>
         <label>Giới tính<select value={form.gender} onChange={e=>setForm({...form,gender:e.target.value})}><option value="male">Nam</option><option value="female">Nữ</option></select></label>
-        <label className="check"><input type="checkbox" checked={form.marked_paid} onChange={e=>setForm({...form,marked_paid:e.target.checked})}/> Tôi đã chuyển khoản lệ phí</label>
         <button className="primary">Đăng ký tham gia</button>
       </form>}
     </section>
   </main>
+}
+
+function PaymentRow({ label, value, copy=false }) {
+  return <div className="payRowV497">
+    <span>{label}</span>
+    <b>{value}</b>
+    {copy && <button type="button" onClick={()=>copyText(value)}><Copy size={15}/> Sao chép</button>}
+  </div>
 }
