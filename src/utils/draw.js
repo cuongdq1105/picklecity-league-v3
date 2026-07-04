@@ -2,106 +2,81 @@
 export const LEVELS = ["UNRANKED", "A+", "A", "B+", "B", "C"];
 export const LV = { "A+":6, "A":5, "B+":4, "B":3, "C":2, "UNRANKED":1, "SUPPLEMENT":1 };
 
-export function strength(p) {
-  return LV[p.level_group || "UNRANKED"] || 1;
-}
+export function strength(p) { return LV[p.level_group || "UNRANKED"] || 1; }
+export function shuffle(a) { const arr=[...a]; for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
 
-export function shuffle(a) {
-  const arr = [...a];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-export function makeTeams(players, method = "balanced") {
-  let list = [...players];
-  const teams = [];
-  const leftover = [];
-  if (method === "balanced") {
-    list = shuffle(list).sort((a,b) => strength(b) - strength(a));
-    while (list.length >= 2) {
-      const a = list.shift();
-      const b = list.pop();
-      teams.push({ name: `Đội ${teams.length + 1}`, players: [a,b], score: strength(a) + strength(b) });
-    }
+export function makeTeams(players, method="balanced") {
+  let list=[...players]; const teams=[]; const leftover=[];
+  if(method==="balanced"){
+    list=shuffle(list).sort((a,b)=>strength(b)-strength(a));
+    while(list.length>=2){const a=list.shift(); const b=list.pop(); teams.push({name:`Đội ${teams.length+1}`,players:[a,b],score:strength(a)+strength(b)});}
     leftover.push(...list);
   } else {
-    list = shuffle(list);
-    while (list.length >= 2) {
-      const a = list.shift();
-      const b = list.shift();
-      teams.push({ name: `Đội ${teams.length + 1}`, players: [a,b], score: strength(a) + strength(b) });
-    }
+    list=shuffle(list);
+    while(list.length>=2){const a=list.shift(); const b=list.shift(); teams.push({name:`Đội ${teams.length+1}`,players:[a,b],score:strength(a)+strength(b)});}
     leftover.push(...list);
   }
-  return { teams, leftover };
+  return {teams,leftover};
 }
 
-export function groupTeams(teams, count = 2, method = "balancedGroups") {
-  let pool = [...teams];
-  if (method === "balancedGroups") pool = pool.sort((a,b)=>(b.score||0)-(a.score||0));
-  if (method === "randomGroups") pool = shuffle(pool);
-  const groups = Array.from({length: Math.max(1, Number(count)||1)}, (_,i)=>({
-    name: `Bảng ${String.fromCharCode(65+i)}`,
-    teams:[]
-  }));
-  if (method === "balancedGroups") {
-    pool.forEach((team, i) => {
-      const round = Math.floor(i / groups.length);
-      const idx = round % 2 === 0 ? i % groups.length : groups.length - 1 - (i % groups.length);
-      groups[idx].teams.push(team);
-    });
-  } else {
-    pool.forEach((team,i)=>groups[i % groups.length].teams.push(team));
-  }
+export function groupTeams(teams,count=2,method="balancedGroups"){
+  let pool=[...teams];
+  if(method==="balancedGroups") pool=pool.sort((a,b)=>(b.score||0)-(a.score||0));
+  if(method==="randomGroups") pool=shuffle(pool);
+  const groups=Array.from({length:Math.max(1,Number(count)||1)},(_,i)=>({name:`Bảng ${String.fromCharCode(65+i)}`,teams:[]}));
+  if(method==="balancedGroups"){
+    pool.forEach((team,i)=>{const round=Math.floor(i/groups.length); const idx=round%2===0?i%groups.length:groups.length-1-(i%groups.length); groups[idx].teams.push(team);});
+  } else pool.forEach((team,i)=>groups[i%groups.length].teams.push(team));
   return groups;
 }
 
-export function makeRoundRobin(teams) {
-  const list = [...teams];
-  if (list.length % 2 === 1) list.push({ name: "Nghỉ", bye: true, players: [] });
-  const n = list.length;
-  const rounds = [];
-  let arr = [...list];
-  for (let r = 0; r < n - 1; r++) {
-    const matches = [];
-    for (let i = 0; i < n / 2; i++) {
-      const a = arr[i], b = arr[n - 1 - i];
-      if (!a.bye && !b.bye) matches.push({ home:a, away:b });
-    }
-    rounds.push(matches);
-    arr = [arr[0], arr[n - 1], ...arr.slice(1, n - 1)];
-  }
+export function makeRoundRobin(teams){
+  const list=[...teams]; if(list.length%2===1) list.push({name:"Nghỉ",bye:true,players:[]});
+  const n=list.length, rounds=[]; let arr=[...list];
+  for(let r=0;r<n-1;r++){const matches=[]; for(let i=0;i<n/2;i++){const a=arr[i],b=arr[n-1-i]; if(!a.bye&&!b.bye)matches.push({home:a,away:b});} rounds.push(matches); arr=[arr[0],arr[n-1],...arr.slice(1,n-1)];}
   return rounds;
 }
 
-export function makeSchedule(groups) {
-  const all = [];
-  groups.forEach(g => {
-    makeRoundRobin(g.teams || []).forEach((matches, ri) => {
-      matches.forEach((m, mi) => all.push({ group:g.name, round:ri+1, match:mi+1, home:m.home, away:m.away }));
-    });
-  });
+function addMinutes(timeText,mins){ if(!timeText)return ""; const m=String(timeText).match(/(\d{1,2}):(\d{2})/); if(!m)return timeText; const d=new Date(2000,0,1,Number(m[1]),Number(m[2])); d.setMinutes(d.getMinutes()+mins); return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`; }
+
+export function makeSchedule(groups,options={}){
+  const all=[]; const courtCount=Math.max(1,Number(options.courtCount||3)); const startTime=options.startTime||"08:00"; const minutesPerMatch=Math.max(5,Number(options.minutesPerMatch||20)); let index=0;
+  (groups||[]).forEach(g=>{makeRoundRobin(g.teams||[]).forEach((matches,ri)=>{matches.forEach((m,mi)=>{const court=(index%courtCount)+1; const slot=Math.floor(index/courtCount); all.push({id:`${g.name}-${ri+1}-${mi+1}-${index+1}`,group:g.name,round:ri+1,match:mi+1,court,time:addMinutes(startTime,slot*minutesPerMatch),home:m.home,away:m.away,homeScore:"",awayScore:""}); index++;});});});
   return all;
 }
 
-export function makeKnockout(groups, cfg) {
-  const candidates = [];
-  groups.forEach(g => {
-    const teams = g.teams || [];
-    for (let i=0; i<Number(cfg.qualifyTop || 2) && i<teams.length; i++) {
-      candidates.push({ slot: `${g.name} - ${i===0?'Nhất':i===1?'Nhì':`Hạng ${i+1}`}`, team: teams[i] });
-    }
-    const rank = Number(cfg.bestRank || 3) - 1;
-    if (rank >= 0 && teams[rank]) candidates.push({ slot: `${g.name} - Hạng ${cfg.bestRank}`, team: teams[rank] });
-  });
-  const selected = candidates.slice(0, Number(cfg.quarterTeams || 8));
-  const pairs = [];
-  for (let i=0; i<Math.floor(selected.length / 2); i++) {
-    const a = selected[i], b = selected[selected.length - 1 - i];
-    if (a && b) pairs.push({ name:`Tứ kết ${i+1}`, a, b });
-  }
+export function teamLabel(team){ return (team?.players||[]).map(p=>p.full_name).join(" + ") || team?.name || ""; }
+function nscore(v){ const n=Number(v); return Number.isFinite(n)?n:null; }
+
+export function calcStandings(groups,schedule){
+  const byGroup={};
+  (groups||[]).forEach(g=>{byGroup[g.name]=(g.teams||[]).map(t=>({group:g.name,team:t,name:t.name,players:teamLabel(t),played:0,win:0,loss:0,pf:0,pa:0,diff:0,points:0,rank:0}));});
+  const find=(group,teamName)=>(byGroup[group]||[]).find(r=>r.name===teamName);
+  (schedule||[]).forEach(m=>{const hs=nscore(m.homeScore),as=nscore(m.awayScore); if(hs===null||as===null)return; const h=find(m.group,m.home?.name),a=find(m.group,m.away?.name); if(!h||!a)return; h.played++;a.played++;h.pf+=hs;h.pa+=as;a.pf+=as;a.pa+=hs; if(hs>as){h.win++;a.loss++;h.points+=1;}else if(as>hs){a.win++;h.loss++;a.points+=1;}});
+  Object.values(byGroup).forEach(rows=>{rows.forEach(r=>r.diff=r.pf-r.pa); rows.sort((a,b)=>b.win-a.win||b.diff-a.diff||b.pf-a.pf||a.players.localeCompare(b.players,"vi")); rows.forEach((r,i)=>r.rank=i+1);});
+  return byGroup;
+}
+
+export function selectQualified(standingsByGroup,cfg){
+  const qualifyTop=Number(cfg.qualifyTop||2), bestRank=Number(cfg.bestRank||3), bestCount=Number(cfg.bestCount||2), quarterTeams=Number(cfg.quarterTeams||8);
+  const direct=[],bestPool=[];
+  Object.entries(standingsByGroup||{}).forEach(([group,rows])=>{rows.forEach(r=>{if(r.rank<=qualifyTop)direct.push({slot:`${group} - Hạng ${r.rank}`,row:r,team:r.team}); else if(r.rank===bestRank)bestPool.push({slot:`${group} - Hạng ${bestRank}`,row:r,team:r.team});});});
+  bestPool.sort((a,b)=>b.row.win-a.row.win||b.row.diff-a.row.diff||b.row.pf-a.row.pf||a.row.players.localeCompare(b.row.players,"vi"));
+  return [...direct,...bestPool.slice(0,bestCount)].slice(0,quarterTeams);
+}
+
+export function makeKnockout(groups,cfg,standingsByGroup=null){
+  let selected;
+  if(standingsByGroup) selected=selectQualified(standingsByGroup,cfg);
+  else { const fake={}; (groups||[]).forEach(g=>fake[g.name]=(g.teams||[]).map((team,i)=>({group:g.name,rank:i+1,team,players:teamLabel(team),win:0,diff:0,pf:0}))); selected=selectQualified(fake,cfg); }
+  const pairs=[]; for(let i=0;i<Math.floor(selected.length/2);i++){const a=selected[i],b=selected[selected.length-1-i]; if(a&&b)pairs.push({name:`Tứ kết ${i+1}`,a,b,winner:""});}
   return pairs;
 }
+
+export function nextRound(matches,label){
+  const winners=(matches||[]).map(m=>m.winner).filter(Boolean); const pairs=[];
+  for(let i=0;i<Math.floor(winners.length/2);i++) pairs.push({name:`${label} ${i+1}`,a:{slot:winners[i]},b:{slot:winners[winners.length-1-i]},winner:""});
+  return pairs;
+}
+
+export function exportScheduleText(schedule){ return (schedule||[]).map((m,i)=>`${i+1}. ${m.time?m.time+" - ":""}Sân ${m.court||""} - ${m.group}: ${m.home?.name} vs ${m.away?.name}`).join("\n"); }

@@ -1,33 +1,25 @@
-# PickleCity Tournament Manager V4 Stable
+# PickleCity Tournament Manager V4.2 Public Tabs
 
-Bản V4 Stable được tách module, không còn dồn toàn bộ vào một file main.jsx.
+Bản này tách rõ màn hình công khai thành 3 mục:
+- Danh sách
+- Bảng đấu
+- Giờ thi đấu
 
-## Tính năng
-- Đăng ký VĐV
-- Danh sách công khai
+Giữ các tính năng V4.1:
 - Dashboard BTC
-- Cấu hình giải đấu
-- Quản lý VĐV: sửa/xóa/lọc/tìm kiếm/xác nhận thanh toán/phân hạng nội bộ
-- Khóa danh sách
-- Bốc thăm ghép cặp
-- Chia bảng
-- Lưu nháp / Chốt / Công bố
-- Màn hình công khai ẩn hạng A/B/C
-- Hiển thị SĐT đầy đủ và nút Gọi
+- Cấu hình giải
+- Quản lý VĐV
+- Khóa/mở khóa danh sách
+- Bốc thăm, chia bảng, chốt, công bố
 - Đăng ký bổ sung / gán cặp thủ công
 - Xếp lịch vòng bảng
-- Sinh nhánh tứ kết
-- Audit log backend
+- Nhập tỷ số
+- Tự tính BXH
+- Sinh nhánh Tứ kết/Bán kết/Chung kết dự kiến
+- Ẩn hạng A/B/C ở màn hình công khai
+- Hiện SĐT đầy đủ + nút Gọi
 
-## Test sau deploy
-/api/ping phải trả:
+Test sau deploy:
+/api/ping phải trả version: 4.2-public-tabs
 
-version: 4.0-stable
-
-## Cloudflare
-- Build command: npm install && npm run build
-- Output: dist
-- D1 binding: DB -> picklecity-db
-
-## Mật khẩu BTC
-PTC2026
+Mật khẩu BTC: PTC2026
