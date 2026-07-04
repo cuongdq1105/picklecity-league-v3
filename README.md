@@ -1,27 +1,22 @@
-# PickleCity Tournament Manager V4.6 Match Control
+# PickleCity Tournament Manager V4.7 Admin Layout
 
-Bản hoàn thiện module Điều hành giải và Cập nhật kết quả.
+Bản này sắp xếp lại tab BTC cho khoa học hơn:
+- Sidebar điều hành giải rõ ràng
+- Khu KPI tổng quan ở đầu
+- Khối Điều hành nhanh
+- Khối Trận đang diễn ra / tiếp theo
+- Khối Cấu hình thể thức thi đấu gọn
+- Khối Cập nhật tỷ số riêng
+- Khối BXH nhanh / trận chưa nhập kết quả
+- Tổng quan các sân
 
-## Điểm mới
-- Có mục Cấu hình thể thức thi đấu:
-  - Vòng bảng: đấu vòng tròn tính điểm
-  - Điểm vòng bảng: mặc định 11 điểm, có cách 2
-  - Vòng loại trực tiếp: Tứ kết, Bán kết, Tranh giải 3, Chung kết
-  - Điểm loại trực tiếp: mặc định 15 điểm, có cách 2
-- Có màn hình Điều hành thi đấu riêng cho BTC.
-- Có màn hình Cập nhật tỷ số từng trận.
-- Mỗi game có nút Lưu riêng.
-- Khi đã lưu game, game bị khóa để tránh nhiều người sửa đè.
-- Tự xác định đội thắng theo game đã lưu.
-- Tự tính BXH vòng bảng.
-- Sinh nhánh Tứ kết theo BXH.
-- Hỗ trợ nhập điểm Tứ kết.
-- Public vẫn tách Danh sách / Bảng đấu / Giờ thi đấu.
+Giữ nguyên tính năng V4.6:
+- Cấu hình thể thức thi đấu
+- Mỗi game có nút Lưu riêng
+- Game đã lưu bị khóa
+- Tự tính đội thắng, BXH, nhánh Tứ kết
 
-## Test sau deploy
-/api/ping phải trả:
-version: 4.6-match-control
+Test sau deploy:
+/api/ping => version: 4.7-admin-layout
 
-Không có package-lock.json để tránh lỗi npm clean-install.
-
-Mật khẩu BTC: PTC2026
+Không có package-lock.json để tránh lỗi Cloudflare npm clean-install.

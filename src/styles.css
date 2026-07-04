@@ -62,3 +62,33 @@
 @media(max-width:1200px){.opsLayout{grid-template-columns:1fr}.opsSide{position:static;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.supportBox{display:none}.opsGrid{grid-template-columns:1fr}}
 @media(max-width:760px){.ruleGrid{grid-template-columns:1fr}.opsSide{grid-template-columns:1fr 1fr}.gameLine{grid-template-columns:70px 1fr auto 1fr}.gameLine .saveGameBtn,.gameLine small{grid-column:1/-1}.opsStats{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.opsSide{grid-template-columns:1fr}.opsStats{grid-template-columns:1fr}}
+
+/* V4.7 Admin Layout - khoa học hơn cho tab BTC */
+.adminOpsV47{display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px;align-items:start;margin-top:16px}
+.opsSideV47{background:#052d24;color:white;border-radius:18px;padding:16px;position:sticky;top:12px;box-shadow:0 12px 28px rgba(0,0,0,.12)}
+.sideBlockTitle{font-size:13px;font-weight:950;letter-spacing:.4px;margin:4px 0 10px;color:#dff7d0}
+.configTitle{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.18)}
+.opsSideV47 button{width:100%;border:0;background:transparent;color:white;text-align:left;padding:11px 10px;border-radius:12px;font-weight:900;display:flex;align-items:center;gap:9px;justify-content:space-between}
+.opsSideV47 button svg{flex:0 0 auto}.opsSideV47 button.active,.opsSideV47 button:hover{background:#b8d72f;color:#10201c}
+.opsWorkspaceV47{min-width:0}.opsTopTitle{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.opsTopTitle h2{margin:0}.opsTopTitle p{margin:4px 0 0;color:#667}
+.topQuick{margin:0;flex-wrap:wrap;justify-content:flex-end}
+.opsKpiV47{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
+.opsKpiV47>div{background:white;border:1px solid #e1e9d7;border-radius:16px;padding:16px;box-shadow:0 8px 18px rgba(0,0,0,.04);min-height:82px}
+.opsKpiV47 svg{width:28px;height:28px;color:#0f7a34}.opsKpiV47 b{display:block;font-size:28px;margin-top:4px}.opsKpiV47 span{font-weight:800;color:#667}
+.progressKpi em{display:block;height:8px;background:#eef2e9;border-radius:999px;margin-top:10px;overflow:hidden}.progressKpi i{display:block;height:100%;background:#0f7a34;border-radius:999px}
+.opsMainGridV47{display:grid;grid-template-columns:1.05fr 1.2fr 1.15fr;gap:14px;align-items:start}
+.panelV47{background:white;border:1px solid #e1e9d7;border-radius:18px;padding:16px;box-shadow:0 8px 18px rgba(0,0,0,.04)}
+.panelHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.panelHead h3{margin:0}.panelHead a{color:#116dcc;font-weight:900;font-size:13px;text-decoration:none}.panelHead span{color:#667;font-weight:800}
+.quickActionV47{display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;border:1px solid #eef1e8;border-radius:14px;padding:12px;margin:10px 0;background:#fff}
+.quickActionV47 svg{background:#eef8e6;color:#0f7a34;border-radius:10px;padding:8px;box-sizing:content-box}.quickActionV47 b{display:block}.quickActionV47 span{display:block;color:#667;font-size:13px;margin-top:3px}.quickActionV47 em{font-style:normal;background:#ef4444;color:white;border-radius:999px;padding:5px 8px;font-weight:900}.quickActionV47 i{font-style:normal;color:#667;font-size:20px}
+.ruleCards{display:grid;gap:12px}.ruleCards>div{border:1px solid #dfe8d5;border-radius:14px;background:#f9fcf5;padding:13px}.ruleCards>div:nth-child(2){border-color:#f2d4a5;background:#fffaf2}.ruleCards h4{margin:0 0 8px;color:#0f7a34}.ruleCards ul{margin:0;padding-left:18px;color:#223}.ruleCards li{margin:6px 0}
+.ruleEditBox{margin-top:12px}.ruleEditBox summary{cursor:pointer;font-weight:900;color:#0f7a34}
+.matchPickV47{width:100%;border:1px solid #edf1e8;border-radius:14px;background:white;padding:12px;margin:9px 0;display:grid;grid-template-columns:1fr 78px 1fr;gap:10px;align-items:center;text-align:left;cursor:pointer}
+.matchPickV47.active{border-color:#0f7a34;background:#f6fff0}.matchPickV47 strong{text-align:center;font-size:22px;background:#eef8e6;border-radius:12px;padding:10px}.matchPickV47 span{display:block;color:#667;font-size:12px;margin-top:3px}.matchPickV47 div:last-child{text-align:right}
+.scorePanelWide{grid-column:2/3}.rightStackPanel{grid-column:3/4;grid-row:2/4}.rulesPanelV47{grid-column:3/4}.actionListPanel{grid-row:1/3}.liveMatchesPanel{grid-column:2/3}
+.courtOverviewV47{margin-top:14px}.courtGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.courtCard{border:1px solid #edf1e8;border-radius:14px;padding:13px;background:#fff;min-height:110px;position:relative}.courtCard b{display:block}.courtCard strong{display:block;margin-top:18px;text-align:center}.courtCard em{display:block;text-align:center;font-style:normal;font-size:22px;font-weight:950;margin-top:6px}.liveTag,.waitTag{position:absolute;right:10px;top:10px;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:900}.liveTag{background:#dcfce7;color:#047857}.waitTag{background:#eef2f0;color:#667}
+.compactTable{width:100%;border-collapse:collapse}.compactTable th,.compactTable td{border-bottom:1px solid #edf1e8;padding:7px;text-align:left}.pendingLine{background:#f8fbf2;border-radius:10px;padding:8px;margin:7px 0}
+.scoreCardV47{box-shadow:none}.gameLine{grid-template-columns:86px 68px auto 68px 150px 60px}
+@media(max-width:1350px){.opsMainGridV47{grid-template-columns:1fr 1fr}.actionListPanel{grid-row:auto}.rulesPanelV47,.rightStackPanel,.scorePanelWide,.liveMatchesPanel{grid-column:auto;grid-row:auto}.opsKpiV47{grid-template-columns:repeat(3,1fr)}.courtGrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1000px){.adminOpsV47{grid-template-columns:1fr}.opsSideV47{position:static;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.sideBlockTitle,.supportBox{display:none}.opsTopTitle{display:block}.topQuick{justify-content:flex-start;margin-top:10px}.opsMainGridV47{grid-template-columns:1fr}.opsKpiV47{grid-template-columns:1fr 1fr}.courtGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.opsSideV47{grid-template-columns:1fr 1fr}.opsKpiV47{grid-template-columns:1fr}.courtGrid{grid-template-columns:1fr}.matchPickV47{grid-template-columns:1fr}.matchPickV47 div:last-child{text-align:left}.gameLine{grid-template-columns:70px 1fr auto 1fr}.gameLine .saveGameBtn,.gameLine small{grid-column:1/-1}}
