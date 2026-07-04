@@ -3,7 +3,7 @@ import { Shield, RefreshCw } from "lucide-react";
 import TournamentSettings from "../components/TournamentSettings";
 import RegistrationManager from "../components/RegistrationManager";
 import DrawManager from "../components/DrawManager";
-import ScheduleManager from "../components/ScheduleManager";
+import TournamentOps from "../components/TournamentOps";
 
 export default function Admin(props) {
   const {
@@ -58,7 +58,7 @@ export default function Admin(props) {
           onStartMC={onStartMC}
           setMsg={setMsg}
         />
-        <ScheduleManager
+        <TournamentOps
           groups={draw.groups}
           config={matchConfig}
           setConfig={setMatchConfig}

@@ -73,7 +73,7 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
             <td>Sân {m.court}</td>
             <td>{m.group}</td>
             <td>{m.home?.name} vs {m.away?.name}</td>
-            <td>{m.homeScore!=="" || m.awayScore!=="" ? `${m.homeScore || 0} - ${m.awayScore || 0}` : "Chưa đấu"}</td>
+            <td>{(m.games||[]).some(g=>g.home!==""&&g.away!=="") ? (m.games||[]).filter(g=>g.home!==""&&g.away!=="").map(g=>`${g.home}-${g.away}`).join(", ") : "Chưa đấu"}</td>
           </tr>)}</tbody>
         </table></div>
         {knockout && knockout.length > 0 && <div className="publicKnockout">
