@@ -1,22 +1,28 @@
-# PickleCity Tournament Manager V4.7 Admin Layout
+# PickleCity Tournament Manager V4.8 Tomorrow Ready
 
-Bản này sắp xếp lại tab BTC cho khoa học hơn:
-- Sidebar điều hành giải rõ ràng
-- Khu KPI tổng quan ở đầu
-- Khối Điều hành nhanh
-- Khối Trận đang diễn ra / tiếp theo
-- Khối Cấu hình thể thức thi đấu gọn
-- Khối Cập nhật tỷ số riêng
-- Khối BXH nhanh / trận chưa nhập kết quả
-- Tổng quan các sân
+Bản sửa nhanh phục vụ giải ngày mai, giữ nền V4 hiện tại nhưng tách màn hình cho gọn.
 
-Giữ nguyên tính năng V4.6:
-- Cấu hình thể thức thi đấu
-- Mỗi game có nút Lưu riêng
-- Game đã lưu bị khóa
-- Tự tính đội thắng, BXH, nhánh Tứ kết
+## Đã sửa theo yêu cầu gần nhất
+- Trong BTC tách rõ:
+  - Cấu hình thể thức thi đấu
+  - Điều hành giải
+  - Giờ thi đấu
+  - Cập nhật kết quả
+  - BXH
+  - Nhánh đấu
+- Màn hình công khai tách thêm:
+  - Giờ thi đấu
+  - Kết quả thi đấu
+- Giữ tính năng:
+  - Vòng bảng 11 điểm cách 2
+  - Loại trực tiếp 15 điểm cách 2
+  - Mỗi game có nút Lưu riêng
+  - Game đã lưu bị khóa
+  - Tự tính BXH
+  - Sinh Tứ kết
 
-Test sau deploy:
-/api/ping => version: 4.7-admin-layout
+## Test sau deploy
+/api/ping phải trả:
+version: 4.8-tomorrow-ready
 
 Không có package-lock.json để tránh lỗi Cloudflare npm clean-install.

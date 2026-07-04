@@ -40,7 +40,7 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
     <div className="publicSubTabs">
       <button className={publicTab==="list"?"active":""} onClick={()=>setPublicTab("list")}><ListChecks size={15}/> Danh sách</button>
       <button className={publicTab==="groups"?"active":""} onClick={()=>setPublicTab("groups")}><Table2 size={15}/> Bảng đấu</button>
-      <button className={publicTab==="schedule"?"active":""} onClick={()=>setPublicTab("schedule")}><Clock size={15}/> Giờ thi đấu</button>
+      <button className={publicTab==="schedule"?"active":""} onClick={()=>setPublicTab("schedule")}><Clock size={15}/> Giờ thi đấu</button><button className={publicTab==="results"?"active":""} onClick={()=>setPublicTab("results")}><Clock size={15}/> Kết quả thi đấu</button>
     </div>
 
     {publicTab==="list" && <section>
@@ -82,5 +82,19 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
         </div>}
       </> : <p className="muted">BTC chưa xếp lịch thi đấu.</p>}
     </section>}
+
+    {publicTab==="results" && <section>
+      <h2>Kết quả thi đấu</h2>
+      {schedule && schedule.length > 0 ? <div className="resultCardsPublic">
+        {schedule.filter(m => (m.games||[]).some(g=>g.saved)).map((m,i)=><div className="publicResultCard" key={m.id||i}>
+          <div><b>{m.group}</b><span>{m.time} · Sân {m.court}</span></div>
+          <h3>{m.home?.name} <small>vs</small> {m.away?.name}</h3>
+          <strong>{(m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ")}</strong>
+          <em>{m.status==="DONE" ? "Hoàn thành" : "Đang cập nhật"}</em>
+        </div>)}
+        {schedule.filter(m => (m.games||[]).some(g=>g.saved)).length===0 && <p className="muted">Chưa có kết quả trận đấu.</p>}
+      </div> : <p className="muted">BTC chưa xếp lịch thi đấu.</p>}
+    </section>}
   </main>
 }
+

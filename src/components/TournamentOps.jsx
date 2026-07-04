@@ -1,6 +1,6 @@
 
 import { useMemo, useState } from "react";
-import { Activity, CalendarDays, Trophy, ClipboardCopy, Save, Settings, CheckCircle2, PlayCircle, ListChecks, BarChart3, GitBranch, Bell, MapPin, FileText } from "lucide-react";
+import { Activity, CalendarDays, Trophy, ClipboardCopy, Save, Settings, CheckCircle2, PlayCircle, ListChecks, BarChart3, GitBranch, FileText } from "lucide-react";
 import { makeSchedule, makeKnockout, calcStandings, koNextRound, exportScheduleText } from "../utils/draw";
 import { DEFAULT_RULES, targetForMatch, validateGameScore, scoreSummary, formatRulesText } from "../utils/matchRules";
 
@@ -8,48 +8,36 @@ function nowText(){
   const d=new Date();
   return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
 }
-
 function pct(done,total){ return total ? Math.round(done*100/total) : 0; }
 
 export default function TournamentOps({groups, config, setConfig, schedule, setSchedule, knockout, setKnockout, setMsg}) {
+  const [opsTab,setOpsTab]=useState("control");
   const [selectedId,setSelectedId]=useState("");
   const rules={...DEFAULT_RULES,...(config.rules||{})};
   const standings=calcStandings(groups||[],schedule||[],rules);
   const semis=koNextRound(knockout||[],"Bán kết","SF");
   const finals=koNextRound(semis,"Chung kết","FINAL");
   const selectedMatch=useMemo(()=> (schedule||[]).find(m=>m.id===selectedId)||(schedule||[]).find(m=>m.status==="LIVE")||(schedule||[]).find(m=>m.status!=="DONE")||(schedule||[])[0]||null,[schedule,selectedId]);
-  const rulesText=formatRulesText(rules);
-
   const live=(schedule||[]).filter(m=>m.status==="LIVE").length;
   const done=(schedule||[]).filter(m=>m.status==="DONE").length;
   const pending=(schedule||[]).filter(m=>m.status!=="DONE").length;
-  const nextMatches=(schedule||[]).filter(m=>m.status!=="DONE").slice(0,6);
+  const nextMatches=(schedule||[]).filter(m=>m.status!=="DONE").slice(0,8);
   const totalTeams=(groups||[]).reduce((s,g)=>s+(g.teams?.length||0),0);
-  const totalSchedule=schedule.length;
-  const progress=pct(done,totalSchedule);
+  const progress=pct(done,schedule.length);
+  const rulesText=formatRulesText(rules);
 
-  const setRules=(patch)=>setConfig({...config,rules:{...rules,...patch}});
-
+  function setRules(patch){ setConfig({...config,rules:{...rules,...patch}}); }
   function genSchedule(){
     if(!groups.length){setMsg("Chưa có bảng đấu để xếp lịch.");return;}
     const s=makeSchedule(groups,{courtCount:config.courtCount,startTime:config.startTime,minutesPerMatch:config.minutesPerMatch});
-    setSchedule(s);
-    setSelectedId(s[0]?.id||"");
-    setMsg(`Đã xếp ${s.length} trận vòng bảng.`);
+    setSchedule(s); setSelectedId(s[0]?.id||""); setMsg(`Đã xếp ${s.length} trận vòng bảng.`);
   }
-
-  function copySchedule(){
-    navigator.clipboard.writeText(exportScheduleText(schedule));
-    setMsg("Đã copy lịch thi đấu.");
-  }
-
+  function copySchedule(){ navigator.clipboard.writeText(exportScheduleText(schedule)); setMsg("Đã copy lịch thi đấu."); }
   function genKO(){
     if(!groups.length){setMsg("Chưa có bảng đấu.");return;}
     const pairs=makeKnockout(groups,config,standings);
-    setKnockout(pairs);
-    setMsg(`Đã sinh ${pairs.length} trận Tứ kết theo BXH hiện tại.`);
+    setKnockout(pairs); setMsg(`Đã sinh ${pairs.length} trận Tứ kết theo BXH hiện tại.`);
   }
-
   function updateDraft(id, idx, side, value){
     setSchedule((schedule||[]).map(m=>{
       if(m.id!==id)return m;
@@ -58,7 +46,6 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
       return {...m,games,status:m.status==="DONE"?"DONE":"LIVE"};
     }));
   }
-
   function saveGame(id, idx){
     let msg="";
     setSchedule((schedule||[]).map(m=>{
@@ -75,11 +62,7 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
     }));
     setMsg(msg||"Đã lưu game.");
   }
-
-  function addGame(id){
-    setSchedule((schedule||[]).map(m=>m.id===id?{...m,games:[...(m.games||[]),{home:"",away:"",saved:false}]}:m));
-  }
-
+  function addGame(id){ setSchedule((schedule||[]).map(m=>m.id===id?{...m,games:[...(m.games||[]),{home:"",away:"",saved:false}]}:m)); }
   function finishMatch(id){
     let msg="";
     setSchedule((schedule||[]).map(m=>{
@@ -91,7 +74,6 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
     }));
     setMsg(msg);
   }
-
   function updateKoDraft(id, idx, side, value){
     setKnockout((knockout||[]).map(m=>{
       if(m.id!==id)return m;
@@ -100,7 +82,6 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
       return {...m,games,status:m.status==="DONE"?"DONE":"LIVE"};
     }));
   }
-
   function saveKoGame(id, idx){
     let msg="";
     setKnockout((knockout||[]).map(m=>{
@@ -117,11 +98,7 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
     }));
     setMsg(msg||"Đã lưu game.");
   }
-
-  function addKoGame(id){
-    setKnockout((knockout||[]).map(m=>m.id===id?{...m,games:[...(m.games||[]),{home:"",away:"",saved:false}]}:m));
-  }
-
+  function addKoGame(id){ setKnockout((knockout||[]).map(m=>m.id===id?{...m,games:[...(m.games||[]),{home:"",away:"",saved:false}]}:m)); }
   function finishKo(id){
     let msg="";
     setKnockout((knockout||[]).map(m=>{
@@ -134,159 +111,130 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
     setMsg(msg);
   }
 
-  return <section className="adminOpsV47">
-    <aside className="opsSideV47">
-      <div className="sideBlockTitle">ĐIỀU HÀNH GIẢI</div>
-      <button className="active"><Activity size={16}/> Tổng quan</button>
-      <button><PlayCircle size={16}/> Trận đang diễn ra <b>{live}</b></button>
-      <button><CalendarDays size={16}/> Lịch thi đấu</button>
-      <button><Save size={16}/> Nhập kết quả <b>{pending}</b></button>
-      <button><BarChart3 size={16}/> Bảng xếp hạng</button>
-      <button><GitBranch size={16}/> Nhánh đấu</button>
-      <button><Bell size={16}/> Thông báo</button>
-      <div className="sideBlockTitle configTitle">CẤU HÌNH GIẢI</div>
-      <button><FileText size={16}/> Thông tin giải</button>
-      <button><Settings size={16}/> Thể thức thi đấu</button>
-      <button><MapPin size={16}/> Sân thi đấu</button>
-      <div className="supportBox"><b>Hỗ trợ BTC</b><span>0904 626 959</span></div>
-    </aside>
-
-    <div className="opsWorkspaceV47">
-      <div className="opsTopTitle">
-        <div>
-          <h2>Điều hành giải</h2>
-          <p>Quản lý lịch thi đấu, cập nhật tỷ số, bảng xếp hạng và nhánh loại trực tiếp.</p>
-        </div>
-        <div className="configActions topQuick">
-          <button className="mini" onClick={genSchedule}><CalendarDays size={14}/> Xếp lịch</button>
-          {schedule.length>0 && <button className="mini" onClick={copySchedule}><ClipboardCopy size={14}/> Copy lịch</button>}
-          <button className="mini" onClick={genKO}><Trophy size={14}/> Sinh tứ kết</button>
-        </div>
+  return <section className="opsClean">
+    <div className="opsCleanHead">
+      <div>
+        <h2>Điều hành giải</h2>
+        <p>Tách riêng cấu hình thể thức, giờ thi đấu, nhập kết quả, BXH và nhánh đấu để BTC thao tác nhanh trong ngày giải.</p>
       </div>
+      <div className="opsMiniStats"><b>{progress}%</b><span>Tiến độ</span></div>
+    </div>
 
-      <div className="opsKpiV47">
-        <div><ListChecks/><b>{totalTeams}</b><span>Đội thi đấu</span></div>
-        <div><PlayCircle/><b>{live}</b><span>Đang diễn ra</span></div>
-        <div><CalendarDays/><b>{pending}</b><span>Trận chờ / chưa nhập</span></div>
-        <div><CheckCircle2/><b>{done}</b><span>Đã hoàn thành</span></div>
-        <div className="progressKpi"><b>{progress}%</b><span>Tiến độ giải đấu</span><em><i style={{width:`${progress}%`}}/></em></div>
-      </div>
+    <div className="opsKpiClean">
+      <div><ListChecks/><b>{totalTeams}</b><span>Đội</span></div>
+      <div><CalendarDays/><b>{schedule.length}</b><span>Trận</span></div>
+      <div><PlayCircle/><b>{live}</b><span>LIVE</span></div>
+      <div><CheckCircle2/><b>{done}</b><span>Hoàn thành</span></div>
+      <div><FileText/><b>{pending}</b><span>Chưa nhập</span></div>
+    </div>
 
-      <div className="opsMainGridV47">
-        <section className="panelV47 actionListPanel">
-          <div className="panelHead"><h3>Điều hành nhanh</h3><a>Xem chi tiết →</a></div>
-          <QuickAction icon={<PlayCircle/>} title="Trận đang diễn ra" desc="Theo dõi và cập nhật tỷ số các trận đang diễn ra" badge={live}/>
-          <QuickAction icon={<CalendarDays/>} title="Lịch thi đấu" desc="Xem lịch thi đấu theo sân, theo thời gian"/>
-          <QuickAction icon={<Save/>} title="Nhập kết quả" desc="Cập nhật tỷ số từng game và kết quả trận đấu" badge={pending}/>
-          <QuickAction icon={<BarChart3/>} title="Bảng xếp hạng" desc="Xem bảng xếp hạng các bảng đấu"/>
-          <QuickAction icon={<GitBranch/>} title="Nhánh đấu" desc="Xem và cập nhật kết quả vòng loại trực tiếp"/>
-        </section>
+    <div className="opsTabsClean">
+      <button className={opsTab==="rules"?"active":""} onClick={()=>setOpsTab("rules")}><Settings size={15}/> Cấu hình thể thức</button>
+      <button className={opsTab==="control"?"active":""} onClick={()=>setOpsTab("control")}><Activity size={15}/> Điều hành giải</button>
+      <button className={opsTab==="schedule"?"active":""} onClick={()=>setOpsTab("schedule")}><CalendarDays size={15}/> Giờ thi đấu</button>
+      <button className={opsTab==="results"?"active":""} onClick={()=>setOpsTab("results")}><Save size={15}/> Cập nhật kết quả</button>
+      <button className={opsTab==="standings"?"active":""} onClick={()=>setOpsTab("standings")}><BarChart3 size={15}/> BXH</button>
+      <button className={opsTab==="bracket"?"active":""} onClick={()=>setOpsTab("bracket")}><GitBranch size={15}/> Nhánh đấu</button>
+    </div>
 
-        <section className="panelV47 liveMatchesPanel">
-          <div className="panelHead"><h3>Trận đang diễn ra / tiếp theo</h3><a>Xem tất cả →</a></div>
-          {nextMatches.length ? nextMatches.map(m=>{
-            const ss=scoreSummary(m,rules);
-            return <button className={`matchPickV47 ${selectedMatch?.id===m.id?"active":""}`} key={m.id} onClick={()=>setSelectedId(m.id)}>
-              <div><b>{m.home.name}</b><span>{m.group} · Lượt {m.round}</span></div>
-              <strong>{ss.scoreText || "0 - 0"}</strong>
-              <div><b>{m.away.name}</b><span>Sân {m.court} · {m.time}</span></div>
-            </button>
-          }) : <p className="muted">Chưa có lịch hoặc tất cả trận đã hoàn thành.</p>}
-        </section>
+    {opsTab==="rules" && <RulesScreen rules={rules} setRules={setRules} rulesText={rulesText} config={config} setConfig={setConfig}/>}
+    {opsTab==="control" && <ControlScreen schedule={schedule} rules={rules} selectedMatch={selectedMatch} setSelectedId={setSelectedId} nextMatches={nextMatches} config={config} genSchedule={genSchedule} copySchedule={copySchedule} genKO={genKO} groups={groups}/>}
+    {opsTab==="schedule" && <ScheduleScreen schedule={schedule} genSchedule={genSchedule} copySchedule={copySchedule} config={config} setConfig={setConfig}/>}
+    {opsTab==="results" && <ResultsScreen schedule={schedule} selectedMatch={selectedMatch} setSelectedId={setSelectedId} rules={rules} updateDraft={updateDraft} saveGame={saveGame} addGame={addGame} finishMatch={finishMatch}/>}
+    {opsTab==="standings" && <StandingsScreen standings={standings} schedule={schedule}/>}
+    {opsTab==="bracket" && <BracketScreen knockout={knockout} semis={semis} finals={finals} genKO={genKO} rules={rules} updateKoDraft={updateKoDraft} saveKoGame={saveKoGame} addKoGame={addKoGame} finishKo={finishKo}/>}
+  </section>
+}
 
-        <section className="panelV47 rulesPanelV47">
-          <div className="panelHead"><h3>Cấu hình thể thức thi đấu</h3><button className="mini"><Settings size={14}/> Chỉnh sửa</button></div>
-          <div className="ruleCards">
-            <div>
-              <h4>Vòng bảng</h4>
-              <ul>
-                <li>Thể thức: Đấu vòng tròn tính điểm</li>
-                <li>Điểm số: {rules.groupPointTarget || 11} điểm {rules.groupWinByTwo!==false ? "cách 2" : ""}</li>
-                <li>Xếp hạng: Thắng → hiệu số game → hiệu số điểm</li>
-              </ul>
-            </div>
-            <div>
-              <h4>Loại trực tiếp</h4>
-              <ul>
-                <li>Từ Tứ kết đến Chung kết</li>
-                <li>Điểm số: {rules.knockoutPointTarget || 15} điểm {rules.knockoutWinByTwo!==false ? "cách 2" : ""}</li>
-                <li>{rules.thirdPlace!==false ? "Có tranh giải 3" : "Không tranh giải 3"}</li>
-              </ul>
-            </div>
-          </div>
-          <details className="ruleEditBox">
-            <summary>Mở cấu hình chi tiết</summary>
-            <div className="ruleGrid">
-              <label>Vòng bảng<select value={rules.groupFormat} onChange={e=>setConfig({...config,rules:{...rules,groupFormat:e.target.value}})}><option value="ROUND_ROBIN">Đấu vòng tròn tính điểm</option></select></label>
-              <label>Điểm vòng bảng<input type="number" min="1" value={rules.groupPointTarget} onChange={e=>setConfig({...config,rules:{...rules,groupPointTarget:e.target.value}})}/></label>
-              <label className="checkLine"><input type="checkbox" checked={rules.groupWinByTwo!==false} onChange={e=>setConfig({...config,rules:{...rules,groupWinByTwo:e.target.checked}})}/> Cách 2 điểm</label>
-              <label>Điểm loại trực tiếp<input type="number" min="1" value={rules.knockoutPointTarget} onChange={e=>setConfig({...config,rules:{...rules,knockoutPointTarget:e.target.value}})}/></label>
-              <label className="checkLine"><input type="checkbox" checked={rules.knockoutWinByTwo!==false} onChange={e=>setConfig({...config,rules:{...rules,knockoutWinByTwo:e.target.checked}})}/> Cách 2 điểm</label>
-              <label className="checkLine"><input type="checkbox" checked={rules.thirdPlace!==false} onChange={e=>setConfig({...config,rules:{...rules,thirdPlace:e.target.checked}})}/> Có tranh giải 3</label>
-            </div>
-          </details>
-        </section>
-
-        <section className="panelV47 scorePanelWide">
-          <div className="panelHead"><h3>Cập nhật tỷ số</h3><span>{selectedMatch ? `${selectedMatch.group} · Sân ${selectedMatch.court}` : "Chưa chọn trận"}</span></div>
-          {selectedMatch ? <MatchScoreCard match={selectedMatch} rules={rules} onDraft={updateDraft} onSaveGame={saveGame} onAddGame={addGame} onFinish={finishMatch}/> : <p className="muted">Chưa có trận để nhập điểm.</p>}
-        </section>
-
-        <section className="panelV47 rightStackPanel">
-          <h3>BXH nhanh</h3>
-          {Object.entries(standings).slice(0,1).map(([group,rows])=><div key={group}>
-            <h4>{group}</h4>
-            <table className="compactTable"><thead><tr><th>#</th><th>Đội</th><th>T</th><th>HS</th></tr></thead><tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{r.name}</td><td>{r.win}</td><td>{r.diff}</td></tr>)}</tbody></table>
-          </div>)}
-          <h3>Trận chưa nhập kết quả ({pending})</h3>
-          {nextMatches.slice(0,6).map(m=><p className="pendingLine" key={m.id}>{m.group} · {m.home.name} vs {m.away.name}</p>)}
-        </section>
-      </div>
-
-      <section className="courtOverviewV47 panelV47">
-        <div className="panelHead"><h3>Tổng quan các sân</h3><a>Xem lịch đầy đủ →</a></div>
-        <div className="courtGrid">
-          {Array.from({length:Number(config.courtCount||3)},(_,i)=>{
-            const court=i+1;
-            const m=(schedule||[]).find(x=>Number(x.court)===court && x.status!=="DONE");
-            const ss=m?scoreSummary(m,rules):null;
-            return <div className="courtCard" key={court}>
-              <b>Sân {court}</b>
-              {m ? <>
-                <span className={m.status==="LIVE"?"liveTag":"waitTag"}>{m.status==="LIVE"?"Đang diễn ra":"Chờ"}</span>
-                <strong>{m.home.name} vs {m.away.name}</strong>
-                <em>{ss?.scoreText || m.time}</em>
-              </> : <p>Chưa có trận</p>}
-            </div>
-          })}
-        </div>
-      </section>
-
-      {schedule.length>0 && <section className="scoreBoard panelV47">
-        <h3>Toàn bộ trận vòng bảng</h3>
-        {schedule.map(m=><MatchScoreCard key={m.id} match={m} rules={rules} compact onDraft={updateDraft} onSaveGame={saveGame} onAddGame={addGame} onFinish={finishMatch}/>)}
-      </section>}
-
-      {Object.keys(standings).length>0 && schedule.length>0 && <section className="standingsBox panelV47">
-        <h3>Bảng xếp hạng vòng bảng</h3>
-        {Object.entries(standings).map(([group,rows])=><div className="standingGroup" key={group}>
-          <h4>{group}</h4>
-          <div className="tablewrap"><table><thead><tr><th>Hạng</th><th>Đội</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>Game</th><th>HS điểm</th></tr></thead><tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{r.name}</td><td>{r.played}</td><td>{r.win}</td><td>{r.loss}</td><td>{r.gameFor}-{r.gameAgainst}</td><td>{r.diff}</td></tr>)}</tbody></table></div>
-        </div>)}
-      </section>}
-
-      {knockout.length>0 && <section className="knockoutBox panelV47">
-        <h3>Nhập điểm Tứ kết</h3>
-        {knockout.map(m=><KoScoreCard key={m.id} match={m} rules={rules} onDraft={updateKoDraft} onSaveGame={saveKoGame} onAddGame={addKoGame} onFinish={finishKo}/>)}
-        {semis.length>0 && <><h3>Bán kết dự kiến</h3>{semis.map(k=><p key={k.id}><b>{k.name}:</b> {k.a.slot} vs {k.b.slot}</p>)}</>}
-        {finals.length>0 && <><h3>Chung kết dự kiến</h3>{finals.map(k=><p key={k.id}><b>{k.name}:</b> {k.a.slot} vs {k.b.slot}</p>)}</>}
-      </section>}
+function RulesScreen({rules,setRules,rulesText,config,setConfig}) {
+  return <section className="panelClean">
+    <div className="panelTitle"><h3>Cấu hình thể thức thi đấu</h3><p>Cấu hình một lần trước giải, sau đó BTC chỉ cần nhập điểm.</p></div>
+    <div className="ruleSummaryBig"><div>{rulesText.group}</div><div>{rulesText.ko}</div></div>
+    <div className="ruleGrid">
+      <label>Vòng bảng<select value={rules.groupFormat} onChange={e=>setRules({groupFormat:e.target.value})}><option value="ROUND_ROBIN">Đấu vòng tròn tính điểm</option></select></label>
+      <label>Điểm vòng bảng<input type="number" min="1" value={rules.groupPointTarget} onChange={e=>setRules({groupPointTarget:e.target.value})}/></label>
+      <label className="checkLine"><input type="checkbox" checked={rules.groupWinByTwo!==false} onChange={e=>setRules({groupWinByTwo:e.target.checked})}/> Thắng cách 2 điểm</label>
+      <label>Vòng loại trực tiếp<input value="Tứ kết, Bán kết, Tranh giải 3, Chung kết" readOnly /></label>
+      <label>Điểm loại trực tiếp<input type="number" min="1" value={rules.knockoutPointTarget} onChange={e=>setRules({knockoutPointTarget:e.target.value})}/></label>
+      <label className="checkLine"><input type="checkbox" checked={rules.knockoutWinByTwo!==false} onChange={e=>setRules({knockoutWinByTwo:e.target.checked})}/> Thắng cách 2 điểm</label>
+      <label className="checkLine"><input type="checkbox" checked={rules.thirdPlace!==false} onChange={e=>setRules({thirdPlace:e.target.checked})}/> Có trận tranh giải 3</label>
+      <label>Số sân<input type="number" min="1" value={config.courtCount||3} onChange={e=>setConfig({...config,courtCount:e.target.value})}/></label>
+      <label>Giờ bắt đầu<input value={config.startTime||"08:00"} onChange={e=>setConfig({...config,startTime:e.target.value})}/></label>
+      <label>Phút/trận<input type="number" min="5" value={config.minutesPerMatch||20} onChange={e=>setConfig({...config,minutesPerMatch:e.target.value})}/></label>
     </div>
   </section>
 }
 
-function QuickAction({icon,title,desc,badge}) {
-  return <div className="quickActionV47">{icon}<div><b>{title}</b><span>{desc}</span></div>{badge ? <em>{badge}</em> : <i>›</i>}</div>
+function ControlScreen({schedule,rules,selectedMatch,setSelectedId,nextMatches,config,genSchedule,copySchedule,genKO,groups}) {
+  const courts = Array.from({length:Number(config.courtCount||3)},(_,i)=>i+1);
+  return <section className="controlGridClean">
+    <div className="panelClean">
+      <div className="panelTitle"><h3>Điều hành theo sân</h3><p>BTC nhìn nhanh trạng thái từng sân.</p></div>
+      <div className="courtGridClean">{courts.map(c=>{
+        const m=(schedule||[]).find(x=>Number(x.court)===c && x.status!=="DONE");
+        const ss=m?scoreSummary(m,rules):null;
+        return <button className={`courtClean ${m?.status==="LIVE"?"live":""}`} key={c} onClick={()=>m&&setSelectedId(m.id)}>
+          <b>Sân {c}</b>
+          {m ? <><span>{m.status==="LIVE"?"LIVE":"Chờ"}</span><strong>{m.home.name} vs {m.away.name}</strong><em>{ss?.scoreText || m.time}</em></> : <p>Trống</p>}
+        </button>
+      })}</div>
+    </div>
+    <div className="panelClean">
+      <div className="panelTitle"><h3>Trận tiếp theo / chưa nhập điểm</h3><p>Chọn trận để cập nhật nhanh.</p></div>
+      <div className="matchListClean">{nextMatches.length ? nextMatches.map(m=>{const ss=scoreSummary(m,rules);return <button className={`matchRowClean ${selectedMatch?.id===m.id?"active":""}`} key={m.id} onClick={()=>setSelectedId(m.id)}><b>{m.time} · Sân {m.court}</b><span>{m.group}: {m.home.name} vs {m.away.name}</span><em>{ss.scoreText||"Chưa nhập"}</em></button>}) : <p className="muted">Chưa có lịch hoặc đã hoàn thành tất cả.</p>}</div>
+    </div>
+    <div className="panelClean quickOpsClean">
+      <h3>Thao tác nhanh</h3>
+      <button className="primary" onClick={genSchedule}>Xếp lịch vòng bảng</button>
+      <button className="mini" onClick={copySchedule}>Copy lịch</button>
+      <button className="mini" onClick={genKO}>Sinh tứ kết</button>
+      <p className="hint">Ngày mai chỉ cần: chốt bảng → xếp lịch → vào Cập nhật kết quả để nhập điểm.</p>
+    </div>
+  </section>
+}
+
+function ScheduleScreen({schedule,genSchedule,copySchedule,config,setConfig}) {
+  return <section className="panelClean">
+    <div className="panelTitle"><h3>Giờ thi đấu</h3><p>Tách riêng để BTC xem lịch theo giờ, sân, bảng.</p></div>
+    <div className="scheduleToolsClean">
+      <label>Số sân<input type="number" value={config.courtCount||3} onChange={e=>setConfig({...config,courtCount:e.target.value})}/></label>
+      <label>Giờ bắt đầu<input value={config.startTime||"08:00"} onChange={e=>setConfig({...config,startTime:e.target.value})}/></label>
+      <label>Phút/trận<input type="number" value={config.minutesPerMatch||20} onChange={e=>setConfig({...config,minutesPerMatch:e.target.value})}/></label>
+      <button className="primary" onClick={genSchedule}>Xếp lịch</button>
+      <button className="mini" onClick={copySchedule}>Copy lịch</button>
+    </div>
+    <div className="tablewrap"><table><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Bảng</th><th>Trận</th><th>Trạng thái</th></tr></thead><tbody>{(schedule||[]).map((m,i)=><tr key={m.id}><td>{i+1}</td><td><b>{m.time}</b></td><td>Sân {m.court}</td><td>{m.group}</td><td>{m.home.name} vs {m.away.name}</td><td>{m.status==="DONE"?"Hoàn thành":m.status==="LIVE"?"LIVE":"Chờ"}</td></tr>)}</tbody></table></div>
+  </section>
+}
+
+function ResultsScreen({schedule,selectedMatch,setSelectedId,rules,updateDraft,saveGame,addGame,finishMatch}) {
+  return <section className="resultsGridClean">
+    <div className="panelClean">
+      <div className="panelTitle"><h3>Danh sách trận</h3><p>Chọn trận cần nhập điểm.</p></div>
+      <div className="matchListClean">{(schedule||[]).map(m=>{const ss=scoreSummary(m,rules);return <button className={`matchRowClean ${selectedMatch?.id===m.id?"active":""}`} key={m.id} onClick={()=>setSelectedId(m.id)}><b>{m.time} · Sân {m.court}</b><span>{m.group}: {m.home.name} vs {m.away.name}</span><em>{m.status==="DONE"?"✓ "+ss.scoreText:ss.scoreText||"Chưa nhập"}</em></button>})}</div>
+    </div>
+    <div className="panelClean">
+      <div className="panelTitle"><h3>Cập nhật tỷ số từng game</h3><p>Mỗi game có nút Lưu riêng. Game đã lưu sẽ khóa.</p></div>
+      {selectedMatch ? <MatchScoreCard match={selectedMatch} rules={rules} onDraft={updateDraft} onSaveGame={saveGame} onAddGame={addGame} onFinish={finishMatch}/> : <p className="muted">Chưa có trận.</p>}
+    </div>
+  </section>
+}
+
+function StandingsScreen({standings,schedule}) {
+  return <section className="panelClean">
+    <div className="panelTitle"><h3>Bảng xếp hạng</h3><p>Tự tính theo trận thắng, hiệu số game, hiệu số điểm.</p></div>
+    {schedule.length ? Object.entries(standings).map(([group,rows])=><div className="standingGroup" key={group}><h4>{group}</h4><div className="tablewrap"><table><thead><tr><th>Hạng</th><th>Đội</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>Game</th><th>HS điểm</th></tr></thead><tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{r.name}</td><td>{r.played}</td><td>{r.win}</td><td>{r.loss}</td><td>{r.gameFor}-{r.gameAgainst}</td><td>{r.diff}</td></tr>)}</tbody></table></div></div>) : <p className="muted">Chưa có lịch thi đấu.</p>}
+  </section>
+}
+
+function BracketScreen({knockout,semis,finals,genKO,rules,updateKoDraft,saveKoGame,addKoGame,finishKo}) {
+  return <section className="panelClean">
+    <div className="panelTitle"><h3>Nhánh đấu</h3><p>Sinh tứ kết theo BXH, sau đó nhập điểm để ra bán kết/chung kết.</p></div>
+    <button className="primary" onClick={genKO}>Sinh / cập nhật nhánh Tứ kết</button>
+    {knockout.length>0 && <div className="koGridClean">{knockout.map(m=><KoScoreCard key={m.id} match={m} rules={rules} onDraft={updateKoDraft} onSaveGame={saveKoGame} onAddGame={addKoGame} onFinish={finishKo}/>)}</div>}
+    {semis.length>0 && <><h3>Bán kết dự kiến</h3>{semis.map(k=><p key={k.id}><b>{k.name}:</b> {k.a.slot} vs {k.b.slot}</p>)}</>}
+    {finals.length>0 && <><h3>Chung kết dự kiến</h3>{finals.map(k=><p key={k.id}><b>{k.name}:</b> {k.a.slot} vs {k.b.slot}</p>)}</>}
+  </section>
 }
 
 function MatchScoreCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,compact=false}) {
@@ -296,12 +244,8 @@ function MatchScoreCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,compa
     <div className="scoreHead"><b>{match.time} · Sân {match.court}</b><span>{match.group} · {rule.label}</span><em>{match.status==="DONE"?"✓ Hoàn thành":match.status==="LIVE"?"LIVE":"Chờ điểm"}</em></div>
     <div className="scoreTeams"><b>{match.home.name}</b><span>vs</span><b>{match.away.name}</b></div>
     {(match.games||[{home:"",away:"",saved:false}]).map((g,i)=><div className={`gameLine ${g.saved?"saved":""}`} key={i}>
-      <span>Game {i+1}</span>
-      <input disabled={g.saved} value={g.home} onChange={e=>onDraft(match.id,i,"home",e.target.value)} placeholder="0"/>
-      <b>-</b>
-      <input disabled={g.saved} value={g.away} onChange={e=>onDraft(match.id,i,"away",e.target.value)} placeholder="0"/>
-      <button className="saveGameBtn" disabled={g.saved} onClick={()=>onSaveGame(match.id,i)}><Save size={14}/> {g.saved?"Đã lưu":"Lưu Game "+(i+1)}</button>
-      {g.saved&&<small>{g.savedAt}</small>}
+      <span>Game {i+1}</span><input disabled={g.saved} value={g.home} onChange={e=>onDraft(match.id,i,"home",e.target.value)} placeholder="0"/><b>-</b><input disabled={g.saved} value={g.away} onChange={e=>onDraft(match.id,i,"away",e.target.value)} placeholder="0"/>
+      <button className="saveGameBtn" disabled={g.saved} onClick={()=>onSaveGame(match.id,i)}><Save size={14}/> {g.saved?"Đã lưu":"Lưu Game "+(i+1)}</button>{g.saved&&<small>{g.savedAt}</small>}
     </div>)}
     <div className="scoreActions"><button className="mini" onClick={()=>onAddGame(match.id)}>+ Game</button><button className="mini primary" onClick={()=>onFinish(match.id)}><CheckCircle2 size={14}/> Kết thúc trận</button>{ss.winner&&<strong>Thắng: {ss.winner}</strong>}</div>
   </div>
@@ -315,12 +259,8 @@ function KoScoreCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish}) {
     <div className="scoreHead"><b>{match.name}</b><span>{rule.label}</span><em>{match.status==="DONE"?"✓ Hoàn thành":match.status==="LIVE"?"LIVE":"Chờ điểm"}</em></div>
     <div className="scoreTeams"><b>{match.a.slot}</b><span>vs</span><b>{match.b.slot}</b></div>
     {(match.games||[{home:"",away:"",saved:false}]).map((g,i)=><div className={`gameLine ${g.saved?"saved":""}`} key={i}>
-      <span>Game {i+1}</span>
-      <input disabled={g.saved} value={g.home} onChange={e=>onDraft(match.id,i,"home",e.target.value)} placeholder="0"/>
-      <b>-</b>
-      <input disabled={g.saved} value={g.away} onChange={e=>onDraft(match.id,i,"away",e.target.value)} placeholder="0"/>
-      <button className="saveGameBtn" disabled={g.saved} onClick={()=>onSaveGame(match.id,i)}><Save size={14}/> {g.saved?"Đã lưu":"Lưu Game "+(i+1)}</button>
-      {g.saved&&<small>{g.savedAt}</small>}
+      <span>Game {i+1}</span><input disabled={g.saved} value={g.home} onChange={e=>onDraft(match.id,i,"home",e.target.value)} placeholder="0"/><b>-</b><input disabled={g.saved} value={g.away} onChange={e=>onDraft(match.id,i,"away",e.target.value)} placeholder="0"/>
+      <button className="saveGameBtn" disabled={g.saved} onClick={()=>onSaveGame(match.id,i)}><Save size={14}/> {g.saved?"Đã lưu":"Lưu Game "+(i+1)}</button>{g.saved&&<small>{g.savedAt}</small>}
     </div>)}
     <div className="scoreActions"><button className="mini" onClick={()=>onAddGame(match.id)}>+ Game</button><button className="mini primary" onClick={()=>onFinish(match.id)}><CheckCircle2 size={14}/> Kết thúc trận</button>{ss.winner&&<strong>Thắng: {ss.winner}</strong>}</div>
   </div>
