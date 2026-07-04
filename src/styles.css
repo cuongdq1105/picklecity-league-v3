@@ -142,3 +142,7 @@
 /* V4.9.1 Local Save */
 .syncNotice{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
 .syncNotice button{border:0;border-radius:999px;padding:7px 10px;font-weight:900;background:#b8d72f;color:#10201c;cursor:pointer}
+
+/* V4.9.2 Public Schedule */
+.syncNotice{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.syncNotice button{border:0;border-radius:999px;padding:7px 10px;font-weight:900;background:#b8d72f;color:#10201c;cursor:pointer}

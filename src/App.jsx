@@ -48,6 +48,9 @@ export default function App() {
   const [matchConfig,setMatchConfig] = useState(()=>readLocal(LOCAL_KEYS.matchConfig, {qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}}));
   const [schedule,setSchedule] = useState(()=>readLocal(LOCAL_KEYS.schedule, []));
   const [knockout,setKnockout] = useState(()=>readLocal(LOCAL_KEYS.knockout, []));
+  const [serverLoaded,setServerLoaded] = useState(false);
+  const [syncing,setSyncing] = useState(false);
+  const [serverSavedAt,setServerSavedAt] = useState(localStorage.getItem("ptm_v492_server_saved_at") || "chưa đồng bộ");
   const [mc,setMc] = useState(null);
   const [filters,setFilters] = useState({quick:"all",payment:"all",level:"all",gender:"all",sort:"newest",search:""});
 
@@ -62,7 +65,54 @@ export default function App() {
   }
 
   async function loadTournament(){ try { hydrateTournament((await api("/tournament")).tournament); } catch(e){ setMsg(e.message); } }
-  async function loadPublic(){ try { setPublicList((await api("/public-registrations")).registrations||[]); setPublicDraw((await api("/draw?public=1")).draw); } catch(e){ setMsg(e.message); } }
+  async function loadPublic(){
+    try {
+      setPublicList((await api("/public-registrations")).registrations||[]);
+      setPublicDraw((await api("/draw?public=1")).draw);
+      const st = await api("/state");
+      if (st.state) {
+        if (st.state.matchConfig) setMatchConfig(st.state.matchConfig);
+        if (Array.isArray(st.state.schedule)) setSchedule(st.state.schedule);
+        if (Array.isArray(st.state.knockout)) setKnockout(st.state.knockout);
+        setServerSavedAt(st.updated_at || st.state.savedAt || "đã tải");
+        localStorage.setItem("ptm_v492_server_saved_at", st.updated_at || st.state.savedAt || "đã tải");
+      }
+      setServerLoaded(true);
+    } catch(e){ setMsg(e.message); }
+  }
+
+  async function loadMatchStateFromServer(){
+    try {
+      const st = await api("/state");
+      if (st.state) {
+        if (st.state.matchConfig) setMatchConfig(st.state.matchConfig);
+        if (Array.isArray(st.state.schedule)) setSchedule(st.state.schedule);
+        if (Array.isArray(st.state.knockout)) setKnockout(st.state.knockout);
+        setMsg("Đã tải lịch/kết quả/nhánh từ server.");
+        setServerSavedAt(st.updated_at || st.state.savedAt || "đã tải");
+        localStorage.setItem("ptm_v492_server_saved_at", st.updated_at || st.state.savedAt || "đã tải");
+      } else {
+        setMsg("Server chưa có lịch/kết quả/nhánh. Có thể bấm Xếp lịch rồi Đồng bộ cho VĐV.");
+      }
+      setServerLoaded(true);
+    } catch(e){ setMsg(e.message); }
+  }
+
+  async function saveMatchStateToServer(showMsg=true){
+    try {
+      setSyncing(true);
+      const d = await post("/state", { matchConfig, schedule, knockout });
+      const stamp = new Date().toLocaleString("vi-VN");
+      setServerSavedAt(stamp);
+      localStorage.setItem("ptm_v492_server_saved_at", stamp);
+      if(showMsg) setMsg("Đã đồng bộ lịch/kết quả/nhánh lên server. VĐV có thể xem trên điện thoại sau khi bấm Tải lại.");
+      return d;
+    } catch(e) {
+      if(showMsg) setMsg("Lỗi đồng bộ server: " + e.message);
+    } finally {
+      setSyncing(false);
+    }
+  }
   async function loadAdmin(){
     setAdmin(a=>({...a,loading:true}));
     try {
@@ -77,7 +127,8 @@ export default function App() {
   useEffect(()=>{ writeLocal(LOCAL_KEYS.matchConfig, matchConfig); },[matchConfig]);
   useEffect(()=>{ writeLocal(LOCAL_KEYS.schedule, schedule); },[schedule]);
   useEffect(()=>{ writeLocal(LOCAL_KEYS.knockout, knockout); },[knockout]);
-  useEffect(()=>{ if(tab==="public") loadPublic(); if(tab==="admin"&&adminAuthed) loadAdmin(); },[tab,adminAuthed]);
+  useEffect(()=>{ if(adminAuthed && serverLoaded) { const t=setTimeout(()=>saveMatchStateToServer(false), 800); return ()=>clearTimeout(t); } },[matchConfig,schedule,knockout,adminAuthed,serverLoaded]);
+  useEffect(()=>{ if(tab==="public") loadPublic(); if(tab==="admin"&&adminAuthed) { loadAdmin(); loadMatchStateFromServer(); } },[tab,adminAuthed]);
 
   async function submit(e){
     e.preventDefault();
@@ -163,7 +214,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.9.1 Local Save</div>
+      <div className="version">V4.9.2 Public Schedule</div>
     </header>
 
     <nav className="tabs">
@@ -172,7 +223,7 @@ export default function App() {
       <button className={tab==="admin"?"active":""} onClick={()=>setTab("admin")}>BTC</button>
     </nav>
 
-    <div className="notice syncNotice">💾 Lưu cục bộ: {localStorage.getItem(LOCAL_KEYS.lastSaved)||"chưa có"} <button onClick={exportLocalTournamentData}>Copy backup</button> <button onClick={clearLocalTournamentData}>Xóa dữ liệu cục bộ</button></div>
+    <div className="notice syncNotice">💾 Cục bộ: {localStorage.getItem(LOCAL_KEYS.lastSaved)||"chưa có"} · ☁️ Server: {syncing ? "đang đồng bộ..." : serverSavedAt} <button onClick={()=>saveMatchStateToServer(true)}>Đồng bộ cho VĐV</button> <button onClick={loadMatchStateFromServer}>Tải từ server</button> <button onClick={exportLocalTournamentData}>Copy backup</button> <button onClick={clearLocalTournamentData}>Xóa cục bộ</button></div>
     {msg && <div className="notice">{msg}</div>}
 
     {tab==="register" && <Register tournament={tournament} form={form} setForm={setForm} onSubmit={submit}/>}

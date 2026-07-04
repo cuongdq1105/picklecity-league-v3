@@ -1,28 +1,24 @@
-# PickleCity Tournament Manager V4.9.1 Local Save
+# PickleCity Tournament Manager V4.9.2 Public Schedule
 
-Bản khẩn cấp để phục vụ giải ngày mai.
+Bản khẩn cấp để BTC xếp lịch và VĐV xem được trên điện thoại.
 
-## Sửa lỗi mất lịch khi đóng trình duyệt
-- Lịch thi đấu được lưu vào localStorage của trình duyệt.
-- Nhánh đấu được lưu vào localStorage.
-- Cấu hình thể thức được lưu vào localStorage.
-- Tắt Chrome/mở lại trên cùng máy, cùng trình duyệt sẽ vẫn còn lịch và nhánh.
+## Điểm mới quan trọng
+- Có API `/api/state` lưu lịch thi đấu, kết quả, nhánh đấu, cấu hình lên Cloudflare D1.
+- BTC bấm **Đồng bộ cho VĐV** để đẩy lịch/kết quả/nhánh lên server.
+- Trang công khai trên điện thoại VĐV bấm **Tải lại** sẽ đọc lịch/kết quả từ server.
+- Vẫn giữ localStorage trên máy BTC để dự phòng.
 
-## Có thêm
-- Thanh trạng thái "Lưu cục bộ".
-- Nút Copy backup để copy dữ liệu dự phòng ra Zalo/Notepad.
-- Nút Xóa dữ liệu cục bộ khi cần làm lại.
+## Cách dùng ngày mai
+1. BTC vào tab BTC.
+2. Xếp lịch vòng bảng.
+3. Sinh nhánh nếu cần.
+4. Bấm nút **Đồng bộ cho VĐV** ở thanh thông báo trên cùng.
+5. VĐV mở trang công khai trên điện thoại, vào **Giờ thi đấu**, bấm **Tải lại**.
 
-## Lưu ý rất quan trọng
-Đây là bản lưu cục bộ trên máy đang điều hành, chưa phải lưu Cloudflare D1.
-- Cùng máy/cùng trình duyệt: giữ dữ liệu.
-- Máy khác/điện thoại khác: không tự thấy lịch đã xếp.
-- Public trên máy khác chưa đồng bộ lịch nếu chưa có backend D1.
-
-Để dùng ngày mai an toàn:
-- Dùng 1 máy chính để xếp lịch và nhập kết quả.
-- Không xóa cache trình duyệt.
-- Sau khi xếp lịch hoặc nhập nhiều kết quả, bấm Copy backup dán vào Zalo/Notepad dự phòng.
+## Lưu ý
+- Bản này đã lưu lên D1 thông qua bảng `tournament_states`.
+- Nếu BTC nhập điểm, sau khi lưu game hệ thống sẽ tự đồng bộ sau khoảng 1 giây khi đang đăng nhập BTC.
+- Nếu muốn chắc chắn, bấm **Đồng bộ cho VĐV** sau mỗi vòng đấu.
 
 ## Test sau deploy
-/api/ping => version: 4.9.1-local-save
+/api/ping => version: 4.9.2-public-schedule
