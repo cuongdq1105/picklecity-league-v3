@@ -39,8 +39,8 @@ export default function DrawManager({
       <button className="primary" onClick={makeDraw} type="button"><Shuffle size={16}/> Bốc thăm / Bốc lại</button>
       <button className="mini" onClick={onStartMC}><Radio size={14}/> Chế độ quay</button>
       <button className="mini" onClick={onSaveDraft}>Lưu nháp</button>
-      <button className="mini" onClick={()=>{ if(confirm("Chốt kết quả bốc thăm? Sau khi chốt, BTC vẫn có thể công bố hoặc bổ sung cặp thủ công nếu phát sinh.")) onFinalize(); }}><Lock size={14}/> Chốt</button>
-      <button className="mini" onClick={()=>{ if(confirm("Công bố bảng đấu cho VĐV/khán giả? Màn hình công khai sẽ ẩn hạng A/B/C.")) onPublish(); }}><PartyPopper size={14}/> Công bố</button>
+      <button className="mini" onClick={onFinalize}><Lock size={14}/> Chốt</button>
+      <button className="mini" onClick={onPublish}><PartyPopper size={14}/> Công bố</button>
     </div>
 
     {draw.savedStatus && <p className="statusLine">Trạng thái: <b>{draw.savedStatus}</b></p>}
