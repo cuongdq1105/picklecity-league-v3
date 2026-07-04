@@ -11,3 +11,25 @@
 .playerContact small{color:#667;font-weight:700}
 .callBtn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:#b8d72f;color:#10201c;border-radius:999px;padding:7px 10px;font-weight:900;white-space:nowrap}
 @media(max-width:720px){.playerContact{grid-template-columns:1fr auto}.playerContact small{grid-column:1 / -1}.callBtn{padding:8px 12px}}
+
+.phoneCell{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.phoneCell span{font-weight:800}
+
+.manualAddBox{margin-top:14px;background:white;border:1px dashed #b8d72f;border-radius:16px;padding:14px}
+.manualAddBox h3{margin:0 0 6px;font-size:18px}
+.manualGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.manualBtn{width:100%;border:0;border-radius:12px;background:#183329;color:white;font-weight:900;padding:11px 14px;margin-top:10px;cursor:pointer}
+@media(max-width:720px){.manualGrid{grid-template-columns:1fr}.manualAddBox{padding:12px}}
+
+.tournamentConfigBox,.scheduleBox,.knockoutBox{margin-top:14px;background:white;border:1px solid #dfe8cf;border-radius:16px;padding:14px}
+.tournamentConfigBox h3,.scheduleBox h3,.knockoutBox h3{margin:0 0 8px;font-size:18px;display:flex;align-items:center;gap:8px}
+.configGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.configActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.scheduleBox p,.knockoutBox p{margin:8px 0;padding:8px 10px;background:#f8fbf2;border-radius:10px}
+@media(max-width:720px){.configGrid{grid-template-columns:1fr}.scheduleBox p,.knockoutBox p{font-size:13px}}
+
+.settingsBox{background:#fff;border-radius:18px;padding:16px;margin:14px 0 18px;border:1px solid #e8ecd8}
+.settingsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.saveSettingsBtn{margin-top:12px;border:0;border-radius:12px;background:#183329;color:white;font-weight:900;padding:12px 16px;cursor:pointer;width:100%}
+@media(max-width:1100px){.settingsGrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:720px){.settingsGrid{grid-template-columns:1fr}.settingsBox{padding:12px}}

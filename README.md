@@ -1,13 +1,28 @@
-# PickleCity Tournament Manager V2.7 Public Phone Contact
+# PickleCity Tournament Manager V3.0 Tournament Settings
 
 Tính năng mới:
-- Tab công bố bảng đấu công khai hiển thị số điện thoại đầy đủ của VĐV sau khi đã ghép cặp/chia bảng.
-- Thêm nút “Gọi” để VĐV/partner liên hệ nhanh với nhau trên điện thoại.
-- Phần công bố vẫn ẩn hạng A/B/C, chỉ hiện tên + số điện thoại + nút gọi.
-- Giữ các chức năng bốc thăm, chốt, công bố, khóa danh sách và Dashboard BTC.
+- Thêm mục **Cấu hình giải đấu** trong Dashboard BTC.
+- BTC có thể cập nhật:
+  - Tên giải
+  - Nội dung: Đôi nam, Đôi nữ, Đôi nam nữ, Đôi vợ chồng, Đơn nam, Đơn nữ
+  - Lệ phí
+  - Quy mô VĐV
+  - Thời gian thi đấu
+  - Thời gian bốc thăm
+  - Hạn đăng ký
+  - Giải nhất / nhì / ba / số giải ba
+  - Ghi chú tài trợ, giải thưởng
+- Các thông tin cập nhật sẽ hiển thị ra màn hình đăng ký/công khai.
+
+Giữ các chức năng:
+- Khóa danh sách
+- Bốc thăm, chốt, công bố
+- Đăng ký bổ sung / gán cặp thủ công
+- Xếp lịch vòng bảng
+- Sinh nhánh tứ kết
 
 Test sau deploy:
-- /api/ping phải trả version: 2.7-public-phone-call
+- /api/ping phải trả version: 3.0-tournament-settings
 
 Cloudflare:
 - Build command: npm install && npm run build
