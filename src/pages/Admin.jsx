@@ -29,6 +29,14 @@ export default function Admin(props) {
       <span className={draw.savedStatus==="PUBLISHED"?"done":""}>Công bố</span>
     </div>
 
+    <div className="summaryCardsV31">
+      <div><b>{admin.stats?.total||0}</b><span>Tổng VĐV</span></div>
+      <div><b>{admin.stats?.confirmed||0}</b><span>Đã xác nhận</span></div>
+      <div><b>{admin.stats?.pending||0}</b><span>Chờ xác nhận</span></div>
+      <div><b>{draw.groups?.flatMap(g=>g.teams||[]).length||0}</b><span>Đã ghép đội</span></div>
+      <div><b>{draw.groups?.length||0}</b><span>Số bảng</span></div>
+      <div><b>{draw.savedStatus||"CHƯA"}</b><span>Trạng thái bốc thăm</span></div>
+    </div>
     <TournamentSettings form={tForm} setForm={setTForm} onSave={onSaveTournament}/>
 
     <div className="adminGrid">

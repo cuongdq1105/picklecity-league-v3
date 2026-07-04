@@ -1,28 +1,27 @@
-# PickleCity Tournament Manager V4 Stable
+# PickleCity League V3.1 Stable
 
-Bản V4 Stable được tách module, không còn dồn toàn bộ vào một file main.jsx.
+Bản ổn định dùng cho repo đã clone bằng GitHub Desktop.
 
-## Tính năng
+## Tính năng chính
 - Đăng ký VĐV
-- Danh sách công khai
 - Dashboard BTC
 - Cấu hình giải đấu
-- Quản lý VĐV: sửa/xóa/lọc/tìm kiếm/xác nhận thanh toán/phân hạng nội bộ
-- Khóa danh sách
+- Quản lý VĐV: sửa, xóa, lọc, tìm kiếm, phân hạng, xác nhận thanh toán
+- Khóa/mở khóa danh sách
 - Bốc thăm ghép cặp
 - Chia bảng
 - Lưu nháp / Chốt / Công bố
-- Màn hình công khai ẩn hạng A/B/C
+- Công khai ẩn hạng A/B/C
 - Hiển thị SĐT đầy đủ và nút Gọi
 - Đăng ký bổ sung / gán cặp thủ công
 - Xếp lịch vòng bảng
 - Sinh nhánh tứ kết
-- Audit log backend
+- Dashboard tổng quan BTC
 
 ## Test sau deploy
 /api/ping phải trả:
 
-version: 4.0-stable
+version: 3.1-stable
 
 ## Cloudflare
 - Build command: npm install && npm run build
