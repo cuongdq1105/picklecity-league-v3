@@ -7,6 +7,30 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import EditPlayerModal from "./components/EditPlayerModal";
 
+const LOCAL_KEYS = {
+  matchConfig: "ptm_v491_match_config",
+  schedule: "ptm_v491_schedule",
+  knockout: "ptm_v491_knockout",
+  lastSaved: "ptm_v491_last_saved"
+};
+
+function readLocal(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeLocal(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(LOCAL_KEYS.lastSaved, new Date().toLocaleString("vi-VN"));
+  } catch {}
+}
+
+
 export default function App() {
   const [tab,setTab] = useState("register");
   const [tournament,setTournament] = useState(null);
@@ -21,9 +45,9 @@ export default function App() {
   const [editing,setEditing] = useState(null);
   const [draw,setDraw] = useState({source:"all",method:"balanced",groupMethod:"balancedGroups",tableCount:2,teams:[],groups:[],leftover:[],savedStatus:""});
   const [manualPair,setManualPair] = useState({group:"Bảng A",p1:"",p1phone:"",p2:"",p2phone:"",teamName:""});
-  const [matchConfig,setMatchConfig] = useState({qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}});
-  const [schedule,setSchedule] = useState([]);
-  const [knockout,setKnockout] = useState([]);
+  const [matchConfig,setMatchConfig] = useState(()=>readLocal(LOCAL_KEYS.matchConfig, {qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}}));
+  const [schedule,setSchedule] = useState(()=>readLocal(LOCAL_KEYS.schedule, []));
+  const [knockout,setKnockout] = useState(()=>readLocal(LOCAL_KEYS.knockout, []));
   const [mc,setMc] = useState(null);
   const [filters,setFilters] = useState({quick:"all",payment:"all",level:"all",gender:"all",sort:"newest",search:""});
 
@@ -50,6 +74,9 @@ export default function App() {
   }
 
   useEffect(()=>{ loadTournament(); loadPublic(); },[]);
+  useEffect(()=>{ writeLocal(LOCAL_KEYS.matchConfig, matchConfig); },[matchConfig]);
+  useEffect(()=>{ writeLocal(LOCAL_KEYS.schedule, schedule); },[schedule]);
+  useEffect(()=>{ writeLocal(LOCAL_KEYS.knockout, knockout); },[knockout]);
   useEffect(()=>{ if(tab==="public") loadPublic(); if(tab==="admin"&&adminAuthed) loadAdmin(); },[tab,adminAuthed]);
 
   async function submit(e){
@@ -111,12 +138,32 @@ export default function App() {
     try { if(draw.groups.length){ await post("/draw",{action:"save_draft",groups:draw.groups}); await post("/draw",{action:"finalize"}); } await post("/draw",{action:"publish"}); setDraw(d=>({...d,savedStatus:"PUBLISHED"})); setMsg("Đã công bố bảng đấu cho VĐV/khán giả. Màn hình công khai không hiển thị hạng nội bộ."); loadAdmin(); loadPublic(); } catch(e){ setMsg(e.message); }
   }
 
+
+  function clearLocalTournamentData(){
+    if(!confirm("Xóa lịch, kết quả, nhánh đấu đã lưu trên trình duyệt này?")) return;
+    localStorage.removeItem(LOCAL_KEYS.schedule);
+    localStorage.removeItem(LOCAL_KEYS.knockout);
+    localStorage.removeItem(LOCAL_KEYS.matchConfig);
+    localStorage.removeItem(LOCAL_KEYS.lastSaved);
+    setSchedule([]);
+    setKnockout([]);
+    setMatchConfig({qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}});
+    setMsg("Đã xóa dữ liệu lịch/kết quả/nhánh lưu cục bộ trên trình duyệt này.");
+  }
+
+  function exportLocalTournamentData(){
+    const data = {matchConfig, schedule, knockout, exportedAt:new Date().toISOString()};
+    const text = JSON.stringify(data, null, 2);
+    navigator.clipboard.writeText(text);
+    setMsg("Đã copy dữ liệu giải vào clipboard. Có thể dán lưu vào Zalo/Notepad để dự phòng.");
+  }
+
   return <div className="app">
     <header className="hero">
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.9 Stable</div>
+      <div className="version">V4.9.1 Local Save</div>
     </header>
 
     <nav className="tabs">
@@ -125,6 +172,7 @@ export default function App() {
       <button className={tab==="admin"?"active":""} onClick={()=>setTab("admin")}>BTC</button>
     </nav>
 
+    <div className="notice syncNotice">💾 Lưu cục bộ: {localStorage.getItem(LOCAL_KEYS.lastSaved)||"chưa có"} <button onClick={exportLocalTournamentData}>Copy backup</button> <button onClick={clearLocalTournamentData}>Xóa dữ liệu cục bộ</button></div>
     {msg && <div className="notice">{msg}</div>}
 
     {tab==="register" && <Register tournament={tournament} form={form} setForm={setForm} onSubmit={submit}/>}

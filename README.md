@@ -1,32 +1,28 @@
-# PickleCity Tournament Manager V4.9 Stable
+# PickleCity Tournament Manager V4.9.1 Local Save
 
-Bản cập nhật trên source V4.8, tối ưu cho ngày thi đấu.
+Bản khẩn cấp để phục vụ giải ngày mai.
 
-## Nội dung đã sửa
-- BTC tách rõ các màn hình:
-  - Cấu hình thể thức
-  - Điều hành giải
-  - Giờ thi đấu
-  - Cập nhật kết quả
-  - BXH
-  - Nhánh đấu
-- Public có thêm:
-  - Giờ thi đấu
-  - Kết quả thi đấu
-- Cấu hình thể thức:
-  - Vòng bảng: đấu vòng tròn, 11 điểm, cách 2
-  - Loại trực tiếp: 15 điểm, cách 2
-- Cập nhật kết quả:
-  - Mỗi game có nút Lưu riêng
-  - Game đã lưu bị khóa
-  - Có nút Kết thúc trận
-- BXH tự tính theo trận thắng, hiệu số game, hiệu số điểm
-- Sinh nhánh Tứ kết theo BXH
+## Sửa lỗi mất lịch khi đóng trình duyệt
+- Lịch thi đấu được lưu vào localStorage của trình duyệt.
+- Nhánh đấu được lưu vào localStorage.
+- Cấu hình thể thức được lưu vào localStorage.
+- Tắt Chrome/mở lại trên cùng máy, cùng trình duyệt sẽ vẫn còn lịch và nhánh.
 
-## Lưu ý quan trọng
-Bản này vẫn dùng state frontend như V4.8, chưa phải Auto Save xuống D1. Không F5 hoặc đóng trình duyệt trong khi đang điều hành nếu chưa có bản backend lưu dữ liệu.
+## Có thêm
+- Thanh trạng thái "Lưu cục bộ".
+- Nút Copy backup để copy dữ liệu dự phòng ra Zalo/Notepad.
+- Nút Xóa dữ liệu cục bộ khi cần làm lại.
+
+## Lưu ý rất quan trọng
+Đây là bản lưu cục bộ trên máy đang điều hành, chưa phải lưu Cloudflare D1.
+- Cùng máy/cùng trình duyệt: giữ dữ liệu.
+- Máy khác/điện thoại khác: không tự thấy lịch đã xếp.
+- Public trên máy khác chưa đồng bộ lịch nếu chưa có backend D1.
+
+Để dùng ngày mai an toàn:
+- Dùng 1 máy chính để xếp lịch và nhập kết quả.
+- Không xóa cache trình duyệt.
+- Sau khi xếp lịch hoặc nhập nhiều kết quả, bấm Copy backup dán vào Zalo/Notepad dự phòng.
 
 ## Test sau deploy
-/api/ping => version: 4.9-stable
-
-Không có package-lock.json để tránh lỗi Cloudflare npm clean-install.
+/api/ping => version: 4.9.1-local-save
