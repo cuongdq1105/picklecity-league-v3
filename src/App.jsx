@@ -21,7 +21,7 @@ export default function App() {
   const [editing,setEditing] = useState(null);
   const [draw,setDraw] = useState({source:"all",method:"balanced",groupMethod:"balancedGroups",tableCount:2,teams:[],groups:[],leftover:[],savedStatus:""});
   const [manualPair,setManualPair] = useState({group:"Bảng A",p1:"",p1phone:"",p2:"",p2phone:"",teamName:""});
-  const [matchConfig,setMatchConfig] = useState({qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20});
+  const [matchConfig,setMatchConfig] = useState({qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}});
   const [schedule,setSchedule] = useState([]);
   const [knockout,setKnockout] = useState([]);
   const [mc,setMc] = useState(null);
@@ -116,7 +116,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.5 Match Ops</div>
+      <div className="version">V4.6 Match Control</div>
     </header>
 
     <nav className="tabs">
