@@ -42,7 +42,7 @@ export function calcStandings(groups, schedule, rules={}){
   (groups||[]).forEach(g=>{byGroup[g.name]=(g.teams||[]).map(t=>({group:g.name,team:t,name:t.name,players:teamLabel(t),played:0,win:0,loss:0,gameFor:0,gameAgainst:0,pf:0,pa:0,diff:0,gameDiff:0,rank:0}));});
   const find=(group,name)=>(byGroup[group]||[]).find(r=>r.name===name);
   (schedule||[]).filter(m=>m.type!=="KO").forEach(m=>{const s=scoreSummary(m,rules); if(!s.games.length||!s.winner)return; const h=find(m.group,m.home?.name), a=find(m.group,m.away?.name); if(!h||!a)return; h.played++; a.played++; h.gameFor+=s.homeGames; h.gameAgainst+=s.awayGames; a.gameFor+=s.awayGames; a.gameAgainst+=s.homeGames; h.pf+=s.homePts; h.pa+=s.awayPts; a.pf+=s.awayPts; a.pa+=s.homePts; if(s.winner===m.home?.name){h.win++; a.loss++;} else {a.win++; h.loss++;}});
-  Object.values(byGroup).forEach(rows=>{rows.forEach(r=>{r.diff=r.pf-r.pa; r.gameDiff=r.gameFor-r.gameAgainst;}); rows.sort((a,b)=>b.win-a.win||b.gameDiff-a.gameDiff||b.diff-a.diff||b.pf-a.pf||a.players.localeCompare(b.players,"vi")); rows.forEach((r,i)=>r.rank=i+1);});
+  Object.values(byGroup).forEach(rows=>{rows.forEach(r=>{r.diff=r.pf-r.pa; r.gameDiff=r.gameFor-r.gameAgainst;}); rows.sort((a,b)=>b.win-a.win||b.diff-a.diff||b.pf-a.pf||a.players.localeCompare(b.players,"vi")); rows.forEach((r,i)=>r.rank=i+1);});
   return byGroup;
 }
 
@@ -50,7 +50,7 @@ export function selectQualified(standingsByGroup,cfg){
   const qualifyTop=Number(cfg.qualifyTop||2), bestRank=Number(cfg.bestRank||3), bestCount=Number(cfg.bestCount||2), quarterTeams=Number(cfg.quarterTeams||8);
   const direct=[], bestPool=[];
   Object.entries(standingsByGroup||{}).forEach(([group,rows])=>rows.forEach(r=>{if(r.rank<=qualifyTop)direct.push({slot:`${group} - Hạng ${r.rank}`,row:r,team:r.team}); else if(r.rank===bestRank)bestPool.push({slot:`${group} - Hạng ${bestRank}`,row:r,team:r.team});}));
-  bestPool.sort((a,b)=>b.row.win-a.row.win||b.row.gameDiff-a.row.gameDiff||b.row.diff-a.row.diff||b.row.pf-a.row.pf||a.row.players.localeCompare(b.row.players,"vi"));
+  bestPool.sort((a,b)=>b.row.win-a.row.win||b.row.diff-a.row.diff||b.row.pf-a.row.pf||a.row.players.localeCompare(b.row.players,"vi"));
   return [...direct,...bestPool.slice(0,bestCount)].slice(0,quarterTeams);
 }
 

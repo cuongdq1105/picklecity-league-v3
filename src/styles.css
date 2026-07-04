@@ -155,3 +155,16 @@
   font-weight:900;
 }
 .cleanSync button{display:none!important}
+
+/* V4.9.4 Ranking Rules */
+.rankingRuleBox{
+  background:#fffdf1;
+  border:1px solid #f5d77b;
+  border-radius:16px;
+  padding:14px;
+  margin:12px 0 16px;
+}
+.rankingRuleBox h4{margin:0 0 8px;color:#7c4a03}
+.rankingRuleBox ol{margin:0;padding-left:22px;font-weight:900}
+.rankingRuleBox li{margin:5px 0}
+.rankingRuleBox p{margin:10px 0 0;color:#6b5b24;font-weight:800}

@@ -1,6 +1,7 @@
 
 export const DEFAULT_RULES = {
   groupFormat: "ROUND_ROBIN",
+  rankingCriteria: ["win", "pointDiff", "pointFor", "headToHead", "draw"],
   groupPointTarget: 11,
   groupWinByTwo: true,
   knockoutPointTarget: 15,
@@ -44,7 +45,7 @@ export function scoreSummary(match, rules = DEFAULT_RULES) {
 
 export function formatRulesText(rules = DEFAULT_RULES) {
   return {
-    group: `Vòng bảng: đấu vòng tròn tính điểm · ${rules.groupPointTarget || 11} điểm${rules.groupWinByTwo !== false ? " cách 2" : ""}`,
+    group: `Vòng bảng: đấu vòng tròn tính điểm · ${rules.groupPointTarget || 11} điểm${rules.groupWinByTwo !== false ? " cách 2" : ""} · Xếp hạng: thắng → hiệu số điểm → tổng điểm ghi được`,
     ko: `Loại trực tiếp: Tứ kết, Bán kết${rules.thirdPlace !== false ? ", Tranh giải 3" : ""}, Chung kết · ${rules.knockoutPointTarget || 15} điểm${rules.knockoutWinByTwo !== false ? " cách 2" : ""}`
   };
 }

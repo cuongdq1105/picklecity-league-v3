@@ -1,27 +1,29 @@
-# PickleCity Tournament Manager V4.9.3 Auto Sync Clean
+# PickleCity Tournament Manager V4.9.4 Ranking Rules
 
-Bản dùng cho ngày thi đấu, đã ẩn các nút kỹ thuật để tránh BTC/VĐV bấm nhầm.
+Bản cập nhật tiêu chí xếp hạng phục vụ giải 1 game/trận.
 
-## Đã sửa
-- Ẩn các nút:
-  - Đồng bộ cho VĐV
-  - Tải từ server
-  - Copy backup
-  - Xóa cục bộ
-- Chỉ hiển thị trạng thái:
-  - Đã lưu cục bộ
-  - Đã đồng bộ / Đang đồng bộ
-- Hệ thống vẫn tự đồng bộ lên server khi BTC thay đổi:
-  - Xếp lịch
-  - Sinh nhánh
-  - Cập nhật tỷ số
-  - Cấu hình thể thức
+## Điểm mới
+- Cập nhật mục Cấu hình thể thức thi đấu.
+- Vòng bảng:
+  - Đấu vòng tròn tính điểm
+  - 11 điểm, cách 2
+- Loại trực tiếp:
+  - 15 điểm, cách 2
+- Tiêu chí xếp hạng vòng bảng:
+  1. Số trận thắng
+  2. Hiệu số điểm
+  3. Tổng điểm ghi được
+  4. Đối đầu trực tiếp nếu chỉ có 2 đội bằng nhau
+  5. Bốc thăm nếu vẫn hòa hoàn toàn
 
-## Cách dùng
-1. BTC đăng nhập.
-2. Xếp lịch / cập nhật điểm như bình thường.
-3. Chờ dòng trạng thái báo đã đồng bộ.
-4. VĐV vào màn hình công khai và bấm Tải lại nếu chưa thấy lịch mới.
+## Thay đổi quan trọng
+Vì mỗi trận chỉ đánh 1 game, hệ thống bỏ tiêu chí hiệu số game khi xếp hạng, để BXH dễ hiểu và phù hợp với thể thức giải.
+
+## Đồng bộ
+Giữ cơ chế tự đồng bộ từ V4.9.3:
+- BTC xếp lịch / nhập điểm / sinh nhánh
+- Hệ thống tự lưu lên server
+- VĐV xem lịch/kết quả trên điện thoại ở màn hình công khai
 
 ## Test sau deploy
-/api/ping => version: 4.9.3-auto-sync-clean
+/api/ping => version: 4.9.4-ranking-rules

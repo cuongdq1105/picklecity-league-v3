@@ -45,7 +45,7 @@ export default function App() {
   const [editing,setEditing] = useState(null);
   const [draw,setDraw] = useState({source:"all",method:"balanced",groupMethod:"balancedGroups",tableCount:2,teams:[],groups:[],leftover:[],savedStatus:""});
   const [manualPair,setManualPair] = useState({group:"Bảng A",p1:"",p1phone:"",p2:"",p2phone:"",teamName:""});
-  const [matchConfig,setMatchConfig] = useState(()=>readLocal(LOCAL_KEYS.matchConfig, {qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}}));
+  const [matchConfig,setMatchConfig] = useState(()=>readLocal(LOCAL_KEYS.matchConfig, {qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",rankingCriteria:["win","pointDiff","pointFor","headToHead","draw"],groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}}));
   const [schedule,setSchedule] = useState(()=>readLocal(LOCAL_KEYS.schedule, []));
   const [knockout,setKnockout] = useState(()=>readLocal(LOCAL_KEYS.knockout, []));
   const [serverLoaded,setServerLoaded] = useState(false);
@@ -198,7 +198,7 @@ export default function App() {
     localStorage.removeItem(LOCAL_KEYS.lastSaved);
     setSchedule([]);
     setKnockout([]);
-    setMatchConfig({qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}});
+    setMatchConfig({qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",rankingCriteria:["win","pointDiff","pointFor","headToHead","draw"],groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}});
     setMsg("Đã xóa dữ liệu lịch/kết quả/nhánh lưu cục bộ trên trình duyệt này.");
   }
 
@@ -214,7 +214,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.9.3 Auto Sync</div>
+      <div className="version">V4.9.4 Ranking Rules</div>
     </header>
 
     <nav className="tabs">
