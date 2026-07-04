@@ -1,20 +1,21 @@
-# PickleCity Tournament Manager V2.4
+# PickleCity Tournament Manager V2.5 Dashboard Filter
 
-- Khóa danh sách
-- Bốc thăm nháp / bốc lại
-- Chế độ quay tên ẩn hạng A/B
-- Lưu nháp, chốt kết quả, công bố bảng đấu
-- Public view không hiển thị hạng
+Tính năng mới:
+- Danh sách công khai có tổng VĐV, đã BTC xác nhận, chưa xác nhận
+- Dashboard BTC có bộ lọc theo thanh toán, hạng, giới tính
+- Tìm kiếm theo tên/SĐT
+- Sắp xếp theo hạng, xác nhận, chưa xác nhận, tên, mới/cũ
+- Tab nhanh: Tất cả, Hạng A, Hạng B, Đã xác nhận, Chưa xác nhận
+- Thống kê động theo danh sách đang lọc
+- Tối ưu mobile
 
-Test: /api/ping -> version 2.4-draw-lock-publish
+Test sau deploy:
+- /api/ping phải trả version: 2.5-dashboard-filter
 
-## V2.4.1 cập nhật
-- Khôi phục bảng tổng quan phía trên Dashboard BTC.
-- Thêm thống kê: Tổng VĐV, đã xác nhận, chờ xác nhận, hạng A/A+, hạng B/B+, đội dự kiến.
-- Cải thiện giao diện điện thoại, tránh xô lệch bảng và nút thao tác.
-- API ping version: 2.4.1-mobile-summary
+Cloudflare:
+- Build command: npm install && npm run build
+- Output: dist
+- D1 binding: DB -> picklecity-db
 
-
-V2.4.2:
-- Danh sách công khai có tổng VĐV / đã xác nhận / chưa xác nhận.
-- Dashboard BTC có lựa chọn sắp xếp theo hạng, thanh toán, tên, thời gian.
+Mật khẩu BTC: PTC2026
+STK: 202.202.6868
