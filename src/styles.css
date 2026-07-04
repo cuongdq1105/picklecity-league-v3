@@ -8,3 +8,14 @@
 @media(max-width:1100px){.summaryCardsV31{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:720px){.summaryCardsV31{grid-template-columns:1fr 1fr}}
 @media(max-width:420px){.summaryCardsV31{grid-template-columns:1fr}}
+
+/* V3.2 Complete */
+.summaryCardsV31{grid-template-columns:repeat(8,1fr)}
+.scoreInputs{display:flex;align-items:center;gap:6px}
+.scoreInputs input{width:54px;padding:8px;text-align:center;margin:0}
+.standingsBox{margin-top:14px;background:white;border:1px solid #dfe8cf;border-radius:16px;padding:14px}
+.standingGroup{margin-top:10px}
+.standingGroup h4{margin:10px 0 6px}
+.inlineBtn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;background:#b8d72f;color:#10201c;font-weight:900;padding:7px 10px;cursor:pointer;margin-left:8px}
+@media(max-width:1100px){.summaryCardsV31{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:720px){.summaryCardsV31{grid-template-columns:1fr 1fr}.inlineBtn{margin-left:0;margin-top:8px}.scoreInputs input{width:44px}}

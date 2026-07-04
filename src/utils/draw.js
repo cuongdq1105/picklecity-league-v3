@@ -77,31 +77,147 @@ export function makeRoundRobin(teams) {
   return rounds;
 }
 
-export function makeSchedule(groups) {
+export function makeSchedule(groups, options = {}) {
   const all = [];
+  const courtCount = Math.max(1, Number(options.courtCount || 1));
+  const startTime = options.startTime || "";
+  const minutesPerMatch = Math.max(5, Number(options.minutesPerMatch || 20));
+
+  let index = 0;
   groups.forEach(g => {
     makeRoundRobin(g.teams || []).forEach((matches, ri) => {
-      matches.forEach((m, mi) => all.push({ group:g.name, round:ri+1, match:mi+1, home:m.home, away:m.away }));
+      matches.forEach((m, mi) => {
+        const court = (index % courtCount) + 1;
+        const slot = Math.floor(index / courtCount);
+        all.push({
+          id: `${g.name}-${ri+1}-${mi+1}-${index+1}`,
+          group:g.name,
+          round:ri+1,
+          match:mi+1,
+          court,
+          time: addMinutes(startTime, slot * minutesPerMatch),
+          home:m.home,
+          away:m.away,
+          homeScore:"",
+          awayScore:""
+        });
+        index++;
+      });
     });
   });
   return all;
 }
 
-export function makeKnockout(groups, cfg) {
-  const candidates = [];
+function addMinutes(timeText, mins) {
+  if (!timeText) return "";
+  const m = String(timeText).match(/(\d{1,2}):(\d{2})/);
+  if (!m) return timeText;
+  const d = new Date(2000,0,1,Number(m[1]),Number(m[2]));
+  d.setMinutes(d.getMinutes()+mins);
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  return `${hh}:${mm}`;
+}
+
+export function teamLabel(team) {
+  return (team?.players || []).map(p=>p.full_name).join(" + ") || team?.name || "";
+}
+
+export function parseScore(v) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+export function calcStandings(groups, schedule) {
+  const byGroup = {};
   groups.forEach(g => {
-    const teams = g.teams || [];
-    for (let i=0; i<Number(cfg.qualifyTop || 2) && i<teams.length; i++) {
-      candidates.push({ slot: `${g.name} - ${i===0?'Nhất':i===1?'Nhì':`Hạng ${i+1}`}`, team: teams[i] });
-    }
-    const rank = Number(cfg.bestRank || 3) - 1;
-    if (rank >= 0 && teams[rank]) candidates.push({ slot: `${g.name} - Hạng ${cfg.bestRank}`, team: teams[rank] });
+    byGroup[g.name] = (g.teams || []).map(t => ({
+      group:g.name,
+      team:t,
+      name:t.name,
+      players:teamLabel(t),
+      played:0, win:0, loss:0, pf:0, pa:0, diff:0, points:0
+    }));
   });
-  const selected = candidates.slice(0, Number(cfg.quarterTeams || 8));
+
+  const findRow = (group, name) => (byGroup[group] || []).find(r => r.name === name);
+
+  (schedule || []).forEach(m => {
+    const hs = parseScore(m.homeScore);
+    const as = parseScore(m.awayScore);
+    if (hs === null || as === null) return;
+    const h = findRow(m.group, m.home?.name);
+    const a = findRow(m.group, m.away?.name);
+    if (!h || !a) return;
+    h.played++; a.played++;
+    h.pf += hs; h.pa += as;
+    a.pf += as; a.pa += hs;
+    if (hs > as) { h.win++; a.loss++; h.points += 1; }
+    else if (as > hs) { a.win++; h.loss++; a.points += 1; }
+  });
+
+  Object.values(byGroup).forEach(rows => {
+    rows.forEach(r => { r.diff = r.pf - r.pa; });
+    rows.sort((a,b) =>
+      b.win - a.win ||
+      b.diff - a.diff ||
+      b.pf - a.pf ||
+      a.players.localeCompare(b.players, "vi")
+    );
+    rows.forEach((r,i)=>r.rank=i+1);
+  });
+  return byGroup;
+}
+
+export function selectQualified(standingsByGroup, cfg) {
+  const qualifyTop = Number(cfg.qualifyTop || 2);
+  const bestRank = Number(cfg.bestRank || 3);
+  const bestCount = Number(cfg.bestCount || 2);
+  const quarterTeams = Number(cfg.quarterTeams || 8);
+
+  const direct = [];
+  const bestPool = [];
+  Object.entries(standingsByGroup || {}).forEach(([group, rows]) => {
+    rows.forEach(r => {
+      if (r.rank <= qualifyTop) direct.push({ slot:`${group} - Hạng ${r.rank}`, row:r, team:r.team });
+      else if (r.rank === bestRank) bestPool.push({ slot:`${group} - Hạng ${bestRank}`, row:r, team:r.team });
+    });
+  });
+
+  bestPool.sort((a,b) =>
+    b.row.win - a.row.win ||
+    b.row.diff - a.row.diff ||
+    b.row.pf - a.row.pf ||
+    a.row.players.localeCompare(b.row.players, "vi")
+  );
+
+  return [...direct, ...bestPool.slice(0, bestCount)].slice(0, quarterTeams);
+}
+
+export function makeKnockout(groups, cfg, standingsByGroup = null) {
+  let selected;
+  if (standingsByGroup) {
+    selected = selectQualified(standingsByGroup, cfg);
+  } else {
+    const fake = {};
+    groups.forEach(g => {
+      fake[g.name] = (g.teams || []).map((team,i)=>({
+        group:g.name, rank:i+1, team, players:teamLabel(team), win:0, diff:0, pf:0
+      }));
+    });
+    selected = selectQualified(fake, cfg);
+  }
+
   const pairs = [];
   for (let i=0; i<Math.floor(selected.length / 2); i++) {
     const a = selected[i], b = selected[selected.length - 1 - i];
     if (a && b) pairs.push({ name:`Tứ kết ${i+1}`, a, b });
   }
   return pairs;
+}
+
+export function exportScheduleText(schedule) {
+  return (schedule || []).map((m, i) =>
+    `${i+1}. ${m.time ? m.time + " - " : ""}Sân ${m.court || ""} - ${m.group}: ${m.home?.name} vs ${m.away?.name}`
+  ).join("\\n");
 }

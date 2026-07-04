@@ -1,10 +1,23 @@
 
-import { Eye, RefreshCw } from "lucide-react";
+import { Eye, RefreshCw, ClipboardCopy } from "lucide-react";
 import PaymentBadge from "../components/PaymentBadge";
 import DrawView from "../components/DrawView";
 import { genderLabel, phoneHref } from "../utils/format";
 
 export default function Public({ list, draw, onRefresh }) {
+  function copyPublicDraw() {
+    if (!draw) return;
+    const lines = [];
+    (draw.groups || []).forEach(g => {
+      lines.push(g.name);
+      (g.teams || []).forEach(t => {
+        lines.push(`${t.manual ? "Cặp bổ sung" : t.name}: ${(t.players || []).map(p => `${p.full_name}${p.phone ? " - " + p.phone : ""}`).join(" + ")}`);
+      });
+      lines.push("");
+    });
+    navigator.clipboard.writeText(lines.join("\n"));
+  }
+
   const total = list.length;
   const confirmed = list.filter(x=>x.payment_status==="BTC_CONFIRMED").length;
   const pending = total - confirmed;
@@ -29,7 +42,7 @@ export default function Public({ list, draw, onRefresh }) {
 
     <h2>Bảng đấu đã công bố</h2>
     {draw ? <>
-      <p className="contactNote">Số điện thoại được hiển thị đầy đủ để các VĐV trong cùng cặp và cùng bảng chủ động liên hệ.</p>
+      <p className="contactNote">Số điện thoại được hiển thị đầy đủ để các VĐV trong cùng cặp và cùng bảng chủ động liên hệ. <button className="inlineBtn" onClick={copyPublicDraw}><ClipboardCopy size={14}/> Copy bảng đấu</button></p>
       <DrawView groups={draw.groups} publicMode={true}/>
     </> : <p className="muted">BTC chưa công bố kết quả bốc thăm.</p>}
   </main>

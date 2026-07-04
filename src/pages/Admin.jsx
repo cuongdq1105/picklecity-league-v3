@@ -35,7 +35,7 @@ export default function Admin(props) {
       <div><b>{admin.stats?.pending||0}</b><span>Chờ xác nhận</span></div>
       <div><b>{draw.groups?.flatMap(g=>g.teams||[]).length||0}</b><span>Đã ghép đội</span></div>
       <div><b>{draw.groups?.length||0}</b><span>Số bảng</span></div>
-      <div><b>{draw.savedStatus||"CHƯA"}</b><span>Trạng thái bốc thăm</span></div>
+      <div><b>{draw.savedStatus||"CHƯA"}</b><span>Trạng thái bốc thăm</span></div><div><b>{schedule?.length||0}</b><span>Trận vòng bảng</span></div><div><b>{knockout?.length||0}</b><span>Trận tứ kết</span></div>
     </div>
     <TournamentSettings form={tForm} setForm={setTForm} onSave={onSaveTournament}/>
 
