@@ -1,16 +1,18 @@
-# PickleCity Tournament Manager V2.5 Dashboard Filter
+# PickleCity Tournament Manager V2.6 Draw Options
 
 Tính năng mới:
-- Danh sách công khai có tổng VĐV, đã BTC xác nhận, chưa xác nhận
-- Dashboard BTC có bộ lọc theo thanh toán, hạng, giới tính
-- Tìm kiếm theo tên/SĐT
-- Sắp xếp theo hạng, xác nhận, chưa xác nhận, tên, mới/cũ
-- Tab nhanh: Tất cả, Hạng A, Hạng B, Đã xác nhận, Chưa xác nhận
-- Thống kê động theo danh sách đang lọc
-- Tối ưu mobile
+- Khi bốc thăm, mặc định tính **tất cả VĐV trong danh sách**, bao gồm cả người chưa được BTC xác nhận.
+- Có lựa chọn nguồn VĐV:
+  - Tất cả VĐV trong danh sách
+  - Chỉ VĐV đã BTC xác nhận
+- Có thêm cơ chế chia bảng:
+  - Cân bằng bảng theo tổng trình
+  - Chia lần lượt theo thứ tự đội
+  - Chia bảng ngẫu nhiên
+- Giữ các tính năng V2.5: lọc/sắp xếp Dashboard BTC, khóa danh sách, bốc thăm, chốt, công bố.
 
 Test sau deploy:
-- /api/ping phải trả version: 2.5-dashboard-filter
+- /api/ping phải trả version: 2.6-draw-options
 
 Cloudflare:
 - Build command: npm install && npm run build
