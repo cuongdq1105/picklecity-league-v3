@@ -1,18 +1,14 @@
-# PickleCity Tournament Manager V2.6 Draw Options
+# PickleCity Tournament Manager V2.6.1 Finalize Public
 
-Tính năng mới:
-- Khi bốc thăm, mặc định tính **tất cả VĐV trong danh sách**, bao gồm cả người chưa được BTC xác nhận.
-- Có lựa chọn nguồn VĐV:
-  - Tất cả VĐV trong danh sách
-  - Chỉ VĐV đã BTC xác nhận
-- Có thêm cơ chế chia bảng:
-  - Cân bằng bảng theo tổng trình
-  - Chia lần lượt theo thứ tự đội
-  - Chia bảng ngẫu nhiên
-- Giữ các tính năng V2.5: lọc/sắp xếp Dashboard BTC, khóa danh sách, bốc thăm, chốt, công bố.
+Sửa lỗi:
+- Nút **Chốt** hoạt động ngay sau khi bốc thăm nháp, không bắt buộc phải bấm Lưu nháp trước.
+- Nút **Công bố** cũng có thể lưu/chốt kết quả đang hiển thị.
+- Bảng đấu công khai sau khi công bố **ẩn hạng VĐV A/B/C**, chỉ hiện tên VĐV.
+- Giữ cơ chế bốc thăm theo tất cả VĐV hoặc chỉ VĐV đã xác nhận.
+- Giữ cơ chế chia bảng: cân bằng bảng, chia lần lượt, chia ngẫu nhiên.
 
 Test sau deploy:
-- /api/ping phải trả version: 2.6-draw-options
+- /api/ping phải trả version: 2.6.1-finalize-public
 
 Cloudflare:
 - Build command: npm install && npm run build
