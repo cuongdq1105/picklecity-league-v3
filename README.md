@@ -1,29 +1,23 @@
-# PickleCity Tournament Manager V4.9.4 Ranking Rules
+# PickleCity Tournament Manager V4.9.6 Real QR
 
-Bản cập nhật tiêu chí xếp hạng phục vụ giải 1 game/trận.
+Bản cập nhật QR thanh toán thật do BTC cung cấp.
 
-## Điểm mới
-- Cập nhật mục Cấu hình thể thức thi đấu.
-- Vòng bảng:
-  - Đấu vòng tròn tính điểm
-  - 11 điểm, cách 2
-- Loại trực tiếp:
-  - 15 điểm, cách 2
-- Tiêu chí xếp hạng vòng bảng:
-  1. Số trận thắng
-  2. Hiệu số điểm
-  3. Tổng điểm ghi được
-  4. Đối đầu trực tiếp nếu chỉ có 2 đội bằng nhau
-  5. Bốc thăm nếu vẫn hòa hoàn toàn
+## Đã sửa
+- Thay QR cũ bằng QR VietQR thật.
+- STK hiển thị: 2022026868.
+- Chủ TK: TRẦN THỊ HOÀI THANH.
+- Ngân hàng: Vietcombank.
+- QR hiển thị lớn, rõ và đẹp hơn.
+- Có nút Copy STK.
+- Có nút Copy nội dung chuyển khoản.
+- Nội dung chuyển khoản tự gợi ý theo Họ tên + SĐT.
+- Thêm nhắc nhở chụp màn hình giao dịch để đối chiếu khi cần.
 
-## Thay đổi quan trọng
-Vì mỗi trận chỉ đánh 1 game, hệ thống bỏ tiêu chí hiệu số game khi xếp hạng, để BXH dễ hiểu và phù hợp với thể thức giải.
-
-## Đồng bộ
-Giữ cơ chế tự đồng bộ từ V4.9.3:
-- BTC xếp lịch / nhập điểm / sinh nhánh
-- Hệ thống tự lưu lên server
-- VĐV xem lịch/kết quả trên điện thoại ở màn hình công khai
+## Giữ nguyên các tính năng V4.9.5
+- Đồng bộ lịch/kết quả/nhánh lên server.
+- VĐV xem giờ thi đấu trên điện thoại.
+- Cấu hình thể thức và tiêu chí BXH.
+- Mỗi game có nút Lưu riêng.
 
 ## Test sau deploy
-/api/ping => version: 4.9.4-ranking-rules
+/api/ping => version: 4.9.6-real-qr
