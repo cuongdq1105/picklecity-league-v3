@@ -1,24 +1,27 @@
-# PickleCity Tournament Manager V4.9.2 Public Schedule
+# PickleCity Tournament Manager V4.9.3 Auto Sync Clean
 
-Bản khẩn cấp để BTC xếp lịch và VĐV xem được trên điện thoại.
+Bản dùng cho ngày thi đấu, đã ẩn các nút kỹ thuật để tránh BTC/VĐV bấm nhầm.
 
-## Điểm mới quan trọng
-- Có API `/api/state` lưu lịch thi đấu, kết quả, nhánh đấu, cấu hình lên Cloudflare D1.
-- BTC bấm **Đồng bộ cho VĐV** để đẩy lịch/kết quả/nhánh lên server.
-- Trang công khai trên điện thoại VĐV bấm **Tải lại** sẽ đọc lịch/kết quả từ server.
-- Vẫn giữ localStorage trên máy BTC để dự phòng.
+## Đã sửa
+- Ẩn các nút:
+  - Đồng bộ cho VĐV
+  - Tải từ server
+  - Copy backup
+  - Xóa cục bộ
+- Chỉ hiển thị trạng thái:
+  - Đã lưu cục bộ
+  - Đã đồng bộ / Đang đồng bộ
+- Hệ thống vẫn tự đồng bộ lên server khi BTC thay đổi:
+  - Xếp lịch
+  - Sinh nhánh
+  - Cập nhật tỷ số
+  - Cấu hình thể thức
 
-## Cách dùng ngày mai
-1. BTC vào tab BTC.
-2. Xếp lịch vòng bảng.
-3. Sinh nhánh nếu cần.
-4. Bấm nút **Đồng bộ cho VĐV** ở thanh thông báo trên cùng.
-5. VĐV mở trang công khai trên điện thoại, vào **Giờ thi đấu**, bấm **Tải lại**.
-
-## Lưu ý
-- Bản này đã lưu lên D1 thông qua bảng `tournament_states`.
-- Nếu BTC nhập điểm, sau khi lưu game hệ thống sẽ tự đồng bộ sau khoảng 1 giây khi đang đăng nhập BTC.
-- Nếu muốn chắc chắn, bấm **Đồng bộ cho VĐV** sau mỗi vòng đấu.
+## Cách dùng
+1. BTC đăng nhập.
+2. Xếp lịch / cập nhật điểm như bình thường.
+3. Chờ dòng trạng thái báo đã đồng bộ.
+4. VĐV vào màn hình công khai và bấm Tải lại nếu chưa thấy lịch mới.
 
 ## Test sau deploy
-/api/ping => version: 4.9.2-public-schedule
+/api/ping => version: 4.9.3-auto-sync-clean

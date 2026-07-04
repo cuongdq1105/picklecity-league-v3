@@ -214,7 +214,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.9.2 Public Schedule</div>
+      <div className="version">V4.9.3 Auto Sync</div>
     </header>
 
     <nav className="tabs">
@@ -223,7 +223,7 @@ export default function App() {
       <button className={tab==="admin"?"active":""} onClick={()=>setTab("admin")}>BTC</button>
     </nav>
 
-    <div className="notice syncNotice">💾 Cục bộ: {localStorage.getItem(LOCAL_KEYS.lastSaved)||"chưa có"} · ☁️ Server: {syncing ? "đang đồng bộ..." : serverSavedAt} <button onClick={()=>saveMatchStateToServer(true)}>Đồng bộ cho VĐV</button> <button onClick={loadMatchStateFromServer}>Tải từ server</button> <button onClick={exportLocalTournamentData}>Copy backup</button> <button onClick={clearLocalTournamentData}>Xóa cục bộ</button></div>
+    {adminAuthed && <div className="notice syncNotice cleanSync">💾 Đã lưu cục bộ: {localStorage.getItem(LOCAL_KEYS.lastSaved)||"chưa có"} · ☁️ {syncing ? "Đang đồng bộ..." : "Đã đồng bộ: " + serverSavedAt}</div>}
     {msg && <div className="notice">{msg}</div>}
 
     {tab==="register" && <Register tournament={tournament} form={form} setForm={setForm} onSubmit={submit}/>}
