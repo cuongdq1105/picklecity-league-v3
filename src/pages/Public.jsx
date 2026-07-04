@@ -78,7 +78,7 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
         </table></div>
         {knockout && knockout.length > 0 && <div className="publicKnockout">
           <h3>Nhánh tứ kết dự kiến</h3>
-          {knockout.map(k=><p key={k.name}><b>{k.name}:</b> {k.a.slot} vs {k.b.slot}</p>)}
+          {knockout.map(k=><p key={k.name}><b>{k.name}:</b> {k.a?.slot} vs {k.b?.slot}</p>)}
         </div>}
       </> : <p className="muted">BTC chưa xếp lịch thi đấu.</p>}
     </section>}

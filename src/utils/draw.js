@@ -63,57 +63,64 @@ export function makeKnockout(groups,cfg,standingsByGroup=null){
     selected=selectQualified(fake,cfg);
   }
 
-  // Nhánh chuẩn cho giải 3 bảng, lấy 8 đội:
-  // Tứ kết 1: A1 vs Best3-2
-  // Tứ kết 2: B1 vs Best3-1
-  // Tứ kết 3: C1 vs A2
-  // Tứ kết 4: B2 vs C2
-  const bySlot = {};
+  // Lấy ký hiệu bảng chính xác từ "Bảng A/B/C", tránh lỗi chữ "B" trong từ "Bảng".
+  const groupKey = (name="") => {
+    const m = String(name).match(/Bảng\s*([A-Z])/i);
+    return m ? m[1].toUpperCase() : String(name).trim().slice(-1).toUpperCase();
+  };
+
+  const byRank = {};
   selected.forEach(x => {
-    const g = x.row?.group || "";
+    const g = groupKey(x.row?.group || "");
     const r = Number(x.row?.rank || 0);
-    if (g.includes("A") && r === 1) bySlot.A1 = x;
-    if (g.includes("A") && r === 2) bySlot.A2 = x;
-    if (g.includes("B") && r === 1) bySlot.B1 = x;
-    if (g.includes("B") && r === 2) bySlot.B2 = x;
-    if (g.includes("C") && r === 1) bySlot.C1 = x;
-    if (g.includes("C") && r === 2) bySlot.C2 = x;
+    byRank[`${g}${r}`] = x;
   });
 
   const best3 = selected
     .filter(x => Number(x.row?.rank || 0) === 3)
     .sort((a,b)=>b.row.win-a.row.win||b.row.diff-a.row.diff||b.row.pf-a.row.pf||a.row.players.localeCompare(b.row.players,"vi"));
 
-  bySlot.Best3_1 = best3[0];
-  bySlot.Best3_2 = best3[1];
+  byRank.Best3_1 = best3[0];
+  byRank.Best3_2 = best3[1];
 
+  const entrant = (label, x) => ({
+    ...(x || {}),
+    slot: label,
+    displaySlot: label,
+    originalSlot: x?.slot || label,
+    team: x?.team,
+    row: x?.row
+  });
+
+  // Công thức cố định theo yêu cầu BTC:
   const preferred = [
-    ["Tứ kết 1", "A1", "Best3_2"],
-    ["Tứ kết 2", "B1", "Best3_1"],
-    ["Tứ kết 3", "C1", "A2"],
-    ["Tứ kết 4", "B2", "C2"]
+    ["Tứ kết 1", "A1", "Best3-2", byRank.A1, byRank.Best3_2],
+    ["Tứ kết 2", "B1", "Best3-1", byRank.B1, byRank.Best3_1],
+    ["Tứ kết 3", "C1", "A2",      byRank.C1, byRank.A2],
+    ["Tứ kết 4", "B2", "C2",      byRank.B2, byRank.C2]
   ];
 
-  if (preferred.every(([name,a,b]) => bySlot[a] && bySlot[b])) {
-    return preferred.map(([name,a,b],i)=>({
+  if (preferred.every(([name,aLabel,bLabel,a,b]) => a && b)) {
+    return preferred.map(([name,aLabel,bLabel,a,b],i)=>({
       id:`QF-${i+1}`,
       name,
       type:"KO",
       round:"QF",
       status:"SCHEDULED",
-      bracketRule:"A1-Best3-2, B1-Best3-1, C1-A2, B2-C2",
-      a:bySlot[a],
-      b:bySlot[b],
+      bracketRule:"QF1 A1 vs Best3-2, QF2 B1 vs Best3-1, QF3 C1 vs A2, QF4 B2 vs C2",
+      a:entrant(aLabel,a),
+      b:entrant(bLabel,b),
       games:[{home:"",away:"",saved:false}],
       winner:""
     }));
   }
 
-  // Fallback nếu giải không đúng 3 bảng/8 đội
+  // Fallback an toàn nếu chưa đủ dữ liệu.
+  const labels = ["A1","Best3-2","B1","Best3-1","C1","A2","B2","C2"];
   const pairs=[];
   for(let i=0;i<Math.floor(selected.length/2);i++){
     const a=selected[i], b=selected[selected.length-1-i];
-    if(a&&b)pairs.push({id:`QF-${i+1}`,name:`Tứ kết ${i+1}`,type:"KO",round:"QF",status:"SCHEDULED",a,b,games:[{home:"",away:"",saved:false}],winner:""});
+    if(a&&b)pairs.push({id:`QF-${i+1}`,name:`Tứ kết ${i+1}`,type:"KO",round:"QF",status:"SCHEDULED",a:entrant(labels[i*2]||a.slot,a),b:entrant(labels[i*2+1]||b.slot,b),games:[{home:"",away:"",saved:false}],winner:""});
   }
   return pairs;
 }

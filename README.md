@@ -1,17 +1,25 @@
-# PickleCity Tournament Manager V4.9.9 Bracket UI
+# PickleCity Tournament Manager V4.9.10 Bracket Consistent
 
-Bản cập nhật giao diện Nhánh tứ kết giống mockup đã thống nhất.
+Bản sửa lỗi đồng nhất nhánh tứ kết ở tất cả màn hình.
 
-## Đã sửa
-- Giao diện nhánh tứ kết dạng card đẹp, dễ nhìn.
-- Hiển thị công thức:
-  - QF1: A1 vs Best3-2
-  - QF2: B1 vs Best3-1
-  - QF3: C1 vs A2
-  - QF4: B2 vs C2
-- Có phần giải thích Best3-1 / Best3-2.
-- Có nút Tạo lại nhánh.
-- Vẫn giữ khu nhập kết quả tứ kết bên dưới.
+## Đã sửa lỗi
+Trước đó hệ thống có thể hiển thị sai/lặp:
+- C1 xuất hiện 2 lần
+- C2 gặp C2
+- Các màn hình hiển thị không đồng nhất
+
+Nguyên nhân: thuật toán nhận diện bảng A/B/C bị nhầm vì chữ "B" trong từ "Bảng".
+
+## Công thức cố định hiện tại
+- Tứ kết 1: A1 vs Best3-2
+- Tứ kết 2: B1 vs Best3-1
+- Tứ kết 3: C1 vs A2
+- Tứ kết 4: B2 vs C2
+
+## Các vị trí đã đồng nhất
+- Card nhánh tứ kết
+- Khu nhập kết quả tứ kết
+- Màn hình công khai/giờ thi đấu
 
 ## Test sau deploy
-/api/ping => version: 4.9.9-bracket-ui
+/api/ping => version: 4.9.10-bracket-consistent
