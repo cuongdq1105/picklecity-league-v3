@@ -7,3 +7,9 @@
 - Public view không hiển thị hạng
 
 Test: /api/ping -> version 2.4-draw-lock-publish
+
+## V2.4.1 cập nhật
+- Khôi phục bảng tổng quan phía trên Dashboard BTC.
+- Thêm thống kê: Tổng VĐV, đã xác nhận, chờ xác nhận, hạng A/A+, hạng B/B+, đội dự kiến.
+- Cải thiện giao diện điện thoại, tránh xô lệch bảng và nút thao tác.
+- API ping version: 2.4.1-mobile-summary
