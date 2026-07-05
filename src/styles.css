@@ -423,3 +423,9 @@
 .standingTable .rank3 td{border-top:2px solid #fdba74}
 .publicStandingCard .rankPill{min-width:52px;font-size:11px}
 @media(max-width:760px){.rankPill{min-width:auto;font-size:11px;padding:4px 6px}.teamNameStanding{font-size:13px}}
+
+/* V4.10.10 Standings + Bracket Names */
+.standingPlayers{display:block;margin-top:4px;color:#456;font-size:11px;line-height:1.25;font-weight:700}
+.standingTable th:nth-child(3),.standingTable td:nth-child(3){min-width:210px}
+.publicStandingCard .standingPlayers{display:block;margin-top:3px;color:#456;font-size:11px}
+.qfTeamsNamesV4105 small:empty,.roundTeamsNamesV4105 small:empty,.publicBracketTeams small:empty{display:none}

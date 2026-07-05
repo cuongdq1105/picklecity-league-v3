@@ -16,8 +16,8 @@ function groupedSchedule(schedule=[]){
 }
 function matchScoreText(m){ return (m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", "); }
 function printRankLabel(rank){ return rank===1?"Nhất bảng":rank===2?"Nhì bảng":rank===3?"Hạng ba":""; }
-function bracketPrintName(x){ return x?.team?.name || x?.row?.team?.name || x?.slot || "—"; }
-function bracketPrintPlayers(x){ return (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
+function bracketPrintName(x){ return x?.teamName || x?.team?.name || x?.row?.team?.name || x?.slot || "—"; }
+function bracketPrintPlayers(x){ return x?.playerNames || (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
 function teamKey(t){ return t?.name || (t?.players||[]).map(p=>p.full_name).join(" + "); }
 function matchKey(group,a,b){
   const names=[teamKey(a),teamKey(b)].sort();

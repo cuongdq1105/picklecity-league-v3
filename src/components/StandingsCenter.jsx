@@ -35,7 +35,7 @@ export default function StandingsCenter({ groups=[], schedule=[], config={}, set
     <div className="standingsHead">
       <div>
         <h2><Trophy/> Bảng xếp hạng & xét hạng</h2>
-        <p>Hiển thị tên đội, VĐV, thắng/thua, hiệu số điểm và đánh dấu rõ Nhất bảng, Nhì bảng, Hạng ba.</p>
+        <p>Hiển thị tên đội + tên VĐV, thắng/thua, hiệu số điểm và đánh dấu rõ Nhất bảng, Nhì bảng, Hạng ba.</p>
       </div>
       <button className="mini" onClick={()=>setMsg?.("BXH đã được tính lại theo điểm mới nhất.")}><RefreshCw size={14}/> Tính lại</button>
     </div>
@@ -69,12 +69,11 @@ function GroupStandingCard({group,rows}) {
       <span>{rows.length} đội</span>
     </div>
     <table className="standingTable">
-      <thead><tr><th>Hạng</th><th>Xét hạng</th><th>Tên đội</th><th>VĐV</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>HS</th><th>Điểm</th></tr></thead>
+      <thead><tr><th>Hạng</th><th>Xét hạng</th><th>Tên đội / VĐV</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>HS</th><th>Điểm</th></tr></thead>
       <tbody>{rows.map(r=><tr key={r.name} className={r.rank<=3 ? `rank rank${r.rank}` : ""}>
         <td><b>{r.rank}</b></td>
         <td><span className={`rankPill rankPill${r.rank}`}>{rankLabel(r.rank)}</span></td>
-        <td><b className="teamNameStanding">{r.name}</b></td>
-        <td><small>{r.players}</small></td>
+        <td><b className="teamNameStanding">{r.name}</b><small className="standingPlayers">{r.players}</small></td>
         <td>{r.played}</td>
         <td className="winCol">{r.win}</td>
         <td>{r.loss}</td>
@@ -92,12 +91,11 @@ function BestThirdTable({rows}) {
       <span>Lấy theo cấu hình giải</span>
     </div>
     <table className="standingTable">
-      <thead><tr><th>Thứ tự</th><th>Bảng</th><th>Tên đội</th><th>VĐV</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>HS</th><th>Điểm</th></tr></thead>
+      <thead><tr><th>Thứ tự</th><th>Bảng</th><th>Tên đội / VĐV</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>HS</th><th>Điểm</th></tr></thead>
       <tbody>{rows.map((r,i)=><tr key={`${r.group}-${r.name}`} className={i<2 ? "qualified3" : ""}>
         <td><b>{i+1}</b>{i<2 && <em> vào nhánh</em>}</td>
         <td>{shortGroup(r.group)}</td>
-        <td><b className="teamNameStanding">{r.name}</b></td>
-        <td><small>{r.players}</small></td>
+        <td><b className="teamNameStanding">{r.name}</b><small className="standingPlayers">{r.players}</small></td>
         <td>{r.played}</td>
         <td className="winCol">{r.win}</td>
         <td>{r.loss}</td>

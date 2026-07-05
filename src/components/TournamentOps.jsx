@@ -85,9 +85,10 @@ function ResultsScreen({schedule,selectedMatch,setSelectedId,rules,updateDraft,s
 function StandingsScreen({standings,schedule}) {return <section className="panelClean"><div className="panelTitle"><h3>Bảng xếp hạng</h3><p>Tự tính theo trận thắng, hiệu số game, hiệu số điểm.</p></div>{schedule.length ? Object.entries(standings).map(([group,rows])=><div className="standingGroup" key={group}><h4>{group}</h4><div className="tablewrap"><table><thead><tr><th>Hạng</th><th>Đội</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>Điểm ghi</th><th>HS điểm</th></tr></thead><tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{r.name}</td><td>{r.played}</td><td>{r.win}</td><td>{r.loss}</td><td>{r.pf}</td><td>{r.diff}</td></tr>)}</tbody></table></div></div>) : <p className="muted">Chưa có lịch thi đấu.</p>}</section>}
 
 function bracketTeamName(slotObj){
-  return slotObj?.team?.name || slotObj?.row?.team?.name || slotObj?.slot || "—";
+  return slotObj?.teamName || slotObj?.team?.name || slotObj?.row?.team?.name || slotObj?.winnerName || slotObj?.slot || "—";
 }
 function bracketPlayers(slotObj){
+  if(slotObj?.playerNames) return slotObj.playerNames;
   const players = slotObj?.team?.players || slotObj?.row?.team?.players || [];
   return players.map(p=>p.full_name).join(" + ");
 }
@@ -206,14 +207,14 @@ function QuarterCardV499({match,index}) {
 
 function buildSemis(qfs=[]){
   const byId=Object.fromEntries((qfs||[]).map(m=>[m.id,m]));
-  const adv = (id,label) => byId[id]?.winner ? {slot:label, team:{name:byId[id].winner, players:[]}, winnerName:byId[id].winner} : {slot:label, team:null};
+  const adv = (id,label) => byId[id]?.winner ? {slot:label, team:{name:byId[id].winner, players:[]}, teamName:byId[id].winner, winnerName:byId[id].winner} : {slot:label, team:null};
   return [
     {id:"SF-1",name:"Bán kết 1",type:"KO",round:"SF",status:"SCHEDULED",a:adv("QF-1","Winner QF1"),b:adv("QF-4","Winner QF4"),games:[{home:"",away:"",saved:false}],winner:""},
     {id:"SF-2",name:"Bán kết 2",type:"KO",round:"SF",status:"SCHEDULED",a:adv("QF-2","Winner QF2"),b:adv("QF-3","Winner QF3"),games:[{home:"",away:"",saved:false}],winner:""}
   ];
 }
 function buildFinals(semis=[]){
-  const adv = (m,label) => m?.winner ? {slot:label, team:{name:m.winner, players:[]}, winnerName:m.winner} : {slot:label, team:null};
+  const adv = (m,label) => m?.winner ? {slot:label, team:{name:m.winner, players:[]}, teamName:m.winner, winnerName:m.winner} : {slot:label, team:null};
   return [{id:"FINAL-1",name:"Chung kết",type:"KO",round:"FINAL",status:"SCHEDULED",a:adv(semis[0],"Winner BK1"),b:adv(semis[1],"Winner BK2"),games:[{home:"",away:"",saved:false}],winner:""}];
 }
 function buildThirdPlace(semis=[]){

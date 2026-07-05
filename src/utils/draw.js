@@ -149,8 +149,10 @@ export function makeKnockout(groups,cfg,standingsByGroup=null){
     slot: label,
     displaySlot: label,
     originalSlot: x?.slot || label,
-    team: x?.team,
-    row: x?.row
+    team: x?.team || x?.row?.team,
+    row: x?.row,
+    teamName: (x?.team || x?.row?.team)?.name || "",
+    playerNames: ((x?.team || x?.row?.team)?.players || []).map(p=>p.full_name).join(" + ")
   });
 
   // Công thức cố định theo yêu cầu BTC:
