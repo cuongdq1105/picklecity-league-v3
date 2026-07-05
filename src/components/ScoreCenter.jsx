@@ -69,9 +69,25 @@ export default function ScoreCenter({ groups=[], schedule=[], setSchedule, confi
       const ss=scoreSummary(m,rules);
       if(!ss.winner){msg="Chưa đủ game đã lưu để kết thúc trận.";return m;}
       msg=`Đã kết thúc trận. Đội thắng: ${ss.winner}`;
-      return {...m,status:"DONE",winner:ss.winner,finishedAt:nowText()};
+      return {...m,status:"DONE",winner:ss.winner,finishedAt:nowText(), editing:false};
     }));
     setMsg(msg);
+  }
+
+  function unlockMatch(id){
+    if(!confirm("Mở sửa điểm trận này? Sau khi sửa cần bấm Lưu lại và Kết thúc trận lại.")) return;
+    setSchedule((schedule||[]).map(m=>{
+      if(m.id!==id)return m;
+      const games=(m.games||[]).map(g=>({...g,saved:false, edited:true}));
+      return {...m,games,status:"LIVE",winner:"",finishedAt:"",editing:true};
+    }));
+    setMsg("Đã mở sửa điểm. Hãy sửa tỷ số, bấm Lưu từng game, rồi Kết thúc trận lại.");
+  }
+
+  function clearMatchScore(id){
+    if(!confirm("Xóa toàn bộ điểm trận này để nhập lại?")) return;
+    setSchedule((schedule||[]).map(m=>m.id===id?{...m,games:[{home:"",away:"",saved:false}],status:"SCHEDULED",winner:"",finishedAt:"",editing:true}:m));
+    setMsg("Đã xóa điểm trận. Hãy nhập lại Game 1.");
   }
 
   return <section className="scoreCenter">
@@ -110,12 +126,12 @@ export default function ScoreCenter({ groups=[], schedule=[], setSchedule, confi
     </div>
 
     <div className="scoreMatchList">
-      {filtered.length ? filtered.map(m=><ScoreMatchCard key={m.id} match={m} rules={rules} onDraft={updateDraft} onSaveGame={saveGame} onAddGame={addGame} onFinish={finishMatch}/>) : <p className="muted">Không có trận phù hợp.</p>}
+      {filtered.length ? filtered.map(m=><ScoreMatchCard key={m.id} match={m} rules={rules} onDraft={updateDraft} onSaveGame={saveGame} onAddGame={addGame} onFinish={finishMatch} onUnlock={unlockMatch} onClear={clearMatchScore}/>) : <p className="muted">Không có trận phù hợp.</p>}
     </div>
   </section>
 }
 
-function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish}) {
+function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,onUnlock,onClear}) {
   const ss=scoreSummary(match,rules);
   const rule=targetForMatch(match,rules);
   return <div className={`scoreMatchCard ${match.status==="DONE"?"done":""}`}>
@@ -124,7 +140,7 @@ function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish}) {
         <b>{match.group} · {match.time || "Chưa giờ"} · Sân {match.court || ""}</b>
         <span>{rule.label}</span>
       </div>
-      <em>{match.status==="DONE"?"✓ Hoàn thành":match.status==="LIVE"?"LIVE":"Chờ điểm"}</em>
+      <em>{match.editing?"Đang sửa":match.status==="DONE"?"✓ Hoàn thành":match.status==="LIVE"?"LIVE":"Chờ điểm"}</em>
     </div>
 
     <div className="scoreMatchTeams">
@@ -143,9 +159,15 @@ function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish}) {
     </div>)}
 
     <div className="scoreMatchActions">
-      <button className="mini" onClick={()=>onAddGame(match.id)}>+ Game</button>
-      <button className="mini primary" onClick={()=>onFinish(match.id)}><CheckCircle2 size={14}/> Kết thúc trận</button>
+      {match.status==="DONE" ? <>
+        <button className="mini editScoreBtn" onClick={()=>onUnlock(match.id)}>✎ Mở sửa điểm</button>
+        <button className="mini dangerScoreBtn" onClick={()=>onClear(match.id)}>Xóa nhập lại</button>
+      </> : <>
+        <button className="mini" onClick={()=>onAddGame(match.id)}>+ Game</button>
+        <button className="mini primary" onClick={()=>onFinish(match.id)}><CheckCircle2 size={14}/> Kết thúc trận</button>
+      </>}
       {ss.winner && <strong>Thắng: {ss.winner}</strong>}
+      {match.editing && <em className="editingBadge">Đang sửa điểm</em>}
     </div>
   </div>
 }

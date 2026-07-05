@@ -1,21 +1,25 @@
-# PickleCity Tournament Manager V4.10.6 Public Result Tabs
+# PickleCity Tournament Manager V4.10.7 Edit Score
 
-Bản cập nhật màn hình công khai cho VĐV.
+Bản bổ sung chức năng sửa điểm sau khi đã bấm Kết thúc trận.
 
 ## Đã thêm
-- Tab Kết quả có bộ lọc:
-  - Tất cả
-  - Bảng A
-  - Bảng B
-  - Bảng C
-  - Tứ kết
-- Tab Giờ thi đấu cũng có bộ lọc theo bảng.
-- Thêm tab Nhánh đấu công khai.
-- Nhánh đấu công khai hiển thị:
-  - vị trí A1/B1/Best3
-  - tên đội
-  - tên VĐV
-- VĐV theo dõi dễ hơn, không phải cuộn toàn bộ danh sách.
+Trong khu **Cập nhật điểm số**:
+
+- Nếu trận đã hoàn thành, hiện nút **Mở sửa điểm**.
+- Bấm **Mở sửa điểm** sẽ:
+  - mở khóa các ô điểm
+  - chuyển trận về trạng thái đang sửa
+  - xóa đội thắng cũ
+  - cho phép lưu lại từng game
+- Sau khi sửa xong, BTC bấm **Kết thúc trận** lại.
+- Có thêm nút **Xóa nhập lại** nếu muốn xóa toàn bộ điểm của trận đó.
+
+## Quy trình
+1. Bấm Mở sửa điểm.
+2. Sửa tỷ số.
+3. Bấm Lưu game.
+4. Bấm Kết thúc trận.
+5. BXH/kết quả công khai sẽ tự tính lại theo dữ liệu mới.
 
 ## Test
-/api/ping => version: 4.10.6-public-result-tabs
+/api/ping => version: 4.10.7-edit-score

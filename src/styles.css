@@ -393,3 +393,9 @@
 .publicBracketCard p{margin:10px 0 0;color:#006b3b;font-weight:900}
 .publicBracketInfo{grid-column:1/-1;background:#fff7e6;border:1px solid #f1c875;border-radius:14px;padding:12px;color:#5d4600;line-height:1.6}
 @media(max-width:760px){.publicBracketGrid{grid-template-columns:1fr}.publicBracketTeams{grid-template-columns:1fr}.publicBracketTeams strong{padding:2px}}
+
+/* V4.10.7 Edit Score */
+.editScoreBtn{background:#fff7e6!important;border:1px solid #f1c875!important;color:#9a5b00!important}
+.dangerScoreBtn{background:#fee2e2!important;border:1px solid #fecaca!important;color:#991b1b!important}
+.editingBadge{font-style:normal;background:#fff7e6;border:1px solid #f1c875;color:#9a5b00;border-radius:999px;padding:6px 9px;font-weight:950}
+.scoreMatchCard.done .scoreGameLine.saved input{background:#f8fbf2}
