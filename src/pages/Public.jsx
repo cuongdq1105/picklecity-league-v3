@@ -17,6 +17,12 @@ function bracketName(x){
 function bracketPlayers(x){
   return (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + ");
 }
+function rankLabel(rank){
+  if(rank===1) return "🥇 Nhất";
+  if(rank===2) return "🥈 Nhì";
+  if(rank===3) return "🥉 Ba";
+  return "";
+}
 function makeResultTabs(schedule=[], knockout=[]){
   const tabs=[{key:"all",label:"Tất cả",count:schedule.filter(matchDone).length}];
   const groups=[...new Set((schedule||[]).map(m=>m.group).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"vi"));
@@ -154,9 +160,9 @@ function PublicStandings({standings={}}) {
   return <div className="publicStandingGrid">
     {groups.map(([group,rows])=><div className="publicStandingCard" key={group}>
       <h3>{group}</h3>
-      <table><thead><tr><th>Hạng</th><th>Đội</th><th>Thắng</th><th>Thua</th><th>HS</th><th>Điểm</th></tr></thead>
+      <table><thead><tr><th>Hạng</th><th>Xét hạng</th><th>Tên đội</th><th>Thắng</th><th>Thua</th><th>HS</th><th>Điểm</th></tr></thead>
         <tbody>{rows.map(r=><tr key={r.name} className={r.rank<=3?"ranked":""}>
-          <td><b>{r.rank}</b></td><td>{r.name}</td><td>{r.win}</td><td>{r.loss}</td><td>{r.diff>0?`+${r.diff}`:r.diff}</td><td>{r.pf}</td>
+          <td><b>{r.rank}</b></td><td><span className={`rankPill rankPill${r.rank}`}>{rankLabel(r.rank)}</span></td><td><b className="teamNameStanding">{r.name}</b></td><td>{r.win}</td><td>{r.loss}</td><td>{r.diff>0?`+${r.diff}`:r.diff}</td><td>{r.pf}</td>
         </tr>)}</tbody>
       </table>
     </div>)}

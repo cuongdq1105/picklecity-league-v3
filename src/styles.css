@@ -411,3 +411,15 @@
 .standingTable{width:100%;border-collapse:collapse}.standingTable th,.standingTable td{border-bottom:1px solid #edf1e8;padding:9px;text-align:left}.standingTable th{background:#f8fbf2;color:#31594d}.standingTable small{font-weight:700;color:#456}.standingTable .rank1{background:#fff7d6}.standingTable .rank2{background:#f3f8ff}.standingTable .rank3{background:#fff0e6}.winCol{font-weight:950;color:#006b3b}.positive{color:#047857;font-weight:950}.negative{color:#b91c1c;font-weight:950}.qualified3{background:#e9f8ee}.qualified3 em{display:block;font-style:normal;font-size:11px;color:#006b3b;font-weight:900}
 .publicStandingGrid{display:grid;grid-template-columns:1fr;gap:12px}.publicStandingCard{border:1px solid #e1e9d7;border-radius:14px;overflow:hidden;background:white}.publicStandingCard h3{margin:0;padding:11px 13px;background:#e9f8ee;color:#006b3b}.publicStandingCard table{width:100%;border-collapse:collapse}.publicStandingCard th,.publicStandingCard td{border-bottom:1px solid #edf1e8;padding:8px;text-align:left}.publicStandingCard th{background:#f8fbf2}.publicStandingCard tr.ranked{background:#fffdf3}
 @media(max-width:760px){.standingTable,.publicStandingCard table{font-size:12px}.standingRuleBox{display:block}.standingRuleBox span{display:inline-block;margin:4px 3px}.standingsHead{display:block}}
+
+/* V4.10.9 Standings Team Highlight */
+.teamNameStanding{color:#064e3b;font-size:15px}
+.rankPill{display:inline-flex;align-items:center;justify-content:center;min-width:76px;border-radius:999px;padding:5px 8px;font-size:12px;font-weight:950;background:#eef2f0;color:#667;white-space:nowrap}
+.rankPill1{background:#fff7cc;color:#92400e;border:1px solid #facc15}
+.rankPill2{background:#eff6ff;color:#1d4ed8;border:1px solid #93c5fd}
+.rankPill3{background:#fff0e6;color:#c2410c;border:1px solid #fdba74}
+.standingTable .rank1 td{border-top:2px solid #facc15}
+.standingTable .rank2 td{border-top:2px solid #93c5fd}
+.standingTable .rank3 td{border-top:2px solid #fdba74}
+.publicStandingCard .rankPill{min-width:52px;font-size:11px}
+@media(max-width:760px){.rankPill{min-width:auto;font-size:11px;padding:4px 6px}.teamNameStanding{font-size:13px}}

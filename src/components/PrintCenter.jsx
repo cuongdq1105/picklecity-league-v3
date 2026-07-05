@@ -15,6 +15,7 @@ function groupedSchedule(schedule=[]){
   return Object.entries(map).sort(([a],[b])=>groupName(a).localeCompare(groupName(b),"vi"));
 }
 function matchScoreText(m){ return (m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", "); }
+function printRankLabel(rank){ return rank===1?"Nhất bảng":rank===2?"Nhì bảng":rank===3?"Hạng ba":""; }
 function bracketPrintName(x){ return x?.team?.name || x?.row?.team?.name || x?.slot || "—"; }
 function bracketPrintPlayers(x){ return (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
 function teamKey(t){ return t?.name || (t?.players||[]).map(p=>p.full_name).join(" + "); }
@@ -134,8 +135,8 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
 
       {pick.standings && <PrintPage title="Bảng xếp hạng vòng bảng" tournament={tournament}>
         {Object.entries(standings||{}).map(([group,rows])=><div className="printStanding" key={group}><h3>{group}</h3>
-          <table className="printTable"><thead><tr><th>Hạng</th><th>Đội</th><th>VĐV</th><th>Trận</th><th>Thắng</th><th>HS điểm</th><th>Điểm ghi</th></tr></thead>
-            <tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{r.name}</td><td>{r.players}</td><td>{r.played}</td><td>{r.win}</td><td>{r.diff}</td><td>{r.pf}</td></tr>)}</tbody>
+          <table className="printTable"><thead><tr><th>Hạng</th><th>Xét hạng</th><th>Tên đội</th><th>VĐV</th><th>Trận</th><th>Thắng</th><th>HS điểm</th><th>Điểm ghi</th></tr></thead>
+            <tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{printRankLabel(r.rank)}</td><td><b>{r.name}</b></td><td>{r.players}</td><td>{r.played}</td><td>{r.win}</td><td>{r.diff}</td><td>{r.pf}</td></tr>)}</tbody>
           </table></div>)}
       </PrintPage>}
 
