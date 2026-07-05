@@ -10,6 +10,9 @@ import { DEFAULT_RULES } from "../utils/matchRules";
 function scoreText(m){
   return (m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ");
 }
+function publicTeamPlayers(t){
+  return (t?.players||[]).map(p=>p.full_name).join(" + ");
+}
 function matchDone(m){ return (m.games||[]).some(g=>g.saved); }
 function bracketName(x){
   return x?.teamName || x?.team?.name || x?.row?.team?.name || x?.slot || "—";
@@ -119,7 +122,11 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
         <div className="tablewrap"><table>
           <thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Bảng</th><th>Trận</th><th>Tỷ số</th></tr></thead>
           <tbody>{visibleSchedule.map((m,i)=><tr key={m.id||i}>
-            <td>{i+1}</td><td><b>{m.time}</b></td><td>Sân {m.court}</td><td>{m.group}</td><td>{m.home?.name} vs {m.away?.name}</td><td>{scoreText(m)||"Chưa đấu"}</td>
+            <td>{i+1}</td><td><b>{m.time}</b></td><td>Sân {m.court}</td><td>{m.group}</td><td><div className="scheduleTeamsPublic">
+              <b>{m.home?.name}</b><small>{publicTeamPlayers(m.home)}</small>
+              <em>vs</em>
+              <b>{m.away?.name}</b><small>{publicTeamPlayers(m.away)}</small>
+            </div></td><td>{scoreText(m)||"Chưa đấu"}</td>
           </tr>)}</tbody>
         </table></div>
       </> : <p className="muted">BTC chưa xếp lịch thi đấu.</p>}
@@ -135,7 +142,7 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
       (visibleResults.length > 0 ? <div className="resultCardsPublic">
         {visibleResults.map((m,i)=><div className="publicResultCard" key={m.id||i}>
           <div><b>{m.group}</b><span>{m.time} · Sân {m.court}</span></div>
-          <h3>{m.home?.name} <small>vs</small> {m.away?.name}</h3>
+          <h3>{m.home?.name} <small>vs</small> {m.away?.name}</h3><p className="resultPlayersPublic">{publicTeamPlayers(m.home)}<br/>vs<br/>{publicTeamPlayers(m.away)}</p>
           <strong>{scoreText(m)}</strong>
           <em>{m.status==="DONE" ? "Hoàn thành" : "Đang cập nhật"}</em>
         </div>)}

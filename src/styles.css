@@ -439,3 +439,41 @@
 .paymentMainSingleQR{display:block!important;text-align:center}.paymentMainSingleQR .qrBlockV497{border-right:0!important;padding-right:0!important}.paymentMainSingleQR .qrFrameV497 img{width:220px!important;height:auto!important;max-height:260px!important}.paymentMainSingleQR .bankLogoV497{font-size:20px}
 .paymentQrSettings{background:#fff;border:1px solid #dfe8cf;border-radius:20px;padding:18px;margin-top:18px}.settingsTitle{display:flex;align-items:center;gap:8px;font-size:22px;font-weight:950;color:#10201c}.qrSettingBox{display:grid;grid-template-columns:160px 1fr;gap:14px;align-items:center;margin-top:12px}.qrSettingBox img{max-width:150px;border:1px solid #e1e9d7;border-radius:12px;background:white}.uploadQrBtn{display:inline-flex!important;align-items:center;gap:7px;background:#006b3b!important;color:white!important;border-radius:12px;padding:10px 12px;font-weight:950;cursor:pointer;width:max-content}.uploadQrBtn input{display:none!important}
 @media(max-width:900px){.publicBracketTree{grid-template-columns:1fr}.qrSettingBox{grid-template-columns:1fr}.paymentMainSingleQR .qrFrameV497 img{width:200px!important}}
+
+/* V4.10.12 Layout / QR / names */
+.adminSubMenu{
+  position:sticky;top:8px;z-index:50;display:flex;gap:8px;flex-wrap:wrap;
+  background:#ffffffdd;backdrop-filter:blur(8px);border:1px solid #dfe8cf;border-radius:16px;
+  padding:10px;margin:10px 0 16px;box-shadow:0 6px 18px rgba(0,0,0,.06)
+}
+.adminSubMenu a{background:#eef2f0;border-radius:999px;padding:9px 13px;color:#10201c;text-decoration:none;font-weight:950}
+.adminSubMenu a:hover{background:#b8d72f}
+#score,#standing,#bracket,#print,#qrsetting{scroll-margin-top:90px}
+
+/* Payment: show only the QR image, no duplicated bank/account texts */
+.paymentMainOnlyQR{display:block!important;text-align:center!important;background:#fff;border:1px solid #edf1e8;border-radius:20px;padding:16px!important}
+.paymentMainOnlyQR .qrBlockV497{border-right:0!important;padding-right:0!important}
+.paymentMainOnlyQR .bankLogoV497,.paymentMainOnlyQR .qrBlockV497 p,.paymentMainOnlyQR .bankPanelV497{display:none!important}
+.paymentMainOnlyQR .qrFrameV497{box-shadow:none!important;border:0!important;padding:0!important;background:transparent!important}
+.paymentMainOnlyQR .qrFrameV497 img{width:240px!important;height:auto!important;max-height:320px!important;object-fit:contain!important;border-radius:16px!important;border:1px solid #e1e9d7!important}
+.paymentCardV497{max-width:460px;margin:auto}
+.transferBoxV497{margin-top:12px!important}
+.noteBoxV497{padding:10px 12px!important}
+.paidConfirmV497 span{font-size:18px!important;padding:13px!important}
+
+/* Public schedule: show full player names */
+.scheduleTeamsPublic{display:grid;gap:2px}
+.scheduleTeamsPublic b{color:#064e3b}
+.scheduleTeamsPublic small{display:block;color:#456;font-size:11px;font-weight:700;line-height:1.25}
+.scheduleTeamsPublic em{font-style:normal;color:#667;font-weight:950;margin:2px 0}
+.resultPlayersPublic{margin:4px 0 8px;color:#456;font-size:12px;font-weight:700;line-height:1.35}
+
+/* improve wide desktop page width */
+.wide{max-width:1400px!important}
+@media(min-width:1100px){
+  .adminGrid,.grid{max-width:1400px;margin-left:auto;margin-right:auto}
+}
+@media(max-width:700px){
+  .adminSubMenu{position:relative;top:auto}
+  .paymentMainOnlyQR .qrFrameV497 img{width:210px!important}
+}

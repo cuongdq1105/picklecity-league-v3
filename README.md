@@ -1,8 +1,10 @@
-# PickleCity Tournament Manager V4.10.11 Public Bracket Tree
+# PickleCity Tournament Manager V4.10.12 Layout QR Names
 
-- Màn hình công khai có sơ đồ nhánh đấu: Tứ kết, Bán kết, Chung kết, Tranh giải 3.
-- Nhánh đấu hiển thị tên đội + tên VĐV.
-- Thanh toán chỉ tập trung vào QR, gọn hơn.
-- BTC có mục Cài đặt QR thanh toán.
+## Đã chỉnh
+1. BTC có thanh submenu nhanh: Cấu hình, Nhập điểm, BXH, Nhánh, In ấn, QR.
+2. Thanh toán QR gọn lại: chỉ hiển thị ảnh QR, không lặp số tài khoản/chủ tài khoản/ngân hàng.
+3. Màn hình lịch thi đấu công khai hiển thị đầy đủ tên VĐV dưới tên đội.
+4. BTC có mục Cài đặt QR thanh toán.
 
-Test: /api/ping => version: 4.10.11-public-bracket-tree
+## Test
+/api/ping => version: 4.10.12-layout-qr-names

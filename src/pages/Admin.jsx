@@ -62,7 +62,7 @@ export default function Admin(props) {
           onStartMC={onStartMC}
           setMsg={setMsg}
         />
-        <ScoreCenter
+        <div id="score"></div><ScoreCenter
           groups={draw.groups}
           schedule={schedule}
           setSchedule={setSchedule}
@@ -70,14 +70,14 @@ export default function Admin(props) {
           setMsg={setMsg}
         />
 
-        <StandingsCenter
+        <div id="standing"></div><StandingsCenter
           groups={draw.groups}
           schedule={schedule}
           config={matchConfig}
           setMsg={setMsg}
         />
 
-        <TournamentOps
+        <div id="bracket"></div><TournamentOps
           groups={draw.groups}
           config={matchConfig}
           setConfig={setMatchConfig}
@@ -87,9 +87,9 @@ export default function Admin(props) {
           setKnockout={setKnockout}
           setMsg={setMsg}
         />
-        <PaymentQrSettings setMsg={setMsg} />
+        <div id="qrsetting"></div><PaymentQrSettings setMsg={setMsg} />
 
-        <PrintCenter tournament={tournament} registrations={admin.registrations} groups={draw.groups} schedule={schedule} knockout={knockout} config={matchConfig} />
+        <div id="print"></div><PrintCenter tournament={tournament} registrations={admin.registrations} groups={draw.groups} schedule={schedule} knockout={knockout} config={matchConfig} />
       </div>
     </div>
   </main>
