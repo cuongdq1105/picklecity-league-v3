@@ -15,6 +15,42 @@ function groupedSchedule(schedule=[]){
   return Object.entries(map).sort(([a],[b])=>groupName(a).localeCompare(groupName(b),"vi"));
 }
 function matchScoreText(m){ return (m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", "); }
+function teamKey(t){ return t?.name || (t?.players||[]).map(p=>p.full_name).join(" + "); }
+function matchKey(group,a,b){
+  const names=[teamKey(a),teamKey(b)].sort();
+  return `${group}::${names[0]}::${names[1]}`;
+}
+function completeScheduleByGroup(groups=[],schedule=[]){
+  const scheduled = new Map();
+  schedule.forEach(m => scheduled.set(matchKey(m.group,m.home,m.away), m));
+  return (groups||[]).map(g => {
+    const rows=[];
+    const teams=g.teams||[];
+    for(let i=0;i<teams.length;i++){
+      for(let j=i+1;j<teams.length;j++){
+        const key=matchKey(g.name,teams[i],teams[j]);
+        const existing=scheduled.get(key);
+        rows.push(existing || {
+          id:`print-${g.name}-${i}-${j}`,
+          group:g.name,
+          round:"",
+          match:"",
+          time:"",
+          court:"",
+          home:teams[i],
+          away:teams[j],
+          games:[]
+        });
+      }
+    }
+    rows.sort((a,b)=>
+      (String(a.time||"").localeCompare(String(b.time||""))) ||
+      (Number(a.court||999)-Number(b.court||999)) ||
+      teamKey(a.home).localeCompare(teamKey(b.home),"vi")
+    );
+    return [g.name, rows];
+  });
+}
 
 export default function PrintCenter({ tournament, registrations=[], groups=[], schedule=[], knockout=[], config={} }) {
   const [pick,setPick] = useState({players:true,teams:true,schedule:true,scoreSheets:true,standings:true,bracket:true,results:false,report:true});
@@ -22,7 +58,7 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
   const standings = useMemo(()=>calcStandings(groups||[],schedule||[],rules),[groups,schedule,config]);
   const confirmed = registrations.filter(x=>x.payment_status==="BTC_CONFIRMED").length;
   const courts = [...new Set((schedule||[]).map(m=>m.court).filter(Boolean))].sort((a,b)=>a-b);
-  const scheduleGroups = groupedSchedule(schedule);
+  const scheduleGroups = completeScheduleByGroup(groups, schedule);
   const toggle = k => setPick(p=>({...p,[k]:!p[k]}));
   const setAll = v => setPick(Object.fromEntries(Object.keys(pick).map(k=>[k,v])));
 
@@ -30,7 +66,7 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
     <div className="printToolbar noPrint">
       <div>
         <h2><Printer/> Trung tâm in ấn</h2>
-        <p>Chọn nội dung cần in, sau đó bấm <b>In / Xuất PDF</b>. Lịch thi đấu được in theo từng bảng để không bị thiếu trận.</p>
+        <p>Chọn nội dung cần in, sau đó bấm <b>In / Xuất PDF</b>. Lịch thi đấu được in theo từng bảng và tự bổ sung đủ vòng tròn n×(n-1)/2 trận, kể cả khi lịch xếp giờ bị thiếu.</p>
       </div>
       <div className="printActions">
         <button className="mini" onClick={()=>setAll(true)}>Chọn tất cả</button>
@@ -75,10 +111,10 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
       </PrintPage>}
 
       {pick.schedule && scheduleGroups.map(([group,rows])=><PrintPage key={group} title={`Lịch thi đấu ${group}`} tournament={tournament}>
-        <div className="printScheduleSummary"><b>{group}</b><span>{rows.length} trận</span></div>
+        <div className="printScheduleSummary"><b>{group}</b><span>{rows.length} trận vòng tròn</span></div>
         <table className="printTable"><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Lượt</th><th>Đội 1</th><th>Đội 2</th><th>Kết quả</th></tr></thead>
           <tbody>{rows.map((m,i)=><tr key={m.id||i}>
-            <td>{i+1}</td><td><b>{m.time}</b></td><td>Sân {m.court}</td><td>{m.round || ""}</td>
+            <td>{i+1}</td><td><b>{m.time || "____"}</b></td><td>{m.court ? "Sân " + m.court : "____"}</td><td>{m.round || ""}</td>
             <td>{m.home?.name}<br/><small>{teamPlayers(m.home)}</small></td>
             <td>{m.away?.name}<br/><small>{teamPlayers(m.away)}</small></td>
             <td>{matchScoreText(m)}</td>

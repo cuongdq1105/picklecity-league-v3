@@ -5,6 +5,7 @@ import RegistrationManager from "../components/RegistrationManager";
 import DrawManager from "../components/DrawManager";
 import TournamentOps from "../components/TournamentOps";
 import PrintCenter from "../components/PrintCenter";
+import ScoreCenter from "../components/ScoreCenter";
 
 export default function Admin(props) {
   const {
@@ -59,6 +60,14 @@ export default function Admin(props) {
           onStartMC={onStartMC}
           setMsg={setMsg}
         />
+        <ScoreCenter
+          groups={draw.groups}
+          schedule={schedule}
+          setSchedule={setSchedule}
+          config={matchConfig}
+          setMsg={setMsg}
+        />
+
         <TournamentOps
           groups={draw.groups}
           config={matchConfig}

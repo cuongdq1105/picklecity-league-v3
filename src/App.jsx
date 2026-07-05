@@ -214,7 +214,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.10.1 Print Fix</div>
+      <div className="version">V4.10.3 Score Tab</div>
     </header>
 
     <nav className="tabs">
