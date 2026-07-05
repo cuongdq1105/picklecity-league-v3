@@ -81,8 +81,8 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
 
     <div className="publicStats">
       <div><b>{total}</b><span>Tổng VĐV</span></div>
-      <div><b>{confirmed}</b><span>Đã BTC xác nhận</span></div>
-      <div><b>{pending}</b><span>Chưa xác nhận</span></div>
+      <div><b>{confirmed}</b><span>Đăng ký hợp lệ</span></div>
+      <div><b>{pending}</b><span>Chờ BTC xác nhận</span></div>
     </div>
 
     <div className="publicSubTabs">

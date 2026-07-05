@@ -8,12 +8,12 @@ export default function DrawManager({
   manualPair, setManualPair, onAddManualPair, onStartMC, setMsg
 }) {
   function makeDraw() {
-    const list = registrations.filter(x => draw.source === "all" || x.payment_status === "BTC_CONFIRMED");
-    if (list.length < 2) { setMsg("Cần ít nhất 2 VĐV để bốc thăm."); return; }
+    const list = registrations.filter(x => x.payment_status === "BTC_CONFIRMED");
+    if (list.length < 2) { setMsg("Cần ít nhất 2 VĐV đã được BTC xác nhận thanh toán để bốc thăm."); return; }
     const {teams, leftover} = makeTeams(list, draw.method);
     const groups = groupTeams(teams, draw.tableCount, draw.groupMethod);
     setDraw(d=>({...d, teams, groups, leftover, savedStatus:"DRAFT_LOCAL"}));
-    setMsg(`Đã bốc thăm nháp ${teams.length} đội từ ${list.length} VĐV, chia ${groups.length} bảng. Chưa công bố.`);
+    setMsg(`Đã bốc thăm nháp ${teams.length} đội từ ${list.length} VĐV đã BTC xác nhận, chia ${groups.length} bảng. Chưa công bố.`);
   }
 
   function copyDraw() {
@@ -29,8 +29,11 @@ export default function DrawManager({
 
   return <section className="drawBox">
     <div className="card-title"><Shuffle/> Bốc thăm ghép cặp</div>
-    <label>Nguồn VĐV<select value={draw.source} onChange={e=>setDraw({...draw,source:e.target.value})}><option value="all">Tất cả VĐV trong danh sách</option><option value="confirmed">Chỉ VĐV đã BTC xác nhận</option></select></label>
-    <p className="hint">Mặc định tính cả VĐV chưa được BTC xác nhận.</p>
+    <div className="confirmedOnlyBox">
+      <b>Chỉ lấy VĐV hợp lệ</b>
+      <p>Hệ thống chỉ đưa vào bốc thăm những VĐV đã được BTC xác nhận thanh toán. VĐV mới bấm “Tôi đã chuyển khoản” nhưng BTC chưa xác nhận sẽ không được xếp cặp.</p>
+      <span>{registrations.filter(x=>x.payment_status==="BTC_CONFIRMED").length} đã xác nhận / {registrations.length} tổng đăng ký</span>
+    </div>
     <label>Kiểu ghép cặp<select value={draw.method} onChange={e=>setDraw({...draw,method:e.target.value})}><option value="balanced">Cân bằng trình: cao ghép thấp</option><option value="random">Ngẫu nhiên hoàn toàn</option></select></label>
     <label>Cơ chế chia bảng<select value={draw.groupMethod} onChange={e=>setDraw({...draw,groupMethod:e.target.value})}><option value="balancedGroups">Cân bằng bảng theo tổng trình</option><option value="roundRobinGroups">Chia lần lượt theo thứ tự đội</option><option value="randomGroups">Chia bảng ngẫu nhiên</option></select></label>
     <label>Số bảng<input type="number" min="1" max="16" value={draw.tableCount} onChange={e=>setDraw({...draw,tableCount:e.target.value})}/></label>

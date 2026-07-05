@@ -547,3 +547,22 @@
   border:1px solid #f1c875!important;
   color:#7c4a03!important;
 }
+
+/* V4.10.16 BTC Confirmed Only */
+.confirmedOnlyBox{
+  background:#fff7e6;
+  border:1px solid #f1c875;
+  color:#5d4600;
+  border-radius:16px;
+  padding:12px 14px;
+  margin:10px 0 12px;
+}
+.confirmedOnlyBox b{display:block;font-size:17px;margin-bottom:4px}
+.confirmedOnlyBox p{margin:0 0 8px;font-weight:800;line-height:1.4}
+.confirmedOnlyBox span{
+  display:inline-block;
+  background:#fff;
+  border-radius:999px;
+  padding:6px 10px;
+  font-weight:950;
+}

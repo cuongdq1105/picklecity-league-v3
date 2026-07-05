@@ -43,7 +43,7 @@ export default function App() {
   const [pin,setPin] = useState("");
   const [admin,setAdmin] = useState({registrations:[],stats:{total:0,confirmed:0,pending:0},loading:false});
   const [editing,setEditing] = useState(null);
-  const [draw,setDraw] = useState({source:"all",method:"balanced",groupMethod:"balancedGroups",tableCount:2,teams:[],groups:[],leftover:[],savedStatus:""});
+  const [draw,setDraw] = useState({source:"confirmed",method:"balanced",groupMethod:"balancedGroups",tableCount:2,teams:[],groups:[],leftover:[],savedStatus:""});
   const [manualPair,setManualPair] = useState({group:"Bảng A",p1:"",p1phone:"",p2:"",p2phone:"",teamName:""});
   const [matchConfig,setMatchConfig] = useState(()=>readLocal(LOCAL_KEYS.matchConfig, {qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",rankingCriteria:["win","pointDiff","pointFor","headToHead","draw"],groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}}));
   const [schedule,setSchedule] = useState(()=>readLocal(LOCAL_KEYS.schedule, []));
@@ -218,7 +218,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.10.15 Paid Register Only</div>
+      <div className="version">V4.10.16 BTC Confirmed Only</div>
     </header>
 
     <nav className="tabs">
