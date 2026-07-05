@@ -1,25 +1,22 @@
-# PickleCity Tournament Manager V4.10.7 Edit Score
+# PickleCity Tournament Manager V4.10.8 Standings Screen
 
-Bản bổ sung chức năng sửa điểm sau khi đã bấm Kết thúc trận.
+Bản bổ sung màn hình BXH/xét hạng.
 
-## Đã thêm
-Trong khu **Cập nhật điểm số**:
+## Đã thêm trong BTC
+- Màn hình **Bảng xếp hạng & xét hạng**
+- Hiển thị:
+  - số trận
+  - thắng
+  - thua
+  - hiệu số điểm
+  - tổng điểm ghi được
+  - hạng trong bảng
+- Có tab xem từng bảng.
+- Có tab **Xét hạng 3** để chọn Best3-1, Best3-2.
 
-- Nếu trận đã hoàn thành, hiện nút **Mở sửa điểm**.
-- Bấm **Mở sửa điểm** sẽ:
-  - mở khóa các ô điểm
-  - chuyển trận về trạng thái đang sửa
-  - xóa đội thắng cũ
-  - cho phép lưu lại từng game
-- Sau khi sửa xong, BTC bấm **Kết thúc trận** lại.
-- Có thêm nút **Xóa nhập lại** nếu muốn xóa toàn bộ điểm của trận đó.
-
-## Quy trình
-1. Bấm Mở sửa điểm.
-2. Sửa tỷ số.
-3. Bấm Lưu game.
-4. Bấm Kết thúc trận.
-5. BXH/kết quả công khai sẽ tự tính lại theo dữ liệu mới.
+## Đã thêm ở màn hình công khai
+- Tab **BXH** để VĐV theo dõi.
+- Hiển thị thắng/thua/hiệu số/điểm.
 
 ## Test
-/api/ping => version: 4.10.7-edit-score
+/api/ping => version: 4.10.8-standings-screen

@@ -399,3 +399,15 @@
 .dangerScoreBtn{background:#fee2e2!important;border:1px solid #fecaca!important;color:#991b1b!important}
 .editingBadge{font-style:normal;background:#fff7e6;border:1px solid #f1c875;color:#9a5b00;border-radius:999px;padding:6px 9px;font-weight:950}
 .scoreMatchCard.done .scoreGameLine.saved input{background:#f8fbf2}
+
+/* V4.10.8 Standings Screen */
+.standingsCenter{background:#fff;border:1px solid #dfe8cf;border-radius:20px;padding:18px;margin-top:18px;box-shadow:0 8px 18px rgba(0,0,0,.04)}
+.standingsHead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.standingsHead h2{display:flex;align-items:center;gap:10px;margin:0;color:#10201c}.standingsHead p{margin:6px 0 0;color:#667;font-weight:800}
+.standingRuleBox{display:flex;gap:8px;flex-wrap:wrap;background:#fff7e6;border:1px solid #f1c875;border-radius:14px;padding:11px 12px;margin-bottom:12px;color:#5d4600;font-weight:900}
+.standingRuleBox span{background:white;border-radius:999px;padding:5px 9px}
+.standingTabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.standingTabs button{border:1px solid #e1e9d7;background:white;border-radius:999px;padding:9px 12px;font-weight:900;display:flex;align-items:center;gap:6px;cursor:pointer}.standingTabs button.active{background:#b8d72f;color:#10201c;border-color:#b8d72f}
+.standingGrid{display:grid;grid-template-columns:1fr;gap:14px}.standingCard{border:1px solid #e1e9d7;border-radius:16px;overflow:hidden;background:white}.standingCardHead{display:flex;justify-content:space-between;align-items:center;background:#e9f8ee;padding:12px 14px;border-bottom:1px solid #cfe7bd}.standingCardHead h3{margin:0;color:#006b3b}.standingCardHead span{font-weight:900;color:#31594d}
+.standingTable{width:100%;border-collapse:collapse}.standingTable th,.standingTable td{border-bottom:1px solid #edf1e8;padding:9px;text-align:left}.standingTable th{background:#f8fbf2;color:#31594d}.standingTable small{font-weight:700;color:#456}.standingTable .rank1{background:#fff7d6}.standingTable .rank2{background:#f3f8ff}.standingTable .rank3{background:#fff0e6}.winCol{font-weight:950;color:#006b3b}.positive{color:#047857;font-weight:950}.negative{color:#b91c1c;font-weight:950}.qualified3{background:#e9f8ee}.qualified3 em{display:block;font-style:normal;font-size:11px;color:#006b3b;font-weight:900}
+.publicStandingGrid{display:grid;grid-template-columns:1fr;gap:12px}.publicStandingCard{border:1px solid #e1e9d7;border-radius:14px;overflow:hidden;background:white}.publicStandingCard h3{margin:0;padding:11px 13px;background:#e9f8ee;color:#006b3b}.publicStandingCard table{width:100%;border-collapse:collapse}.publicStandingCard th,.publicStandingCard td{border-bottom:1px solid #edf1e8;padding:8px;text-align:left}.publicStandingCard th{background:#f8fbf2}.publicStandingCard tr.ranked{background:#fffdf3}
+@media(max-width:760px){.standingTable,.publicStandingCard table{font-size:12px}.standingRuleBox{display:block}.standingRuleBox span{display:inline-block;margin:4px 3px}.standingsHead{display:block}}

@@ -4,6 +4,8 @@ import { Eye, RefreshCw, ClipboardCopy, ListChecks, Table2, Clock, Trophy } from
 import PaymentBadge from "../components/PaymentBadge";
 import DrawView from "../components/DrawView";
 import { genderLabel, phoneHref } from "../utils/format";
+import { calcStandings } from "../utils/draw";
+import { DEFAULT_RULES } from "../utils/matchRules";
 
 function scoreText(m){
   return (m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ");
@@ -33,6 +35,7 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
   const pending = total - confirmed;
 
   const resultTabs = useMemo(()=>makeResultTabs(schedule, knockout),[schedule,knockout]);
+  const publicStandings = useMemo(()=>calcStandings(draw?.groups||[], schedule||[], DEFAULT_RULES),[draw,schedule]);
   const scheduleTabs = useMemo(()=>{
     const groups=[...new Set((schedule||[]).map(m=>m.group).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"vi"));
     return [{key:"all",label:"Tất cả",count:schedule.length}, ...groups.map(g=>({key:g,label:g,count:schedule.filter(m=>m.group===g).length}))];
@@ -78,6 +81,7 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
       <button className={publicTab==="groups"?"active":""} onClick={()=>setPublicTab("groups")}><Table2 size={15}/> Bảng đấu</button>
       <button className={publicTab==="schedule"?"active":""} onClick={()=>setPublicTab("schedule")}><Clock size={15}/> Giờ thi đấu</button>
       <button className={publicTab==="results"?"active":""} onClick={()=>setPublicTab("results")}><Trophy size={15}/> Kết quả</button>
+      <button className={publicTab==="standings"?"active":""} onClick={()=>setPublicTab("standings")}><Trophy size={15}/> BXH</button>
       <button className={publicTab==="bracket"?"active":""} onClick={()=>setPublicTab("bracket")}><Trophy size={15}/> Nhánh đấu</button>
     </div>
 
@@ -132,11 +136,31 @@ export default function Public({ list, draw, schedule = [], knockout = [], onRef
       </div> : <p className="muted">Chưa có kết quả trong mục này.</p>)}
     </section>}
 
+    {publicTab==="standings" && <section>
+      <h2>Bảng xếp hạng</h2>
+      <PublicStandings standings={publicStandings}/>
+    </section>}
+
     {publicTab==="bracket" && <section>
       <h2>Nhánh đấu</h2>
       <PublicBracket knockout={knockout}/>
     </section>}
   </main>
+}
+
+function PublicStandings({standings={}}) {
+  const groups = Object.entries(standings||{});
+  if(!groups.length) return <p className="muted">BTC chưa công bố bảng xếp hạng.</p>;
+  return <div className="publicStandingGrid">
+    {groups.map(([group,rows])=><div className="publicStandingCard" key={group}>
+      <h3>{group}</h3>
+      <table><thead><tr><th>Hạng</th><th>Đội</th><th>Thắng</th><th>Thua</th><th>HS</th><th>Điểm</th></tr></thead>
+        <tbody>{rows.map(r=><tr key={r.name} className={r.rank<=3?"ranked":""}>
+          <td><b>{r.rank}</b></td><td>{r.name}</td><td>{r.win}</td><td>{r.loss}</td><td>{r.diff>0?`+${r.diff}`:r.diff}</td><td>{r.pf}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>)}
+  </div>
 }
 
 function KnockoutResults({knockout=[]}) {
