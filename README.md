@@ -1,13 +1,13 @@
-# PickleCity Tournament Manager V4.10 Print Center
+# PickleCity Tournament Manager V4.10.1 Print Fix
 
-Bản bổ sung Trung tâm in ấn để in hoặc xuất PDF.
+Bản sửa Trung tâm in ấn.
 
-## Cách dùng
-1. Vào BTC.
-2. Kéo tới mục Trung tâm in ấn.
-3. Tích các mẫu cần in.
-4. Bấm In / Xuất PDF.
-5. Trong hộp thoại in, chọn máy in hoặc Save as PDF.
+## Đã sửa
+- Lịch thi đấu khi in được tách theo từng bảng.
+- Không bị thiếu trận khi Bảng A có 5 đội / 10 trận.
+- Danh sách đội theo bảng hiển thị rõ tên đội + tên VĐV.
+- Lịch in hiển thị rõ đội, VĐV, giờ, sân, lượt.
+- Các hàng trong bảng in tránh bị cắt giữa trang.
 
 ## Test
-/api/ping => version: 4.10-print-center
+/api/ping => version: 4.10.1-print-fix

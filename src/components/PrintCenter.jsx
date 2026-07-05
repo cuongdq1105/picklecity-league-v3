@@ -6,6 +6,15 @@ import { DEFAULT_RULES } from "../utils/matchRules";
 
 function todayText(){ const d=new Date(); return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`; }
 function printNow(){ window.print(); }
+function groupName(g){ return String(g || "").replace("Bảng ","").trim(); }
+function teamPlayers(t){ return (t?.players||[]).map(p => p.full_name + (p.phone ? ` - ${p.phone}` : "")).join(" + "); }
+function groupedSchedule(schedule=[]){
+  const map={};
+  schedule.forEach(m=>{ const g=m.group||"Khác"; if(!map[g]) map[g]=[]; map[g].push(m); });
+  Object.values(map).forEach(rows=>rows.sort((a,b)=>(a.round||0)-(b.round||0)||(a.match||0)-(b.match||0)||String(a.time||"").localeCompare(String(b.time||""))));
+  return Object.entries(map).sort(([a],[b])=>groupName(a).localeCompare(groupName(b),"vi"));
+}
+function matchScoreText(m){ return (m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", "); }
 
 export default function PrintCenter({ tournament, registrations=[], groups=[], schedule=[], knockout=[], config={} }) {
   const [pick,setPick] = useState({players:true,teams:true,schedule:true,scoreSheets:true,standings:true,bracket:true,results:false,report:true});
@@ -13,6 +22,7 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
   const standings = useMemo(()=>calcStandings(groups||[],schedule||[],rules),[groups,schedule,config]);
   const confirmed = registrations.filter(x=>x.payment_status==="BTC_CONFIRMED").length;
   const courts = [...new Set((schedule||[]).map(m=>m.court).filter(Boolean))].sort((a,b)=>a-b);
+  const scheduleGroups = groupedSchedule(schedule);
   const toggle = k => setPick(p=>({...p,[k]:!p[k]}));
   const setAll = v => setPick(Object.fromEntries(Object.keys(pick).map(k=>[k,v])));
 
@@ -20,7 +30,7 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
     <div className="printToolbar noPrint">
       <div>
         <h2><Printer/> Trung tâm in ấn</h2>
-        <p>Chọn nội dung cần in, sau đó bấm <b>In / Xuất PDF</b>. Trong hộp thoại in, chọn máy in hoặc “Save as PDF”.</p>
+        <p>Chọn nội dung cần in, sau đó bấm <b>In / Xuất PDF</b>. Lịch thi đấu được in theo từng bảng để không bị thiếu trận.</p>
       </div>
       <div className="printActions">
         <button className="mini" onClick={()=>setAll(true)}>Chọn tất cả</button>
@@ -32,7 +42,7 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
     <div className="printOptions noPrint">
       <PrintCheck icon={<Users/>} label="Danh sách VĐV" checked={pick.players} onClick={()=>toggle("players")}/>
       <PrintCheck icon={<Table2/>} label="Đội theo bảng" checked={pick.teams} onClick={()=>toggle("teams")}/>
-      <PrintCheck icon={<CalendarDays/>} label="Lịch thi đấu" checked={pick.schedule} onClick={()=>toggle("schedule")}/>
+      <PrintCheck icon={<CalendarDays/>} label="Lịch thi đấu theo bảng" checked={pick.schedule} onClick={()=>toggle("schedule")}/>
       <PrintCheck icon={<ClipboardList/>} label="Phiếu ghi điểm từng sân" checked={pick.scoreSheets} onClick={()=>toggle("scoreSheets")}/>
       <PrintCheck icon={<Trophy/>} label="BXH vòng bảng" checked={pick.standings} onClick={()=>toggle("standings")}/>
       <PrintCheck icon={<GitBranch/>} label="Nhánh đấu" checked={pick.bracket} onClick={()=>toggle("bracket")}/>
@@ -61,19 +71,25 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
       </PrintPage>}
 
       {pick.teams && <PrintPage title="Danh sách đội theo bảng" tournament={tournament}>
-        <div className="printGroupGrid">{(groups||[]).map(g=><div className="printGroupBox" key={g.name}><h3>{g.name}</h3>{(g.teams||[]).map((t,i)=><div className="printTeam" key={t.name||i}><b>{t.name}</b><p>{(t.players||[]).map(p=>p.full_name+(p.phone?` - ${p.phone}`:"")).join(" + ")}</p></div>)}</div>)}</div>
+        <div className="printGroupGrid">{(groups||[]).map(g=><div className="printGroupBox" key={g.name}><h3>{g.name}</h3>{(g.teams||[]).map((t,i)=><div className="printTeam" key={t.name||i}><b>{t.name}</b><p>{teamPlayers(t)}</p></div>)}</div>)}</div>
       </PrintPage>}
 
-      {pick.schedule && <PrintPage title="Lịch thi đấu vòng bảng" tournament={tournament}>
-        <table className="printTable"><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Bảng</th><th>Trận</th><th>Kết quả</th></tr></thead>
-          <tbody>{(schedule||[]).map((m,i)=><tr key={m.id||i}><td>{i+1}</td><td><b>{m.time}</b></td><td>Sân {m.court}</td><td>{m.group}</td><td>{m.home?.name} vs {m.away?.name}</td><td></td></tr>)}</tbody>
+      {pick.schedule && scheduleGroups.map(([group,rows])=><PrintPage key={group} title={`Lịch thi đấu ${group}`} tournament={tournament}>
+        <div className="printScheduleSummary"><b>{group}</b><span>{rows.length} trận</span></div>
+        <table className="printTable"><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Lượt</th><th>Đội 1</th><th>Đội 2</th><th>Kết quả</th></tr></thead>
+          <tbody>{rows.map((m,i)=><tr key={m.id||i}>
+            <td>{i+1}</td><td><b>{m.time}</b></td><td>Sân {m.court}</td><td>{m.round || ""}</td>
+            <td>{m.home?.name}<br/><small>{teamPlayers(m.home)}</small></td>
+            <td>{m.away?.name}<br/><small>{teamPlayers(m.away)}</small></td>
+            <td>{matchScoreText(m)}</td>
+          </tr>)}</tbody>
         </table>
-      </PrintPage>}
+      </PrintPage>)}
 
       {pick.scoreSheets && courts.map(court=><PrintPage key={court} title={`Phiếu ghi điểm - Sân ${court}`} tournament={tournament}>
         <div className="scoreSheetList">{(schedule||[]).filter(m=>Number(m.court)===Number(court)).map((m,i)=><div className="scoreSheet" key={m.id||i}>
           <div><b>{m.time}</b><span>{m.group}</span></div><h3>{m.home?.name} vs {m.away?.name}</h3>
-          <div className="scoreLine"><span>{m.home?.name}</span><em></em></div><div className="scoreLine"><span>{m.away?.name}</span><em></em></div>
+          <p className="scorePlayers">{teamPlayers(m.home)}<br/>vs<br/>{teamPlayers(m.away)}</p><div className="scoreLine"><span>{m.home?.name}</span><em></em></div><div className="scoreLine"><span>{m.away?.name}</span><em></em></div>
           <div className="signLine"><span>Trọng tài:</span><span>BTC:</span></div>
         </div>)}</div>
       </PrintPage>)}
