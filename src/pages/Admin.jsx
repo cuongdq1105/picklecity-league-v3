@@ -125,21 +125,69 @@ export default function Admin(props) {
 }
 
 function OverviewPanel({tournament,admin,draw,schedule,knockout,setActive}) {
-  const confirmed = admin?.registrations?.filter(x=>x.payment_status==="BTC_CONFIRMED").length || 0;
-  const total = admin?.registrations?.length || 0;
+  const regs = admin?.registrations || [];
+  const confirmed = regs.filter(x=>x.payment_status==="BTC_CONFIRMED").length;
+  const total = regs.length;
+  const pending = Math.max(0,total-confirmed);
   const done = (schedule||[]).filter(x=>x.status==="DONE").length;
-  return <section className="btcOverviewV41013">
-    <h2>Tổng quan giải đấu</h2>
-    <div className="overviewCardsV41013">
-      <button onClick={()=>setActive("players")}><b>{total}</b><span>VĐV đăng ký</span></button>
-      <button onClick={()=>setActive("players")}><b>{confirmed}</b><span>Đã xác nhận</span></button>
-      <button onClick={()=>setActive("draw")}><b>{draw?.groups?.length || 0}</b><span>Bảng đấu</span></button>
-      <button onClick={()=>setActive("score")}><b>{done}/{schedule?.length || 0}</b><span>Trận đã xong</span></button>
-      <button onClick={()=>setActive("bracket")}><b>{knockout?.length || 0}</b><span>Trận tứ kết</span></button>
+  const totalMatches = schedule?.length || 0;
+  const progress = totalMatches ? Math.round(done*100/totalMatches) : 0;
+  const upcoming = (schedule||[]).filter(x=>x.status!=="DONE").slice(0,6);
+  const finished = (schedule||[]).filter(x=>x.status==="DONE").slice(-5).reverse();
+  return <section className="overviewProV41014">
+    <div className="overviewHeroV41014">
+      <div>
+        <p className="eyebrowV41014">PickleCity Tournament Manager</p>
+        <h2>{tournament?.name || "Tổng quan giải đấu"}</h2>
+        <p className="muted">Bảng điều hành nhanh cho BTC: đăng ký, thanh toán, lịch thi đấu, kết quả và nhánh đấu.</p>
+      </div>
+      <div className="heroActionsV41014">
+        <button onClick={()=>setActive("score")}>Nhập điểm</button>
+        <button onClick={()=>setActive("bracket")}>Xem nhánh</button>
+        <button onClick={()=>setActive("print")}>In ấn</button>
+      </div>
     </div>
-    <div className="overviewGuideV41013">
-      <h3>Quy trình điều hành nhanh</h3>
-      <p>1. Kiểm tra VĐV/Thanh toán → 2. Bốc thăm/Bảng → 3. Nhập điểm → 4. Xem BXH → 5. Sinh nhánh → 6. In ấn.</p>
+    <div className="metricGridV41014">
+      <MetricCard title="Tổng VĐV" value={total} sub={`${confirmed} đã xác nhận`} onClick={()=>setActive("players")}/>
+      <MetricCard title="Chưa thanh toán" value={pending} sub="Cần BTC kiểm tra" warn onClick={()=>setActive("players")}/>
+      <MetricCard title="Bảng đấu" value={draw?.groups?.length || 0} sub="Đã chia bảng" onClick={()=>setActive("draw")}/>
+      <MetricCard title="Trận đã xong" value={`${done}/${totalMatches}`} sub={`${progress}% tiến độ`} onClick={()=>setActive("score")}/>
+      <MetricCard title="Tứ kết" value={knockout?.length || 0} sub="Nhánh đấu" onClick={()=>setActive("bracket")}/>
+    </div>
+    <div className="overviewMainGridV41014">
+      <div className="overviewPanelV41014">
+        <div className="panelHeadV41014"><h3>Tiến độ giải đấu</h3><span>{progress}%</span></div>
+        <div className="progressRingWrapV41014">
+          <div className="progressRingV41014" style={{"--p": `${progress}%`}}><b>{progress}%</b></div>
+          <div className="progressStepsV41014">
+            <Step done={total>0} text="Đăng ký"/>
+            <Step done={Number(tournament?.list_locked)===1} text="Khóa danh sách"/>
+            <Step done={!!draw?.groups?.length} text="Bốc thăm / chia bảng"/>
+            <Step done={totalMatches>0} text="Xếp lịch"/>
+            <Step done={done>0} text="Thi đấu vòng bảng"/>
+            <Step done={(knockout||[]).length>0} text="Nhánh đấu"/>
+          </div>
+        </div>
+      </div>
+      <div className="overviewPanelV41014">
+        <div className="panelHeadV41014"><h3>Trận sắp diễn ra</h3><button onClick={()=>setActive("score")}>Xem tất cả</button></div>
+        <div className="matchListV41014">
+          {upcoming.length ? upcoming.map((m,i)=><MiniMatch key={m.id||i} match={m}/>) : <p className="muted">Chưa có trận sắp diễn ra.</p>}
+        </div>
+      </div>
+      <div className="overviewPanelV41014 widePanelV41014">
+        <div className="panelHeadV41014"><h3>Kết quả mới nhất</h3><button onClick={()=>setActive("standings")}>Xem BXH</button></div>
+        <div className="resultStripV41014">
+          {finished.length ? finished.map((m,i)=><ResultMini key={m.id||i} match={m}/>) : <p className="muted">Chưa có kết quả.</p>}
+        </div>
+      </div>
+    </div>
+    <div className="quickActionsV41014">
+      <button onClick={()=>setActive("settings")}>Cấu hình giải</button><button onClick={()=>setActive("players")}>Thanh toán</button><button onClick={()=>setActive("draw")}>Bốc thăm</button><button onClick={()=>setActive("score")}>Nhập điểm</button><button onClick={()=>setActive("standings")}>BXH</button><button onClick={()=>setActive("qr")}>QR</button>
     </div>
   </section>
 }
+function MetricCard({title,value,sub,warn,onClick}) {return <button className={warn?"metricCardV41014 warn":"metricCardV41014"} onClick={onClick}><b>{value}</b><span>{title}</span><em>{sub}</em></button>}
+function Step({done,text}) {return <div className={done?"stepV41014 done":"stepV41014"}><span>{done?"✓":"○"}</span>{text}</div>}
+function MiniMatch({match}) {return <div className="miniMatchV41014"><div><b>{match.time||"--:--"}</b><span>Sân {match.court||"-"}</span></div><p>{match.group||match.round}</p><strong>{match.home?.name||match.a?.slot} <em>vs</em> {match.away?.name||match.b?.slot}</strong></div>}
+function ResultMini({match}) {const score=(match.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ");return <div className="resultMiniV41014"><span>{match.group} · {match.time}</span><b>{match.home?.name} vs {match.away?.name}</b><strong>{score||"Đã xong"}</strong></div>}

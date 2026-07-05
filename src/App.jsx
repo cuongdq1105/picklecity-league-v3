@@ -36,7 +36,7 @@ export default function App() {
   const [tournament,setTournament] = useState(null);
   const [tForm,setTForm] = useState({});
   const [msg,setMsg] = useState("");
-  const [form,setForm] = useState({full_name:"",phone:"",gender:"male",marked_paid:true});
+  const [form,setForm] = useState({full_name:"",phone:"",gender:"male",marked_paid:false});
   const [publicList,setPublicList] = useState([]);
   const [publicDraw,setPublicDraw] = useState(null);
   const [adminAuthed,setAdminAuthed] = useState(localStorage.getItem("ptm_admin")==="1");
@@ -132,11 +132,15 @@ export default function App() {
 
   async function submit(e){
     e.preventDefault();
+    if(!form.marked_paid){
+      setMsg("Vui lòng hoàn thiện chuyển khoản và tích 'Tôi đã chuyển khoản' trước khi gửi đăng ký.");
+      return;
+    }
     setMsg("Đang gửi đăng ký...");
     try {
       await post("/register", form);
       setMsg("Đăng ký thành công. BTC sẽ kiểm tra tài khoản và xác nhận thanh toán.");
-      setForm({full_name:"",phone:"",gender:"male",marked_paid:true});
+      setForm({full_name:"",phone:"",gender:"male",marked_paid:false});
       loadPublic(); loadTournament(); if(adminAuthed) loadAdmin();
     } catch(err){ setMsg(err.message); }
   }
@@ -214,7 +218,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.10.13 BTC Tabs</div>
+      <div className="version">V4.10.15 Paid Register Only</div>
     </header>
 
     <nav className="tabs">

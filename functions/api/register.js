@@ -12,6 +12,7 @@ export async function onRequestPost({request,env}) {
     const phone=String(b.phone||'').trim();
     const gender=b.gender||'male';
     if(!fullName||!phone) return json({ok:false,error:'Thiếu họ tên hoặc số điện thoại'},{status:400});
+    if(!b.marked_paid) return json({ok:false,error:'Vui lòng hoàn thiện chuyển khoản và xác nhận đã chuyển khoản trước khi đăng ký.'},{status:400});
 
     const col=await memberColumn(env);
     let m=await env.DB.prepare('SELECT * FROM members WHERE phone=?').bind(phone).first();

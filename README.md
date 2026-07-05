@@ -1,17 +1,15 @@
-# PickleCity Tournament Manager V4.10.13 BTC Tabs
+# PickleCity Tournament Manager V4.10.15 Paid Register Only
 
-Bản này sửa thật phần Dashboard BTC:
-- Có menu điều hành riêng bên trái.
-- Không còn nhồi toàn bộ chức năng trong một trang dài.
-- Các chức năng được tách tab:
-  - Tổng quan
-  - Cấu hình giải
-  - VĐV / Thanh toán
-  - Bốc thăm / Bảng
-  - Nhập điểm
-  - BXH
-  - Nhánh đấu
-  - In ấn
-  - QR thanh toán
+## Đã sửa
+- VĐV chỉ hoàn tất đăng ký sau khi đã tích **Tôi đã chuyển khoản**.
+- Nút **Hoàn thành đăng ký** bị khóa nếu chưa xác nhận đã chuyển khoản.
+- API `/register` cũng kiểm tra `marked_paid`, tránh gửi đăng ký bỏ qua giao diện.
 
-Test: /api/ping => version: 4.10.13-btc-tabs
+## Quy trình mới
+1. VĐV nhập thông tin.
+2. Quét QR/chuyển khoản.
+3. Tích **Tôi đã chuyển khoản**.
+4. Bấm **Hoàn thành đăng ký**.
+
+## Test
+/api/ping => version: 4.10.15-paid-register-only

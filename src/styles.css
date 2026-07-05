@@ -511,3 +511,39 @@
   .btcSideNavV41013 button{padding:10px;font-size:13px}
   .overviewCardsV41013{grid-template-columns:1fr}
 }
+
+/* V4.10.14 Overview UI */
+.overviewProV41014{display:grid;gap:16px}.overviewHeroV41014{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;background:linear-gradient(135deg,#0b3b2e,#0f5c3f);border-radius:22px;padding:24px;color:#fff;box-shadow:0 18px 40px rgba(0,0,0,.18)}.eyebrowV41014{margin:0 0 6px;color:#d9f99d;font-weight:950;letter-spacing:.04em;text-transform:uppercase}.overviewHeroV41014 h2{font-size:34px;margin:0 0 8px}.overviewHeroV41014 .muted{color:#eaffef}.heroActionsV41014{display:flex;gap:10px;flex-wrap:wrap}.heroActionsV41014 button{border:1px solid rgba(255,255,255,.25);background:#b8d72f;color:#10201c;border-radius:14px;padding:12px 16px;font-weight:950;cursor:pointer}
+.metricGridV41014{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.metricCardV41014{border:1px solid #dfe8cf;background:#fff;border-radius:18px;padding:16px;text-align:left;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.04)}.metricCardV41014 b{display:block;font-size:30px;color:#006b3b}.metricCardV41014 span{display:block;font-weight:950;margin-top:4px}.metricCardV41014 em{display:block;font-style:normal;color:#667;margin-top:3px;font-weight:800}.metricCardV41014.warn b{color:#b45309}
+.overviewMainGridV41014{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}.overviewPanelV41014{background:#fff;border:1px solid #dfe8cf;border-radius:20px;padding:16px;box-shadow:0 8px 20px rgba(0,0,0,.04)}.widePanelV41014{grid-column:1/-1}.panelHeadV41014{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.panelHeadV41014 h3{margin:0;font-size:22px;color:#10201c}.panelHeadV41014 span,.panelHeadV41014 button{background:#e9f8ee;color:#006b3b;border:0;border-radius:999px;padding:8px 11px;font-weight:950;cursor:pointer}
+.progressRingWrapV41014{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center}.progressRingV41014{width:138px;height:138px;border-radius:50%;background:conic-gradient(#16a34a var(--p),#e5e7eb 0);display:grid;place-items:center}.progressRingV41014 b{background:#fff;width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-size:24px;color:#006b3b}.progressStepsV41014{display:grid;gap:8px}.stepV41014{display:flex;gap:8px;align-items:center;color:#667;font-weight:900}.stepV41014.done{color:#006b3b}
+.matchListV41014{display:grid;gap:8px}.miniMatchV41014{display:grid;grid-template-columns:90px 90px 1fr;gap:10px;align-items:center;border:1px solid #edf1e8;border-radius:14px;padding:10px;background:#f8fbf2}.miniMatchV41014 div b{display:block;color:#006b3b}.miniMatchV41014 div span{font-size:12px;color:#667;font-weight:800}.miniMatchV41014 p{margin:0;font-weight:900;color:#667}.miniMatchV41014 strong em{font-style:normal;color:#667;margin:0 5px}
+.resultStripV41014{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.resultMiniV41014{border:1px solid #edf1e8;border-radius:14px;padding:11px;background:#f8fbf2}.resultMiniV41014 span{display:block;color:#667;font-size:12px;font-weight:800}.resultMiniV41014 b{display:block;margin:4px 0}.resultMiniV41014 strong{color:#006b3b;font-size:18px}.quickActionsV41014{display:flex;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid #dfe8cf;border-radius:18px;padding:14px}.quickActionsV41014 button{border:0;background:#eef2f0;border-radius:999px;padding:10px 13px;font-weight:950;cursor:pointer}.quickActionsV41014 button:hover{background:#b8d72f}
+.paymentMainOnlyQR{display:block!important;text-align:center!important}.paymentMainOnlyQR .bankLogoV497,.paymentMainOnlyQR .qrBlockV497 p,.paymentMainOnlyQR .bankPanelV497{display:none!important}.paymentMainOnlyQR .qrBlockV497{border-right:0!important;padding-right:0!important}.paymentMainOnlyQR .qrFrameV497{box-shadow:none!important;border:0!important;padding:0!important;background:transparent!important}.paymentMainOnlyQR .qrFrameV497 img{width:240px!important;height:auto!important;max-height:320px!important;border-radius:16px!important;border:1px solid #e1e9d7!important}
+@media(max-width:1100px){.metricGridV41014{grid-template-columns:repeat(2,1fr)}.overviewMainGridV41014{grid-template-columns:1fr}.resultStripV41014{grid-template-columns:1fr 1fr}.progressRingWrapV41014{grid-template-columns:1fr}.miniMatchV41014{grid-template-columns:1fr}}@media(max-width:650px){.overviewHeroV41014{display:block}.heroActionsV41014{margin-top:12px}.metricGridV41014,.resultStripV41014{grid-template-columns:1fr}.overviewHeroV41014 h2{font-size:25px}}
+
+/* V4.10.15 Paid Register Only */
+.registerFormCardV497 button.primary:disabled{
+  background:#cfd8d3!important;
+  color:#64736b!important;
+  cursor:not-allowed!important;
+  box-shadow:none!important;
+}
+.paidRequiredText{
+  margin:10px 0 0;
+  background:#fff7e6;
+  border:1px solid #f1c875;
+  color:#7c4a03;
+  border-radius:12px;
+  padding:10px 12px;
+  font-weight:900;
+  line-height:1.35;
+}
+.formRequirePaid label input,.formRequirePaid label select{
+  border-color:#f1c875;
+}
+.paidConfirmV497 input:not(:checked)+span{
+  background:#fff7e6!important;
+  border:1px solid #f1c875!important;
+  color:#7c4a03!important;
+}

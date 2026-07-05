@@ -76,7 +76,7 @@ export default function Register({ tournament, form, setForm, onSubmit }) {
           <b>Lưu ý</b>
           <ul>
             <li>Sau khi chuyển khoản, vui lòng chụp màn hình giao dịch.</li>
-            <li>BTC sẽ xác nhận trong thời gian sớm nhất.</li>
+            <li>Chỉ sau khi tích “Tôi đã chuyển khoản”, hệ thống mới cho hoàn thành đăng ký.</li>
           </ul>
         </div>
       </div>
@@ -90,11 +90,12 @@ export default function Register({ tournament, form, setForm, onSubmit }) {
     <section className="card registerFormCardV497">
       <div className="card-title"><Users/> Form đăng ký</div>
       {Number(tournament?.list_locked)===1 ? <div className="lockedBox">🔒 Danh sách đã khóa. Vui lòng liên hệ BTC.</div> :
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} className={!form.marked_paid ? "formRequirePaid" : ""}>
         <label>Họ và tên<input required value={form.full_name} onChange={e=>setForm({...form,full_name:e.target.value})}/></label>
         <label>Số điện thoại<input required value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})}/></label>
         <label>Giới tính<select value={form.gender} onChange={e=>setForm({...form,gender:e.target.value})}><option value="male">Nam</option><option value="female">Nữ</option></select></label>
-        <button className="primary">Đăng ký tham gia</button>
+        <button className="primary" disabled={!form.marked_paid}>Hoàn thành đăng ký</button>
+        {!form.marked_paid && <p className="paidRequiredText">Vui lòng chuyển khoản và tích “Tôi đã chuyển khoản” để hoàn tất đăng ký.</p>}
       </form>}
     </section>
   </main>
