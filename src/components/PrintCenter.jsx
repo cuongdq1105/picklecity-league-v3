@@ -1,0 +1,108 @@
+
+import { useMemo, useState } from "react";
+import { Printer, FileText, CalendarDays, Trophy, Users, Table2, GitBranch, ClipboardList } from "lucide-react";
+import { calcStandings } from "../utils/draw";
+import { DEFAULT_RULES } from "../utils/matchRules";
+
+function todayText(){ const d=new Date(); return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`; }
+function printNow(){ window.print(); }
+
+export default function PrintCenter({ tournament, registrations=[], groups=[], schedule=[], knockout=[], config={} }) {
+  const [pick,setPick] = useState({players:true,teams:true,schedule:true,scoreSheets:true,standings:true,bracket:true,results:false,report:true});
+  const rules = {...DEFAULT_RULES,...(config.rules||{})};
+  const standings = useMemo(()=>calcStandings(groups||[],schedule||[],rules),[groups,schedule,config]);
+  const confirmed = registrations.filter(x=>x.payment_status==="BTC_CONFIRMED").length;
+  const courts = [...new Set((schedule||[]).map(m=>m.court).filter(Boolean))].sort((a,b)=>a-b);
+  const toggle = k => setPick(p=>({...p,[k]:!p[k]}));
+  const setAll = v => setPick(Object.fromEntries(Object.keys(pick).map(k=>[k,v])));
+
+  return <section className="printCenter">
+    <div className="printToolbar noPrint">
+      <div>
+        <h2><Printer/> Trung tâm in ấn</h2>
+        <p>Chọn nội dung cần in, sau đó bấm <b>In / Xuất PDF</b>. Trong hộp thoại in, chọn máy in hoặc “Save as PDF”.</p>
+      </div>
+      <div className="printActions">
+        <button className="mini" onClick={()=>setAll(true)}>Chọn tất cả</button>
+        <button className="mini" onClick={()=>setAll(false)}>Bỏ chọn</button>
+        <button className="primary" onClick={printNow}><Printer size={17}/> In / Xuất PDF</button>
+      </div>
+    </div>
+
+    <div className="printOptions noPrint">
+      <PrintCheck icon={<Users/>} label="Danh sách VĐV" checked={pick.players} onClick={()=>toggle("players")}/>
+      <PrintCheck icon={<Table2/>} label="Đội theo bảng" checked={pick.teams} onClick={()=>toggle("teams")}/>
+      <PrintCheck icon={<CalendarDays/>} label="Lịch thi đấu" checked={pick.schedule} onClick={()=>toggle("schedule")}/>
+      <PrintCheck icon={<ClipboardList/>} label="Phiếu ghi điểm từng sân" checked={pick.scoreSheets} onClick={()=>toggle("scoreSheets")}/>
+      <PrintCheck icon={<Trophy/>} label="BXH vòng bảng" checked={pick.standings} onClick={()=>toggle("standings")}/>
+      <PrintCheck icon={<GitBranch/>} label="Nhánh đấu" checked={pick.bracket} onClick={()=>toggle("bracket")}/>
+      <PrintCheck icon={<FileText/>} label="Kết quả đã nhập" checked={pick.results} onClick={()=>toggle("results")}/>
+      <PrintCheck icon={<FileText/>} label="Báo cáo tóm tắt" checked={pick.report} onClick={()=>toggle("report")}/>
+    </div>
+
+    <div className="printPreview">
+      <section className="printPage printCover">
+        <h1>PickleCity Weekly Open</h1>
+        <h2>{tournament?.name || "Giải PickleCity"}</h2>
+        <p>{tournament?.event_name || "Đôi nam"} · {tournament?.start_time || ""}</p>
+        <div className="coverStats">
+          <div><b>{registrations.length}</b><span>VĐV</span></div>
+          <div><b>{confirmed}</b><span>Đã xác nhận</span></div>
+          <div><b>{groups?.length||0}</b><span>Bảng</span></div>
+          <div><b>{schedule?.length||0}</b><span>Trận</span></div>
+        </div>
+        <p className="printNote">Ngày in: {todayText()}</p>
+      </section>
+
+      {pick.players && <PrintPage title="Danh sách VĐV" tournament={tournament}>
+        <table className="printTable"><thead><tr><th>#</th><th>Họ tên</th><th>SĐT</th><th>Giới tính</th><th>Thanh toán</th><th>Ký tên</th></tr></thead>
+          <tbody>{registrations.map((x,i)=><tr key={x.registration_id||i}><td>{i+1}</td><td>{x.full_name}</td><td>{x.phone}</td><td>{x.gender==="female"?"Nữ":"Nam"}</td><td>{x.payment_status==="BTC_CONFIRMED"?"Đã xác nhận":"Chưa xác nhận"}</td><td></td></tr>)}</tbody>
+        </table>
+      </PrintPage>}
+
+      {pick.teams && <PrintPage title="Danh sách đội theo bảng" tournament={tournament}>
+        <div className="printGroupGrid">{(groups||[]).map(g=><div className="printGroupBox" key={g.name}><h3>{g.name}</h3>{(g.teams||[]).map((t,i)=><div className="printTeam" key={t.name||i}><b>{t.name}</b><p>{(t.players||[]).map(p=>p.full_name+(p.phone?` - ${p.phone}`:"")).join(" + ")}</p></div>)}</div>)}</div>
+      </PrintPage>}
+
+      {pick.schedule && <PrintPage title="Lịch thi đấu vòng bảng" tournament={tournament}>
+        <table className="printTable"><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Bảng</th><th>Trận</th><th>Kết quả</th></tr></thead>
+          <tbody>{(schedule||[]).map((m,i)=><tr key={m.id||i}><td>{i+1}</td><td><b>{m.time}</b></td><td>Sân {m.court}</td><td>{m.group}</td><td>{m.home?.name} vs {m.away?.name}</td><td></td></tr>)}</tbody>
+        </table>
+      </PrintPage>}
+
+      {pick.scoreSheets && courts.map(court=><PrintPage key={court} title={`Phiếu ghi điểm - Sân ${court}`} tournament={tournament}>
+        <div className="scoreSheetList">{(schedule||[]).filter(m=>Number(m.court)===Number(court)).map((m,i)=><div className="scoreSheet" key={m.id||i}>
+          <div><b>{m.time}</b><span>{m.group}</span></div><h3>{m.home?.name} vs {m.away?.name}</h3>
+          <div className="scoreLine"><span>{m.home?.name}</span><em></em></div><div className="scoreLine"><span>{m.away?.name}</span><em></em></div>
+          <div className="signLine"><span>Trọng tài:</span><span>BTC:</span></div>
+        </div>)}</div>
+      </PrintPage>)}
+
+      {pick.standings && <PrintPage title="Bảng xếp hạng vòng bảng" tournament={tournament}>
+        {Object.entries(standings||{}).map(([group,rows])=><div className="printStanding" key={group}><h3>{group}</h3>
+          <table className="printTable"><thead><tr><th>Hạng</th><th>Đội</th><th>VĐV</th><th>Trận</th><th>Thắng</th><th>HS điểm</th><th>Điểm ghi</th></tr></thead>
+            <tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{r.name}</td><td>{r.players}</td><td>{r.played}</td><td>{r.win}</td><td>{r.diff}</td><td>{r.pf}</td></tr>)}</tbody>
+          </table></div>)}
+      </PrintPage>}
+
+      {pick.bracket && <PrintPage title="Nhánh loại trực tiếp" tournament={tournament}>
+        <div className="printBracketRule"><b>Công thức tứ kết:</b> QF1 A1 vs Best3-2 · QF2 B1 vs Best3-1 · QF3 C1 vs A2 · QF4 B2 vs C2</div>
+        <div className="printBracketGrid">{(knockout && knockout.length ? knockout : [{name:"Tứ kết 1",a:{slot:"A1"},b:{slot:"Best3-2"}},{name:"Tứ kết 2",a:{slot:"B1"},b:{slot:"Best3-1"}},{name:"Tứ kết 3",a:{slot:"C1"},b:{slot:"A2"}},{name:"Tứ kết 4",a:{slot:"B2"},b:{slot:"C2"}}]).map(k=><div className="printBracketCard" key={k.name}><h3>{k.name}</h3><div>{k.a?.slot||"—"}</div><b>vs</b><div>{k.b?.slot||"—"}</div><p>Kết quả: ____________________</p></div>)}</div>
+      </PrintPage>}
+
+      {pick.results && <PrintPage title="Kết quả đã nhập" tournament={tournament}>
+        <table className="printTable"><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Bảng</th><th>Trận</th><th>Tỷ số</th></tr></thead>
+          <tbody>{(schedule||[]).filter(m=>(m.games||[]).some(g=>g.saved)).map((m,i)=><tr key={m.id||i}><td>{i+1}</td><td>{m.time}</td><td>Sân {m.court}</td><td>{m.group}</td><td>{m.home?.name} vs {m.away?.name}</td><td>{(m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ")}</td></tr>)}</tbody>
+        </table>
+      </PrintPage>}
+
+      {pick.report && <PrintPage title="Báo cáo tóm tắt giải đấu" tournament={tournament}>
+        <div className="reportGrid"><div><b>{registrations.length}</b><span>Tổng VĐV</span></div><div><b>{confirmed}</b><span>Đã xác nhận</span></div><div><b>{groups.length}</b><span>Số bảng</span></div><div><b>{schedule.length}</b><span>Trận vòng bảng</span></div><div><b>{courts.length}</b><span>Số sân</span></div><div><b>{todayText()}</b><span>Ngày in</span></div></div>
+        <p className="printNote">Tài liệu được xuất từ PickleCity Tournament Manager.</p>
+      </PrintPage>}
+    </div>
+  </section>
+}
+
+function PrintCheck({icon,label,checked,onClick}){ return <button className={checked?"checked":""} onClick={onClick}>{icon}<span>{label}</span><b>{checked?"✓":""}</b></button> }
+function PrintPage({title,tournament,children}){ return <section className="printPage"><div className="printHeader"><div><b>PickleCity</b><span>Tournament Manager</span></div><div>{tournament?.name || "PickleCity Weekly Open"}</div></div><h2>{title}</h2>{children}<div className="printFooter">PickleCity · {todayText()}</div></section> }

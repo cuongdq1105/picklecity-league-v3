@@ -4,6 +4,7 @@ import TournamentSettings from "../components/TournamentSettings";
 import RegistrationManager from "../components/RegistrationManager";
 import DrawManager from "../components/DrawManager";
 import TournamentOps from "../components/TournamentOps";
+import PrintCenter from "../components/PrintCenter";
 
 export default function Admin(props) {
   const {
@@ -68,6 +69,7 @@ export default function Admin(props) {
           setKnockout={setKnockout}
           setMsg={setMsg}
         />
+        <PrintCenter tournament={tournament} registrations={admin.registrations} groups={draw.groups} schedule={schedule} knockout={knockout} config={matchConfig} />
       </div>
     </div>
   </main>
