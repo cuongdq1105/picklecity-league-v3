@@ -15,6 +15,8 @@ function groupedSchedule(schedule=[]){
   return Object.entries(map).sort(([a],[b])=>groupName(a).localeCompare(groupName(b),"vi"));
 }
 function matchScoreText(m){ return (m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", "); }
+function bracketPrintName(x){ return x?.team?.name || x?.row?.team?.name || x?.slot || "—"; }
+function bracketPrintPlayers(x){ return (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
 function teamKey(t){ return t?.name || (t?.players||[]).map(p=>p.full_name).join(" + "); }
 function matchKey(group,a,b){
   const names=[teamKey(a),teamKey(b)].sort();
@@ -139,7 +141,7 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
 
       {pick.bracket && <PrintPage title="Nhánh loại trực tiếp" tournament={tournament}>
         <div className="printBracketRule"><b>Công thức:</b> QF1 A1 vs Best3-2 · QF2 B1 vs Best3-1 · QF3 C1 vs A2 · QF4 B2 vs C2<br/><b>Bán kết:</b> BK1 Winner QF1 vs Winner QF4 · BK2 Winner QF2 vs Winner QF3<br/><b>Chung kết:</b> Winner BK1 vs Winner BK2 · <b>Tranh 3:</b> Loser BK1 vs Loser BK2</div>
-        <div className="printBracketGrid">{(knockout && knockout.length ? knockout : [{name:"Tứ kết 1",a:{slot:"A1"},b:{slot:"Best3-2"}},{name:"Tứ kết 2",a:{slot:"B1"},b:{slot:"Best3-1"}},{name:"Tứ kết 3",a:{slot:"C1"},b:{slot:"A2"}},{name:"Tứ kết 4",a:{slot:"B2"},b:{slot:"C2"}}]).map(k=><div className="printBracketCard" key={k.name}><h3>{k.name}</h3><div>{k.a?.slot||"—"}</div><b>vs</b><div>{k.b?.slot||"—"}</div><p>Kết quả: ____________________</p></div>)}</div>
+        <div className="printBracketGrid">{(knockout && knockout.length ? knockout : [{name:"Tứ kết 1",a:{slot:"A1"},b:{slot:"Best3-2"}},{name:"Tứ kết 2",a:{slot:"B1"},b:{slot:"Best3-1"}},{name:"Tứ kết 3",a:{slot:"C1"},b:{slot:"A2"}},{name:"Tứ kết 4",a:{slot:"B2"},b:{slot:"C2"}}]).map(k=><div className="printBracketCard" key={k.name}><h3>{k.name}</h3><div>{k.a?.slot||"—"}<br/><strong>{bracketPrintName(k.a)}</strong><br/><small>{bracketPrintPlayers(k.a)}</small></div><b>vs</b><div>{k.b?.slot||"—"}<br/><strong>{bracketPrintName(k.b)}</strong><br/><small>{bracketPrintPlayers(k.b)}</small></div><p>Kết quả: ____________________</p></div>)}</div>
       </PrintPage>}
 
       {pick.results && <PrintPage title="Kết quả đã nhập" tournament={tournament}>

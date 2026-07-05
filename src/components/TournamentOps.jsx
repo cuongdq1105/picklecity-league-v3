@@ -83,6 +83,31 @@ function ControlScreen({schedule,rules,selectedMatch,setSelectedId,nextMatches,c
 function ScheduleScreen({schedule,genSchedule,copySchedule,config,setConfig}) {return <section className="panelClean"><div className="panelTitle"><h3>Giờ thi đấu</h3><p>Lịch riêng để BTC và khán giả theo dõi. Hệ thống xếp xen kẽ các bảng trên cùng cung giờ.</p></div><div className="scheduleToolsClean"><label>Số sân<input type="number" value={config.courtCount||3} onChange={e=>setConfig({...config,courtCount:e.target.value})}/></label><label>Giờ bắt đầu<input value={config.startTime||"08:00"} onChange={e=>setConfig({...config,startTime:e.target.value})}/></label><label>Phút/trận<input type="number" value={config.minutesPerMatch||20} onChange={e=>setConfig({...config,minutesPerMatch:e.target.value})}/></label><button className="primary" onClick={genSchedule}>Xếp lịch</button><button className="mini" onClick={copySchedule}>Copy lịch</button></div><div className="tablewrap"><table><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Bảng</th><th>Trận</th><th>Trạng thái</th></tr></thead><tbody>{(schedule||[]).map((m,i)=><tr key={m.id}><td>{i+1}</td><td><b>{m.time}</b></td><td>Sân {m.court}</td><td>{m.group}</td><td>{m.home.name} vs {m.away.name}</td><td>{m.status==="DONE"?"Hoàn thành":m.status==="LIVE"?"LIVE":"Chờ"}</td></tr>)}</tbody></table></div></section>}
 function ResultsScreen({schedule,selectedMatch,setSelectedId,rules,updateDraft,saveGame,addGame,finishMatch}) {return <section className="resultsGridClean"><div className="panelClean"><div className="panelTitle"><h3>Danh sách trận</h3><p>Chọn trận cần nhập điểm.</p></div><div className="matchListClean">{(schedule||[]).map(m=>{const ss=scoreSummary(m,rules);return <button className={`matchRowClean ${selectedMatch?.id===m.id?"active":""}`} key={m.id} onClick={()=>setSelectedId(m.id)}><b>{m.time} · Sân {m.court}</b><span>{m.group}: {m.home.name} vs {m.away.name}</span><em>{m.status==="DONE"?"✓ "+ss.scoreText:ss.scoreText||"Chưa nhập"}</em></button>})}</div></div><div className="panelClean"><div className="panelTitle"><h3>Cập nhật tỷ số từng game</h3><p>Mỗi game có nút Lưu riêng. Game đã lưu sẽ khóa.</p></div>{selectedMatch ? <MatchScoreCard match={selectedMatch} rules={rules} onDraft={updateDraft} onSaveGame={saveGame} onAddGame={addGame} onFinish={finishMatch}/> : <p className="muted">Chưa có trận.</p>}</div></section>}
 function StandingsScreen({standings,schedule}) {return <section className="panelClean"><div className="panelTitle"><h3>Bảng xếp hạng</h3><p>Tự tính theo trận thắng, hiệu số game, hiệu số điểm.</p></div>{schedule.length ? Object.entries(standings).map(([group,rows])=><div className="standingGroup" key={group}><h4>{group}</h4><div className="tablewrap"><table><thead><tr><th>Hạng</th><th>Đội</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>Điểm ghi</th><th>HS điểm</th></tr></thead><tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{r.name}</td><td>{r.played}</td><td>{r.win}</td><td>{r.loss}</td><td>{r.pf}</td><td>{r.diff}</td></tr>)}</tbody></table></div></div>) : <p className="muted">Chưa có lịch thi đấu.</p>}</section>}
+
+function bracketTeamName(slotObj){
+  return slotObj?.team?.name || slotObj?.row?.team?.name || slotObj?.slot || "—";
+}
+function bracketPlayers(slotObj){
+  const players = slotObj?.team?.players || slotObj?.row?.team?.players || [];
+  return players.map(p=>p.full_name).join(" + ");
+}
+function bracketSlotLabel(slotObj){
+  return slotObj?.slot || "—";
+}
+function makeAdvancer(label, sourceMatch){
+  if(sourceMatch?.winner){
+    return {slot: label, team:{name:sourceMatch.winner, players:[]}, winnerName:sourceMatch.winner};
+  }
+  return {slot: label, team:null};
+}
+function makeLoser(label, sourceMatch){
+  if(!sourceMatch?.winner) return {slot: label, team:null};
+  const aName = bracketTeamName(sourceMatch.a);
+  const bName = bracketTeamName(sourceMatch.b);
+  const loser = sourceMatch.winner === aName ? sourceMatch.b : sourceMatch.a;
+  return loser ? {...loser, slot: label} : {slot: label, team:null};
+}
+
 function BracketScreen({knockout,semis,finals,thirdPlace,genKO,rules,updateKoDraft,saveKoGame,addKoGame,finishKo}) {
   const qfs = knockout || [];
   const demoQf = [
@@ -146,10 +171,10 @@ function RoundCardV4104({match,label,champion=false}) {
   return <div className={`roundCardV4104 ${champion?"champion":""}`}>
     <div className="roundBadgeV4104">{label}</div>
     <h4>{match.name}</h4>
-    <div className="roundTeamsV4104">
-      <span>{match.a?.slot || "Winner / Loser chờ"}</span>
+    <div className="roundTeamsV4104 roundTeamsNamesV4105">
+      <span><em>{bracketSlotLabel(match.a)}</em><strong>{bracketTeamName(match.a)}</strong><small>{bracketPlayers(match.a)}</small></span>
       <b>vs</b>
-      <span>{match.b?.slot || "Winner / Loser chờ"}</span>
+      <span><em>{bracketSlotLabel(match.b)}</em><strong>{bracketTeamName(match.b)}</strong><small>{bracketPlayers(match.b)}</small></span>
     </div>
     {champion && <p>🏆 Đội thắng là vô địch</p>}
   </div>
@@ -162,17 +187,17 @@ function QuarterCardV499({match,index}) {
     "Nhất Bảng C vs Nhì Bảng A",
     "Nhì Bảng B vs Nhì Bảng C"
   ];
-  const left = match.a?.slot || "—";
-  const right = match.b?.slot || "—";
+  const left = bracketSlotLabel(match.a);
+  const right = bracketSlotLabel(match.b);
   const winner = match.winner || "";
   return <div className="qfCardV499">
     <div className="qfBadgeV499">QF{index+1}</div>
     <div className="qfBodyV499">
       <h4>{match.name || `Tứ kết ${index+1}`}</h4>
-      <div className="qfTeamsV499">
-        <span>{left}</span>
+      <div className="qfTeamsV499 qfTeamsNamesV4105">
+        <span><em>{left}</em><strong>{bracketTeamName(match.a)}</strong><small>{bracketPlayers(match.a)}</small></span>
         <b>vs</b>
-        <span className={String(right).includes("Best3") ? "best3" : ""}>{right}</span>
+        <span className={String(right).includes("Best3") ? "best3" : ""}><em>{right}</em><strong>{bracketTeamName(match.b)}</strong><small>{bracketPlayers(match.b)}</small></span>
       </div>
       <p>{winner ? `Thắng: ${winner}` : (subtitles[index] || "")}</p>
     </div>
@@ -181,24 +206,18 @@ function QuarterCardV499({match,index}) {
 
 function buildSemis(qfs=[]){
   const byId=Object.fromEntries((qfs||[]).map(m=>[m.id,m]));
-  const w = id => byId[id]?.winner ? {slot:byId[id].winner,team:{name:byId[id].winner,players:[]}} : {slot:`Winner ${id}`,team:null};
+  const adv = (id,label) => byId[id]?.winner ? {slot:label, team:{name:byId[id].winner, players:[]}, winnerName:byId[id].winner} : {slot:label, team:null};
   return [
-    {id:"SF-1",name:"Bán kết 1",type:"KO",round:"SF",status:"SCHEDULED",a:w("QF-1"),b:w("QF-4"),games:[{home:"",away:"",saved:false}],winner:""},
-    {id:"SF-2",name:"Bán kết 2",type:"KO",round:"SF",status:"SCHEDULED",a:w("QF-2"),b:w("QF-3"),games:[{home:"",away:"",saved:false}],winner:""}
+    {id:"SF-1",name:"Bán kết 1",type:"KO",round:"SF",status:"SCHEDULED",a:adv("QF-1","Winner QF1"),b:adv("QF-4","Winner QF4"),games:[{home:"",away:"",saved:false}],winner:""},
+    {id:"SF-2",name:"Bán kết 2",type:"KO",round:"SF",status:"SCHEDULED",a:adv("QF-2","Winner QF2"),b:adv("QF-3","Winner QF3"),games:[{home:"",away:"",saved:false}],winner:""}
   ];
 }
 function buildFinals(semis=[]){
-  const w = (m,i) => m?.winner ? {slot:m.winner,team:{name:m.winner,players:[]}} : {slot:`Winner SF-${i}`,team:null};
-  return [{id:"FINAL-1",name:"Chung kết",type:"KO",round:"FINAL",status:"SCHEDULED",a:w(semis[0],1),b:w(semis[1],2),games:[{home:"",away:"",saved:false}],winner:""}];
+  const adv = (m,label) => m?.winner ? {slot:label, team:{name:m.winner, players:[]}, winnerName:m.winner} : {slot:label, team:null};
+  return [{id:"FINAL-1",name:"Chung kết",type:"KO",round:"FINAL",status:"SCHEDULED",a:adv(semis[0],"Winner BK1"),b:adv(semis[1],"Winner BK2"),games:[{home:"",away:"",saved:false}],winner:""}];
 }
 function buildThirdPlace(semis=[]){
-  const loser = (m,i) => {
-    if(!m?.winner) return {slot:`Loser SF-${i}`,team:null};
-    const a=m.a?.slot, b=m.b?.slot;
-    return {slot:m.winner===a ? b : a, team:null};
-  };
-  return [{id:"THIRD-1",name:"Tranh giải 3",type:"KO",round:"THIRD",status:"SCHEDULED",a:loser(semis[0],1),b:loser(semis[1],2),games:[{home:"",away:"",saved:false}],winner:""}];
+  return [{id:"THIRD-1",name:"Tranh giải 3",type:"KO",round:"THIRD",status:"SCHEDULED",a:makeLoser("Loser BK1",semis[0]),b:makeLoser("Loser BK2",semis[1]),games:[{home:"",away:"",saved:false}],winner:""}];
 }
 
-function MatchScoreCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish}) {const ss=scoreSummary(match,rules); const rule=targetForMatch(match,rules); return <div className={`scoreCard scoreCardV47 ${match.status==="DONE"?"done":""}`}><div className="scoreHead"><b>{match.time} · Sân {match.court}</b><span>{match.group} · {rule.label}</span><em>{match.status==="DONE"?"✓ Hoàn thành":match.status==="LIVE"?"LIVE":"Chờ điểm"}</em></div><div className="scoreTeams"><b>{match.home.name}</b><span>vs</span><b>{match.away.name}</b></div>{(match.games||[{home:"",away:"",saved:false}]).map((g,i)=><div className={`gameLine ${g.saved?"saved":""}`} key={i}><span>Game {i+1}</span><input disabled={g.saved} value={g.home} onChange={e=>onDraft(match.id,i,"home",e.target.value)} placeholder="0"/><b>-</b><input disabled={g.saved} value={g.away} onChange={e=>onDraft(match.id,i,"away",e.target.value)} placeholder="0"/><button className="saveGameBtn" disabled={g.saved} onClick={()=>onSaveGame(match.id,i)}><Save size={14}/> {g.saved?"Đã lưu":"Lưu Game "+(i+1)}</button>{g.saved&&<small>{g.savedAt}</small>}</div>)}<div className="scoreActions"><button className="mini" onClick={()=>onAddGame(match.id)}>+ Game</button><button className="mini primary" onClick={()=>onFinish(match.id)}><CheckCircle2 size={14}/> Kết thúc trận</button>{ss.winner&&<strong>Thắng: {ss.winner}</strong>}</div></div>}
-function KoScoreCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish}) {const fake={...match,home:{name:match.a.slot},away:{name:match.b.slot}}; const ss=scoreSummary(fake,rules); const rule=targetForMatch(fake,rules); return <div className={`scoreCard scoreCardV47 ${match.status==="DONE"?"done":""}`}><div className="scoreHead"><b>{match.name}</b><span>{rule.label}</span><em>{match.status==="DONE"?"✓ Hoàn thành":match.status==="LIVE"?"LIVE":"Chờ điểm"}</em></div><div className="scoreTeams"><b>{match.a.slot}</b><span>vs</span><b>{match.b.slot}</b></div>{(match.games||[{home:"",away:"",saved:false}]).map((g,i)=><div className={`gameLine ${g.saved?"saved":""}`} key={i}><span>Game {i+1}</span><input disabled={g.saved} value={g.home} onChange={e=>onDraft(match.id,i,"home",e.target.value)} placeholder="0"/><b>-</b><input disabled={g.saved} value={g.away} onChange={e=>onDraft(match.id,i,"away",e.target.value)} placeholder="0"/><button className="saveGameBtn" disabled={g.saved} onClick={()=>onSaveGame(match.id,i)}><Save size={14}/> {g.saved?"Đã lưu":"Lưu Game "+(i+1)}</button>{g.saved&&<small>{g.savedAt}</small>}</div>)}<div className="scoreActions"><button className="mini" onClick={()=>onAddGame(match.id)}>+ Game</button><button className="mini primary" onClick={()=>onFinish(match.id)}><CheckCircle2 size={14}/> Kết thúc trận</button>{ss.winner&&<strong>Thắng: {ss.winner}</strong>}</div></div>}
+function KoScoreCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish}) {const fake={...match,home:{name:bracketTeamName(match.a)},away:{name:bracketTeamName(match.b)}}; const ss=scoreSummary(fake,rules); const rule=targetForMatch(fake,rules); return <div className={`scoreCard scoreCardV47 ${match.status==="DONE"?"done":""}`}><div className="scoreHead"><b>{match.name}</b><span>{rule.label}</span><em>{match.status==="DONE"?"✓ Hoàn thành":match.status==="LIVE"?"LIVE":"Chờ điểm"}</em></div><div className="scoreTeams"><b>{bracketTeamName(match.a)}</b><span>vs</span><b>{bracketTeamName(match.b)}</b></div>{(match.games||[{home:"",away:"",saved:false}]).map((g,i)=><div className={`gameLine ${g.saved?"saved":""}`} key={i}><span>Game {i+1}</span><input disabled={g.saved} value={g.home} onChange={e=>onDraft(match.id,i,"home",e.target.value)} placeholder="0"/><b>-</b><input disabled={g.saved} value={g.away} onChange={e=>onDraft(match.id,i,"away",e.target.value)} placeholder="0"/><button className="saveGameBtn" disabled={g.saved} onClick={()=>onSaveGame(match.id,i)}><Save size={14}/> {g.saved?"Đã lưu":"Lưu Game "+(i+1)}</button>{g.saved&&<small>{g.savedAt}</small>}</div>)}<div className="scoreActions"><button className="mini" onClick={()=>onAddGame(match.id)}>+ Game</button><button className="mini primary" onClick={()=>onFinish(match.id)}><CheckCircle2 size={14}/> Kết thúc trận</button>{ss.winner&&<strong>Thắng: {ss.winner}</strong>}</div></div>}

@@ -1,22 +1,14 @@
-# PickleCity Tournament Manager V4.10.4 Full Bracket
+# PickleCity Tournament Manager V4.10.5 Bracket Team Names
 
-Bản bổ sung nhánh đấu đầy đủ.
+Bản cập nhật nhánh đấu hiển thị tên đội và tên VĐV.
 
-## Đã thêm
-- Nhánh không chỉ dừng ở Tứ kết.
-- Hiển thị luôn:
-  - Tứ kết
-  - Bán kết
-  - Chung kết
-  - Tranh giải 3
-- Công thức:
-  - BK1: Winner QF1 vs Winner QF4
-  - BK2: Winner QF2 vs Winner QF3
-  - Chung kết: Winner BK1 vs Winner BK2
-  - Tranh giải 3: Loser BK1 vs Loser BK2
-
-## Lưu ý
-Bản này hiển thị và in đầy đủ cây nhánh. Việc nhập điểm trực tiếp cho Bán kết/Chung kết sẽ được hoàn thiện tiếp trong V4.10.5 nếu cần.
+## Đã sửa
+- Sau khi nhập điểm vòng bảng và sinh nhánh, nhánh đấu hiển thị:
+  - Vị trí: A1, B1, C1, A2, B2, C2, Best3-1, Best3-2
+  - Tên đội thật
+  - Tên vận động viên trong đội
+- Khu nhập kết quả tứ kết dùng tên đội thật thay vì chỉ A1/Best3.
+- File in nhánh đấu cũng hiển thị tên đội + VĐV.
 
 ## Test
-/api/ping => version: 4.10.4-full-bracket
+/api/ping => version: 4.10.5-bracket-team-names
