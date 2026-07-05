@@ -335,3 +335,18 @@
 .scoreMatchActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}.scoreMatchActions .primary{width:auto}
 @media(max-width:1000px){.scoreMatchList{grid-template-columns:1fr}.scoreStats{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.scoreFilters{grid-template-columns:1fr}.scoreGameLine{grid-template-columns:60px 1fr auto 1fr}.scoreGameLine button,.scoreGameLine small{grid-column:1/-1}.scoreMatchTeams{grid-template-columns:1fr}.scoreMatchTeams span{padding:0}}
+
+/* V4.10.4 Full Bracket */
+.bracketTreeV4104{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px;align-items:start;margin:16px 0}
+.bracketRoundV4104{background:#f8fbf2;border:1px solid #e1e9d7;border-radius:18px;padding:14px;display:grid;gap:12px}
+.bracketRoundV4104 h3{margin:0;color:#006b3b;font-size:22px}
+.roundCardV4104{background:#fff;border:1px solid #dfe8cf;border-radius:16px;padding:14px;box-shadow:0 8px 18px rgba(0,0,0,.04)}
+.roundCardV4104.champion{border-color:#f1c875;background:#fffaf0}
+.roundBadgeV4104{display:inline-block;background:#e9f8ee;color:#006b3b;border:1px solid #b8e6c7;border-radius:999px;padding:5px 10px;font-weight:950;margin-bottom:8px}
+.roundCardV4104 h4{margin:0 0 10px}
+.roundTeamsV4104{display:grid;gap:8px;text-align:center}
+.roundTeamsV4104 span{background:#e9f8ee;border:1px solid #b8e6c7;border-radius:10px;padding:9px;font-weight:950;color:#006b3b}
+.roundTeamsV4104 b{color:#667}
+.roundCardV4104 p{margin:10px 0 0;font-weight:900;color:#9a5b00;text-align:center}
+.printBracketGridLater{margin-top:12px}
+@media(max-width:1000px){.bracketTreeV4104{grid-template-columns:1fr}}

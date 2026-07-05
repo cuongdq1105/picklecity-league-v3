@@ -1,22 +1,22 @@
-# PickleCity Tournament Manager V4.10.3 Score Tab
+# PickleCity Tournament Manager V4.10.4 Full Bracket
 
-Bản bổ sung tab/khu cập nhật điểm số riêng trong BTC.
+Bản bổ sung nhánh đấu đầy đủ.
 
 ## Đã thêm
-- Khu **Cập nhật điểm số** riêng trong BTC.
-- Chọn từng bảng để cập nhật:
-  - Tất cả
-  - Bảng A
-  - Bảng B
-  - Bảng C
-- Lọc trạng thái:
-  - Tất cả trận
-  - Chưa hoàn thành
-  - Đã hoàn thành
-- Mỗi game có nút Lưu riêng.
-- Game đã lưu bị khóa.
-- Có nút Kết thúc trận.
-- Hiển thị thống kê số trận của từng bảng.
+- Nhánh không chỉ dừng ở Tứ kết.
+- Hiển thị luôn:
+  - Tứ kết
+  - Bán kết
+  - Chung kết
+  - Tranh giải 3
+- Công thức:
+  - BK1: Winner QF1 vs Winner QF4
+  - BK2: Winner QF2 vs Winner QF3
+  - Chung kết: Winner BK1 vs Winner BK2
+  - Tranh giải 3: Loser BK1 vs Loser BK2
+
+## Lưu ý
+Bản này hiển thị và in đầy đủ cây nhánh. Việc nhập điểm trực tiếp cho Bán kết/Chung kết sẽ được hoàn thiện tiếp trong V4.10.5 nếu cần.
 
 ## Test
-/api/ping => version: 4.10.3-score-tab
+/api/ping => version: 4.10.4-full-bracket
