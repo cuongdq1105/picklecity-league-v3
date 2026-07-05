@@ -182,27 +182,62 @@ function KnockoutResults({knockout=[]}) {
   </div>
 }
 
+
+function publicBuildSemis(qfs=[]){
+  const byId=Object.fromEntries((qfs||[]).map(m=>[m.id,m]));
+  const adv=(id,label)=>byId[id]?.winner?{slot:label,teamName:byId[id].winner,winnerName:byId[id].winner}:{slot:label};
+  return [
+    {id:"SF-1",name:"Bán kết 1",a:adv("QF-1","Winner QF1"),b:adv("QF-4","Winner QF4")},
+    {id:"SF-2",name:"Bán kết 2",a:adv("QF-2","Winner QF2"),b:adv("QF-3","Winner QF3")}
+  ];
+}
+function publicBuildFinals(semis=[]){
+  const adv=(m,label)=>m?.winner?{slot:label,teamName:m.winner,winnerName:m.winner}:{slot:label};
+  return [{id:"FINAL-1",name:"Chung kết",a:adv(semis[0],"Winner BK1"),b:adv(semis[1],"Winner BK2")}];
+}
+function publicBuildThird(semis=[]){
+  return [{id:"THIRD-1",name:"Tranh giải 3",a:{slot:"Loser BK1"},b:{slot:"Loser BK2"}}];
+}
 function PublicBracket({knockout=[]}) {
   const qfs = knockout.length ? knockout : [
-    {id:"demo1",name:"Tứ kết 1",a:{slot:"A1"},b:{slot:"Best3-2"}},
-    {id:"demo2",name:"Tứ kết 2",a:{slot:"B1"},b:{slot:"Best3-1"}},
-    {id:"demo3",name:"Tứ kết 3",a:{slot:"C1"},b:{slot:"A2"}},
-    {id:"demo4",name:"Tứ kết 4",a:{slot:"B2"},b:{slot:"C2"}}
+    {id:"QF-1",name:"Tứ kết 1",a:{slot:"A1"},b:{slot:"Best3-2"}},
+    {id:"QF-2",name:"Tứ kết 2",a:{slot:"B1"},b:{slot:"Best3-1"}},
+    {id:"QF-3",name:"Tứ kết 3",a:{slot:"C1"},b:{slot:"A2"}},
+    {id:"QF-4",name:"Tứ kết 4",a:{slot:"B2"},b:{slot:"C2"}}
   ];
-  return <div className="publicBracketGrid">
-    {qfs.map((k,i)=><div className="publicBracketCard" key={k.id||i}>
-      <div className="publicBracketBadge">QF{i+1}</div>
-      <h3>{k.name}</h3>
-      <div className="publicBracketTeams">
-        <span><em>{k.a?.slot}</em><b>{bracketName(k.a)}</b><small>{bracketPlayers(k.a)}</small></span>
-        <strong>vs</strong>
-        <span><em>{k.b?.slot}</em><b>{bracketName(k.b)}</b><small>{bracketPlayers(k.b)}</small></span>
-      </div>
-      {k.winner && <p>Thắng: <b>{k.winner}</b></p>}
-    </div>)}
-    <div className="publicBracketInfo">
-      <b>Bán kết:</b> Winner QF1 vs Winner QF4 · Winner QF2 vs Winner QF3<br/>
-      <b>Chung kết:</b> Winner BK1 vs Winner BK2 · <b>Tranh giải 3:</b> Loser BK1 vs Loser BK2
+  const semis = publicBuildSemis(qfs);
+  const finals = publicBuildFinals(semis);
+  const third = publicBuildThird(semis);
+  return <div className="publicBracketTreeWrap">
+    <div className="publicBracketLegend">
+      <span><b className="dot pending"></b> Chưa đấu</span>
+      <span><b className="dot live"></b> Đang cập nhật</span>
+      <span><b className="dot done"></b> Hoàn thành</span>
     </div>
+    <div className="publicBracketTree">
+      <div className="publicBracketRound"><h3>Tứ kết</h3>{qfs.map((m,i)=><PublicBracketMatch key={m.id||i} match={m} code={`QF${i+1}`}/>)}</div>
+      <div className="publicBracketRound"><h3>Bán kết</h3>{semis.map((m,i)=><PublicBracketMatch key={m.id} match={m} code={`BK${i+1}`}/>)}</div>
+      <div className="publicBracketRound"><h3>Chung kết</h3>{finals.map(m=><PublicBracketMatch key={m.id} match={m} code="CK" champion />)}<h3>Tranh giải 3</h3>{third.map(m=><PublicBracketMatch key={m.id} match={m} code="Hạng 3" />)}</div>
+    </div>
+    <div className="publicBracketInfo"><b>Công thức:</b> BK1 = Winner QF1 vs Winner QF4 · BK2 = Winner QF2 vs Winner QF3 · Chung kết = Winner BK1 vs Winner BK2.</div>
+  </div>
+}
+function PublicBracketMatch({match,code,champion=false}) {
+  const done = match.status==="DONE" || !!match.winner;
+  const live = match.status==="LIVE";
+  const score = scoreText(match);
+  return <div className={`publicTreeMatch ${done?"done":live?"live":"pending"} ${champion?"champion":""}`}>
+    <div className="publicTreeMatchHead"><b>{code}</b><span>{match.name}</span></div>
+    <div className="publicTreeTeams"><PublicTeamLine item={match.a} winner={match.winner}/><em>vs</em><PublicTeamLine item={match.b} winner={match.winner}/></div>
+    {score && <strong className="publicTreeScore">{score}</strong>}
+    {match.winner && <p>Thắng: <b>{match.winner}</b></p>}
+  </div>
+}
+function PublicTeamLine({item,winner}) {
+  const name = bracketName(item);
+  const players = bracketPlayers(item);
+  const isWinner = winner && winner === name;
+  return <div className={isWinner ? "teamLine winner" : "teamLine"}>
+    <small>{item?.slot || ""}</small><b>{name}</b>{players && <span>{players}</span>}
   </div>
 }

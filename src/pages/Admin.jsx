@@ -7,6 +7,7 @@ import TournamentOps from "../components/TournamentOps";
 import PrintCenter from "../components/PrintCenter";
 import ScoreCenter from "../components/ScoreCenter";
 import StandingsCenter from "../components/StandingsCenter";
+import PaymentQrSettings from "../components/PaymentQrSettings";
 
 export default function Admin(props) {
   const {
@@ -86,6 +87,8 @@ export default function Admin(props) {
           setKnockout={setKnockout}
           setMsg={setMsg}
         />
+        <PaymentQrSettings setMsg={setMsg} />
+
         <PrintCenter tournament={tournament} registrations={admin.registrations} groups={draw.groups} schedule={schedule} knockout={knockout} config={matchConfig} />
       </div>
     </div>

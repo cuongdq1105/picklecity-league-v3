@@ -6,7 +6,7 @@ const BANK = {
   account: "2022026868",
   owner: "TRẦN THỊ HOÀI THANH",
   bank: "Vietcombank",
-  qr: "/qr-vcb-compact.png"
+  qr: localStorage.getItem("picklecity_payment_qr") || "/qr-vcb-compact.png"
 };
 
 function copyText(text) {
@@ -49,21 +49,14 @@ export default function Register({ tournament, form, setForm, onSubmit }) {
         <div className="feePillV497">{money(fee)}</div>
       </div>
 
-      <div className="paymentMainV497">
+      <div className="paymentMainV497 paymentMainSingleQR">
         <div className="qrBlockV497">
           <div className="bankLogoV497"><Landmark size={22}/> VIETCOMBANK</div>
           <p>Quét QR để chuyển khoản nhanh</p>
           <div className="qrFrameV497">
             <img src={BANK.qr} alt="QR chuyển khoản Vietcombank"/>
           </div>
-        </div>
-
-        <div className="bankPanelV497">
-          <PaymentRow label="Số tài khoản" value={BANK.account} copy />
-          <PaymentRow label="Chủ tài khoản" value={BANK.owner} />
-          <PaymentRow label="Ngân hàng" value={BANK.bank + " – NAPAS 247"} />
-        </div>
-      </div>
+        </div></div>
 
       <div className="transferBoxV497">
         <div>
