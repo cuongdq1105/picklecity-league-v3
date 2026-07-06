@@ -591,3 +591,122 @@
   line-height:1.25;
   margin-top:3px;
 }
+
+/* V4.10.19 Referee Module */
+.refPage{
+  max-width:980px;
+  margin:0 auto 28px;
+  padding:12px;
+}
+.refLogin{
+  max-width:420px;
+  margin:18px auto;
+  background:#fff;
+  border:1px solid #dfe8cf;
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 14px 32px rgba(0,0,0,.08);
+}
+.refLogin h1{display:flex;align-items:center;gap:10px;margin:0 0 6px;color:#10201c}
+.refLogin p{color:#667;font-weight:800}
+.refLogin form{display:grid;gap:13px}
+.refLogin label{display:grid;gap:7px;font-weight:950}
+.refLogin input,.refLogin select{
+  border:1px solid #dfe8cf;
+  border-radius:13px;
+  padding:12px;
+  font-size:16px;
+}
+.refTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  background:#0b2d22;
+  color:white;
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:12px;
+}
+.refTop h1{margin:0 0 5px}.refTop p{margin:0;color:#eaffef;font-weight:800}
+.refTop>div:last-child{display:flex;gap:8px;flex-wrap:wrap}
+.refTabs{display:flex;gap:8px;margin:10px 0 14px;position:sticky;top:0;z-index:5;background:#eef8dfcc;backdrop-filter:blur(6px);padding:8px;border-radius:16px}
+.refTabs button{
+  border:1px solid #dfe8cf;
+  background:white;
+  border-radius:999px;
+  padding:10px 14px;
+  font-weight:950;
+}
+.refTabs button.active{background:#b8d72f;border-color:#b8d72f;color:#10201c}
+.refList{display:grid;gap:12px}
+.refMatch{
+  background:#fff;
+  border:1px solid #dfe8cf;
+  border-radius:20px;
+  padding:14px;
+  box-shadow:0 8px 20px rgba(0,0,0,.04);
+}
+.refMatch.done{background:#f0fdf4;border-color:#86efac}
+.refMatchHead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.refMatchHead b{font-size:17px;color:#064e3b}
+.refMatchHead span{background:#eef2f0;border-radius:999px;padding:6px 10px;font-weight:950}
+.refTeams{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:8px;
+  text-align:center;
+  margin-bottom:12px;
+}
+.refTeams>div{
+  background:#e9f8ee;
+  border:1px solid #bce4c8;
+  border-radius:14px;
+  padding:10px;
+  min-height:70px;
+}
+.refTeams b{display:block;color:#006b3b;font-size:17px}
+.refTeams small{display:block;color:#456;font-weight:750;font-size:12px;line-height:1.25;margin-top:4px}
+.refTeams em{font-style:normal;font-weight:950;color:#10201c}
+.refGame{
+  display:grid;
+  grid-template-columns:42px 1fr 18px 1fr 96px;
+  gap:8px;
+  align-items:center;
+  margin-bottom:8px;
+}
+.refGame span{font-weight:950;color:#667}
+.refGame input{
+  width:100%;
+  border:1px solid #dfe8cf;
+  border-radius:12px;
+  padding:12px 8px;
+  font-size:20px;
+  font-weight:950;
+  text-align:center;
+}
+.refGame button{
+  border:0;
+  background:#007a3d;
+  color:white;
+  border-radius:12px;
+  padding:12px 8px;
+  font-weight:950;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.refGame button:disabled{background:#d7ded9;color:#7a8580}
+.refActions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.refActions strong{margin-left:auto;color:#006b3b;font-size:16px}
+@media(max-width:620px){
+  .refPage{padding:8px}
+  .refTop{display:block}
+  .refTop>div:last-child{margin-top:10px}
+  .refTeams{grid-template-columns:1fr;gap:6px}
+  .refGame{grid-template-columns:32px 1fr 14px 1fr;gap:6px}
+  .refGame button{grid-column:2/5}
+  .refActions strong{margin-left:0;width:100%}
+}

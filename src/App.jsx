@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Public from "./pages/Public";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
+import Referee from "./pages/Referee";
 import EditPlayerModal from "./components/EditPlayerModal";
 
 const LOCAL_KEYS = {
@@ -218,13 +219,14 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.10.18 KO Player Names</div>
+      <div className="version">V4.10.19 Referee Module</div>
     </header>
 
     <nav className="tabs">
       <button className={tab==="register"?"active":""} onClick={()=>setTab("register")}>Đăng ký</button>
       <button className={tab==="public"?"active":""} onClick={()=>setTab("public")}>Danh sách & bảng đấu</button>
       <button className={tab==="admin"?"active":""} onClick={()=>setTab("admin")}>BTC</button>
+      <button className={tab==="referee"?"active":""} onClick={()=>setTab("referee")}>Trọng tài</button>
     </nav>
 
     {adminAuthed && <div className="notice syncNotice cleanSync">💾 Đã lưu cục bộ: {localStorage.getItem(LOCAL_KEYS.lastSaved)||"chưa có"} · ☁️ {syncing ? "Đang đồng bộ..." : "Đã đồng bộ: " + serverSavedAt}</div>}
@@ -233,6 +235,16 @@ export default function App() {
     {tab==="register" && <Register tournament={tournament} form={form} setForm={setForm} onSubmit={submit}/>}
     {tab==="public" && <Public list={publicList} draw={publicDraw} schedule={schedule} knockout={knockout} onRefresh={loadPublic}/>}
     {tab==="admin" && !adminAuthed && <AdminLogin pin={pin} setPin={setPin} onLogin={login}/>}
+    {tab==="referee" && <Referee
+      schedule={schedule}
+      setSchedule={setSchedule}
+      knockout={knockout}
+      setKnockout={setKnockout}
+      config={matchConfig}
+      setMsg={setMsg}
+      onBack={()=>setTab("public")}
+    />}
+
     {tab==="admin" && adminAuthed && <Admin
       tournament={tournament} tForm={tForm} setTForm={setTForm} onSaveTournament={saveTournament}
       onRefresh={()=>{loadTournament();loadAdmin();}} onLogout={logout}
