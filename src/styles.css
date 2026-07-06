@@ -574,3 +574,20 @@
 .scoreGroupTabs button svg{flex-shrink:0}
 .scoreGameLine button:disabled,.scoreMatchActions button:disabled{opacity:.55;cursor:not-allowed}
 .koMatchCard .scoreMatchTop b{color:#006b3b}
+
+/* V4.10.18 KO Player Names */
+.koMatchCard .scoreMatchTeamsFull small:not(:empty){
+  background:#ffffffa8;
+  border-radius:10px;
+  padding:5px 7px;
+  margin-top:4px;
+}
+.roundTeamsNamesV4105 small:not(:empty),
+.qfTeamsNamesV4105 small:not(:empty){
+  display:block;
+  color:#456;
+  font-size:11px;
+  font-weight:750;
+  line-height:1.25;
+  margin-top:3px;
+}

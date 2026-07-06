@@ -18,14 +18,39 @@ function koRoundLabel(m){
   if(m.id?.startsWith("THIRD")) return "Tranh giải 3";
   return m.round || "Knockout";
 }
+function cloneSlotWithLabel(slotObj,label){
+  if(!slotObj) return {slot:label};
+  const players = slotObj?.playerNames || (slotObj?.team?.players || slotObj?.row?.team?.players || []).map(p=>p.full_name).join(" + ");
+  return {
+    ...slotObj,
+    slot: label,
+    teamName: koTeamName(slotObj),
+    winnerName: koTeamName(slotObj),
+    playerNames: players
+  };
+}
+function winnerSlot(m){
+  if(!m?.winner) return null;
+  if(m.winnerTeam) return m.winnerTeam;
+  const aName=koTeamName(m.a), bName=koTeamName(m.b);
+  if(m.winner===aName) return m.a;
+  if(m.winner===bName) return m.b;
+  return {slot:m.winner, teamName:m.winner, winnerName:m.winner, playerNames:""};
+}
+function loserSlot(m){
+  if(!m?.winner) return null;
+  const aName=koTeamName(m.a), bName=koTeamName(m.b);
+  if(m.winner===aName) return m.b;
+  if(m.winner===bName) return m.a;
+  return null;
+}
 function adv(label, m){
-  if(m?.winner) return {slot:label, teamName:m.winner, winnerName:m.winner};
-  return {slot:label};
+  const w=winnerSlot(m);
+  return w ? cloneSlotWithLabel(w,label) : {slot:label};
 }
 function loser(label, m){
-  if(!m?.winner) return {slot:label};
-  const a=koTeamName(m.a), b=koTeamName(m.b);
-  return {slot:label, teamName:m.winner===a?b:a};
+  const l=loserSlot(m);
+  return l ? cloneSlotWithLabel(l,label) : {slot:label};
 }
 function mergeKeep(base, old){
   if(!old) return base;
@@ -131,8 +156,10 @@ export default function ScoreCenter({ groups=[], schedule=[], setSchedule, knock
       if(!valid.ok){msg=valid.message;return m;}
       games[idx]={...g,saved:true,savedAt:nowText()};
       const ss=scoreSummary({...fake,games,status:"LIVE"},rules);
+      const wSlot = ss.winner === koTeamName(m.a) ? m.a : ss.winner === koTeamName(m.b) ? m.b : null;
+      const winnerTeam = wSlot ? cloneSlotWithLabel(wSlot, m.id?.startsWith("QF") ? `Winner ${m.name}` : `Winner ${m.name}`) : null;
       msg=`Đã lưu ${m.name}: ${g.home}-${g.away}`;
-      return {...m,games,status:"LIVE",winner:ss.winner};
+      return {...m,games,status:"LIVE",winner:ss.winner,winnerTeam};
     }));
     setMsg(msg||"Đã lưu game.");
   }
@@ -146,21 +173,23 @@ export default function ScoreCenter({ groups=[], schedule=[], setSchedule, knock
       if(m.id!==id)return m;
       const fake=makeKoScoreable(m), ss=scoreSummary(fake,rules);
       if(!ss.winner){msg="Chưa đủ game đã lưu để kết thúc trận.";return m;}
+      const wSlot = ss.winner === koTeamName(m.a) ? m.a : ss.winner === koTeamName(m.b) ? m.b : null;
+      const winnerTeam = wSlot ? cloneSlotWithLabel(wSlot, m.id?.startsWith("QF") ? `Winner ${m.name}` : `Winner ${m.name}`) : null;
       msg=`Đã kết thúc ${m.name}. Đội thắng: ${ss.winner}`;
-      return {...m,status:"DONE",winner:ss.winner,finishedAt:nowText(),editing:false};
+      return {...m,status:"DONE",winner:ss.winner,winnerTeam,finishedAt:nowText(),editing:false};
     }));
     setMsg(msg);
   }
   function unlockMatch(match){
     if(!confirm("Mở sửa điểm trận này? Sau khi sửa cần bấm Lưu lại và Kết thúc trận lại.")) return;
-    if(match._scope==="KO") mutateKo(list=>list.map(m=>m.id===match.id?{...m,games:(m.games||[]).map(g=>({...g,saved:false,edited:true})),status:"LIVE",winner:"",finishedAt:"",editing:true}:m));
-    else setSchedule((schedule||[]).map(m=>m.id===match.id?{...m,games:(m.games||[]).map(g=>({...g,saved:false,edited:true})),status:"LIVE",winner:"",finishedAt:"",editing:true}:m));
+    if(match._scope==="KO") mutateKo(list=>list.map(m=>m.id===match.id?{...m,games:(m.games||[]).map(g=>({...g,saved:false,edited:true})),status:"LIVE",winner:"",winnerTeam:null,finishedAt:"",editing:true}:m));
+    else setSchedule((schedule||[]).map(m=>m.id===match.id?{...m,games:(m.games||[]).map(g=>({...g,saved:false,edited:true})),status:"LIVE",winner:"",winnerTeam:null,finishedAt:"",editing:true}:m));
     setMsg("Đã mở sửa điểm. Hãy sửa tỷ số, bấm Lưu từng game, rồi Kết thúc trận lại.");
   }
   function clearMatchScore(match){
     if(!confirm("Xóa toàn bộ điểm trận này để nhập lại?")) return;
-    if(match._scope==="KO") mutateKo(list=>list.map(m=>m.id===match.id?{...m,games:[{home:"",away:"",saved:false}],status:"SCHEDULED",winner:"",finishedAt:"",editing:true}:m));
-    else setSchedule((schedule||[]).map(m=>m.id===match.id?{...m,games:[{home:"",away:"",saved:false}],status:"SCHEDULED",winner:"",finishedAt:"",editing:true}:m));
+    if(match._scope==="KO") mutateKo(list=>list.map(m=>m.id===match.id?{...m,games:[{home:"",away:"",saved:false}],status:"SCHEDULED",winner:"",winnerTeam:null,finishedAt:"",editing:true}:m));
+    else setSchedule((schedule||[]).map(m=>m.id===match.id?{...m,games:[{home:"",away:"",saved:false}],status:"SCHEDULED",winner:"",winnerTeam:null,finishedAt:"",editing:true}:m));
     setMsg("Đã xóa điểm trận. Hãy nhập lại Game 1.");
   }
 

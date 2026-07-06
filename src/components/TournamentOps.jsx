@@ -105,18 +105,25 @@ function bracketPlayers(slotObj){
 function bracketSlotLabel(slotObj){
   return slotObj?.slot || "—";
 }
+function cloneBracketSlot(slotObj,label){
+  if(!slotObj) return {slot:label, team:null};
+  const players = slotObj?.playerNames || (slotObj?.team?.players || slotObj?.row?.team?.players || []).map(p=>p.full_name).join(" + ");
+  return {...slotObj, slot:label, teamName:bracketTeamName(slotObj), winnerName:bracketTeamName(slotObj), playerNames:players};
+}
 function makeAdvancer(label, sourceMatch){
-  if(sourceMatch?.winner){
-    return {slot: label, team:{name:sourceMatch.winner, players:[]}, winnerName:sourceMatch.winner};
-  }
-  return {slot: label, team:null};
+  if(!sourceMatch?.winner) return {slot: label, team:null};
+  if(sourceMatch.winnerTeam) return cloneBracketSlot(sourceMatch.winnerTeam,label);
+  const aName = bracketTeamName(sourceMatch.a);
+  const bName = bracketTeamName(sourceMatch.b);
+  const winner = sourceMatch.winner === aName ? sourceMatch.a : sourceMatch.winner === bName ? sourceMatch.b : null;
+  return winner ? cloneBracketSlot(winner,label) : {slot:label, teamName:sourceMatch.winner, winnerName:sourceMatch.winner, playerNames:""};
 }
 function makeLoser(label, sourceMatch){
   if(!sourceMatch?.winner) return {slot: label, team:null};
   const aName = bracketTeamName(sourceMatch.a);
   const bName = bracketTeamName(sourceMatch.b);
-  const loser = sourceMatch.winner === aName ? sourceMatch.b : sourceMatch.a;
-  return loser ? {...loser, slot: label} : {slot: label, team:null};
+  const loser = sourceMatch.winner === aName ? sourceMatch.b : sourceMatch.winner === bName ? sourceMatch.a : null;
+  return loser ? cloneBracketSlot(loser,label) : {slot: label, team:null};
 }
 
 function BracketScreen({knockout,semis,finals,thirdPlace,genKO,rules,updateKoDraft,saveKoGame,addKoGame,finishKo}) {
@@ -212,14 +219,14 @@ function QuarterCardV499({match,index}) {
 
 function buildSemis(qfs=[]){
   const byId=Object.fromEntries((qfs||[]).map(m=>[m.id,m]));
-  const adv = (id,label) => byId[id]?.winner ? {slot:label, team:{name:byId[id].winner, players:[]}, teamName:byId[id].winner, winnerName:byId[id].winner} : {slot:label, team:null};
+  const adv = (id,label) => makeAdvancer(label, byId[id]);
   return [
     {id:"SF-1",name:"Bán kết 1",type:"KO",round:"SF",status:"SCHEDULED",a:adv("QF-1","Winner QF1"),b:adv("QF-4","Winner QF4"),games:[{home:"",away:"",saved:false}],winner:""},
     {id:"SF-2",name:"Bán kết 2",type:"KO",round:"SF",status:"SCHEDULED",a:adv("QF-2","Winner QF2"),b:adv("QF-3","Winner QF3"),games:[{home:"",away:"",saved:false}],winner:""}
   ];
 }
 function buildFinals(semis=[]){
-  const adv = (m,label) => m?.winner ? {slot:label, team:{name:m.winner, players:[]}, teamName:m.winner, winnerName:m.winner} : {slot:label, team:null};
+  const adv = (m,label) => makeAdvancer(label, m);
   return [{id:"FINAL-1",name:"Chung kết",type:"KO",round:"FINAL",status:"SCHEDULED",a:adv(semis[0],"Winner BK1"),b:adv(semis[1],"Winner BK2"),games:[{home:"",away:"",saved:false}],winner:""}];
 }
 function buildThirdPlace(semis=[]){
