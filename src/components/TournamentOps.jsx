@@ -12,9 +12,11 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
   const [selectedId,setSelectedId]=useState("");
   const rules={...DEFAULT_RULES,...(config.rules||{})};
   const standings=calcStandings(groups||[],schedule||[],rules);
-  const semis=buildSemis(knockout||[]);
-  const finals=buildFinals(semis);
-  const thirdPlace=buildThirdPlace(semis);
+  const qfMatches=(knockout||[]).filter(m=>String(m.id||"").startsWith("QF"));
+  const semis=(knockout||[]).filter(m=>String(m.id||"").startsWith("SF"));
+  const finals=(knockout||[]).filter(m=>String(m.id||"").startsWith("FINAL"));
+  const thirdPlace=(knockout||[]).filter(m=>String(m.id||"").startsWith("THIRD"));
+  const koForDisplay = (qfMatches.length? qfMatches : (knockout||[]));
   const selectedMatch=useMemo(()=> (schedule||[]).find(m=>m.id===selectedId)||(schedule||[]).find(m=>m.status==="LIVE")||(schedule||[]).find(m=>m.status!=="DONE")||(schedule||[])[0]||null,[schedule,selectedId]);
   const live=(schedule||[]).filter(m=>m.status==="LIVE").length;
   const done=(schedule||[]).filter(m=>m.status==="DONE").length;
@@ -27,7 +29,15 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
   function setRules(patch){ setConfig({...config,rules:{...rules,...patch}}); }
   function genSchedule(){ if(!groups.length){setMsg("Chưa có bảng đấu để xếp lịch.");return;} const s=makeSchedule(groups,{courtCount:config.courtCount,startTime:config.startTime,minutesPerMatch:config.minutesPerMatch}); setSchedule(s); setSelectedId(s[0]?.id||""); setMsg(`Đã xếp ${s.length} trận vòng bảng theo kiểu xen kẽ A/B/C trên các sân.`); }
   function copySchedule(){ navigator.clipboard.writeText(exportScheduleText(schedule)); setMsg("Đã copy lịch thi đấu."); }
-  function genKO(){ if(!groups.length){setMsg("Chưa có bảng đấu.");return;} const pairs=makeKnockout(groups,config,standings); setKnockout(pairs); setMsg(`Đã sinh ${pairs.length} trận Tứ kết theo BXH hiện tại.`); }
+  function genKO(){
+    if(!groups.length){setMsg("Chưa có bảng đấu.");return;}
+    const pairs=makeKnockout(groups,config,standings);
+    const sf=buildSemis(pairs);
+    const fn=buildFinals(sf);
+    const th=buildThirdPlace(sf);
+    setKnockout([...pairs,...sf,...fn,...th]);
+    setMsg(`Đã sinh nhánh đấu đầy đủ: ${pairs.length} Tứ kết, Bán kết, Chung kết và Tranh giải 3.`);
+  }
   function updateDraft(id, idx, side, value){ setSchedule((schedule||[]).map(m=>{ if(m.id!==id)return m; const games=[...(m.games||[{home:"",away:"",saved:false}])]; games[idx]={...games[idx],[side]:value}; return {...m,games,status:m.status==="DONE"?"DONE":"LIVE"}; })); }
   function saveGame(id, idx){ let msg=""; setSchedule((schedule||[]).map(m=>{ if(m.id!==id)return m; const games=[...(m.games||[])]; const g=games[idx]||{home:"",away:""}; const valid=validateGameScore(g.home,g.away,targetForMatch(m,rules)); if(!valid.ok){msg=valid.message;return m;} games[idx]={...g,saved:true,savedAt:nowText()}; const ns={...m,games,status:"LIVE"}; const ss=scoreSummary(ns,rules); msg=`Đã lưu Game ${idx+1}: ${g.home}-${g.away}.`; return {...ns,winner:ss.winner}; })); setMsg(msg||"Đã lưu game."); }
   function addGame(id){ setSchedule((schedule||[]).map(m=>m.id===id?{...m,games:[...(m.games||[]),{home:"",away:"",saved:false}]}:m)); }
@@ -53,7 +63,7 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
     {opsTab==="schedule" && <ScheduleScreen schedule={schedule} genSchedule={genSchedule} copySchedule={copySchedule} config={config} setConfig={setConfig}/>}
     {opsTab==="results" && <ResultsScreen schedule={schedule} selectedMatch={selectedMatch} setSelectedId={setSelectedId} rules={rules} updateDraft={updateDraft} saveGame={saveGame} addGame={addGame} finishMatch={finishMatch}/>}
     {opsTab==="standings" && <StandingsScreen standings={standings} schedule={schedule}/>}
-    {opsTab==="bracket" && <BracketScreen knockout={knockout} semis={semis} finals={finals} thirdPlace={thirdPlace} genKO={genKO} rules={rules} updateKoDraft={updateKoDraft} saveKoGame={saveKoGame} addKoGame={addKoGame} finishKo={finishKo}/>}
+    {opsTab==="bracket" && <BracketScreen knockout={qfMatches.length?qfMatches:koForDisplay} semis={semis.length?semis:buildSemis(qfMatches)} finals={finals.length?finals:buildFinals(semis.length?semis:buildSemis(qfMatches))} thirdPlace={thirdPlace.length?thirdPlace:buildThirdPlace(semis.length?semis:buildSemis(qfMatches))} genKO={genKO} rules={rules} updateKoDraft={updateKoDraft} saveKoGame={saveKoGame} addKoGame={addKoGame} finishKo={finishKo}/>}
   </section>
 }
 
@@ -158,13 +168,8 @@ function BracketScreen({knockout,semis,finals,thirdPlace,genKO,rules,updateKoDra
 
     <div className="bracketNoteV499">
       <b>⚠️ Cách cập nhật</b>
-      <p>Nhập và kết thúc các trận Tứ kết bên dưới. Sau khi có đủ đội thắng, hệ thống sẽ tự hiển thị Bán kết. Sau Bán kết sẽ tự hiện Chung kết và Tranh giải 3.</p>
+      <p>Việc nhập điểm Tứ kết, Bán kết, Tranh giải 3 và Chung kết đã được chuyển sang tab Nhập điểm. Nhánh này tự cập nhật theo kết quả đã lưu.</p>
     </div>
-
-    {qfs.length>0 && <div className="koScoreAreaV499">
-      <h3>Nhập kết quả tứ kết</h3>
-      <div className="koGridClean">{qfs.map(m=><KoScoreCard key={m.id} match={m} rules={rules} onDraft={updateKoDraft} onSaveGame={saveKoGame} onAddGame={addKoGame} onFinish={finishKo}/>)}</div>
-    </div>}
   </section>
 }
 

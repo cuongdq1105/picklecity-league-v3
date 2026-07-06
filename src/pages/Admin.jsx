@@ -94,6 +94,8 @@ export default function Admin(props) {
           groups={draw.groups}
           schedule={schedule}
           setSchedule={setSchedule}
+          knockout={knockout}
+          setKnockout={setKnockout}
           config={matchConfig}
           setMsg={setMsg}
         />}

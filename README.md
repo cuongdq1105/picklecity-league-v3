@@ -1,19 +1,24 @@
-# PickleCity Tournament Manager V4.10.16 BTC Confirmed Only
+# PickleCity Tournament Manager V4.10.17 Unified KO Score
 
-## Đã cập nhật cơ chế thanh toán/đăng ký hợp lệ
+## Đã cập nhật
+- Gộp nhập điểm Vòng bảng, Tứ kết, Bán kết, Tranh giải 3, Chung kết vào cùng màn hình **Nhập điểm**.
+- Knockout dùng cùng cơ chế như vòng bảng:
+  - Lưu game
+  - Mở sửa điểm
+  - Xóa nhập lại
+  - Kết thúc trận
+- Hiển thị tên đội và tên VĐV trong các trận knockout.
+- Khi sinh nhánh, hệ thống tạo đủ Tứ kết, Bán kết, Chung kết, Tranh giải 3.
+- Tab Nhánh đấu chỉ dùng để theo dõi sơ đồ, không còn nhập điểm riêng gây rối.
 
-- VĐV vẫn phải chuyển khoản và tích **Tôi đã chuyển khoản** mới gửi được đăng ký.
-- Trạng thái sau khi VĐV gửi là **chờ BTC xác nhận**.
-- Chỉ những VĐV được BTC bấm **Xác nhận thanh toán** mới được xem là đăng ký hợp lệ.
-- Khi bốc thăm/chia bảng, hệ thống chỉ lấy VĐV có trạng thái **BTC_CONFIRMED**.
-- Người bấm giả “Tôi đã chuyển khoản” sẽ không ảnh hưởng giải vì chưa được đưa vào bốc thăm.
-
-## Quy trình
-1. VĐV chuyển khoản.
-2. VĐV tích “Tôi đã chuyển khoản” và gửi đăng ký.
-3. BTC kiểm tra tài khoản.
-4. BTC bấm xác nhận thanh toán.
-5. VĐV mới được đưa vào bốc thăm/chia bảng.
+## Cách update bằng GitHub Desktop
+1. Giải nén file ZIP này.
+2. Copy toàn bộ nội dung vào thư mục project GitHub hiện tại.
+3. Mở GitHub Desktop.
+4. Kiểm tra file thay đổi.
+5. Commit: `V4.10.17 - Unified KO Score`
+6. Push origin.
+7. Cloudflare Pages tự deploy.
 
 ## Test
-/api/ping => version: 4.10.16-btc-confirmed-only
+/api/ping => version: 4.10.17-unified-ko-score

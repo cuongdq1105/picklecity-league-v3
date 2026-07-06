@@ -566,3 +566,11 @@
   padding:6px 10px;
   font-weight:950;
 }
+
+/* V4.10.17 Unified KO Score */
+.koMatchCard{border-color:#cfe7bd!important;background:#fbfff7}
+.scoreMatchTeamsFull strong{display:grid;gap:4px;min-height:62px}
+.scoreMatchTeamsFull small{display:block;color:#456;font-size:12px;line-height:1.25;font-weight:750}
+.scoreGroupTabs button svg{flex-shrink:0}
+.scoreGameLine button:disabled,.scoreMatchActions button:disabled{opacity:.55;cursor:not-allowed}
+.koMatchCard .scoreMatchTop b{color:#006b3b}
