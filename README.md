@@ -1,30 +1,22 @@
-# PickleCity Tournament Manager V4.10.19 Referee Module
+# PickleCity Tournament Manager V4.10.20 Referee Tabs
 
-## Đã thêm
-- Module **Trọng tài** riêng, có tab riêng ngoài màn hình chính.
-- Trọng tài đăng nhập bằng mật khẩu riêng.
-- Mặc định mật khẩu trọng tài: `123456`.
-- Chọn sân phụ trách khi đăng nhập.
-- Giao diện tối ưu cho điện thoại.
-- Trọng tài chỉ thấy chức năng nhập điểm:
-  - Lưu game
-  - Thêm game
-  - Kết thúc trận
-  - Mở sửa điểm
-- Có lọc theo sân phụ trách hoặc xem tất cả trận.
-
-## Lưu ý
-- BTC vẫn có toàn quyền trong module BTC.
-- Trọng tài không thấy đăng ký, thanh toán, bốc thăm, cấu hình giải.
-- Dữ liệu điểm vẫn đồng bộ chung với hệ thống hiện tại.
+## Đã sửa theo yêu cầu
+- Tab Trọng tài được tách rõ:
+  - Bảng đấu
+  - Tứ kết
+  - Bán kết
+  - Chung kết
+  - Tranh 3
+- Vẫn giữ lọc theo sân phụ trách hoặc tất cả trận.
+- Không còn hiển thị gợi ý mật khẩu `123456` trên giao diện và thông báo lỗi.
 
 ## Cách update bằng GitHub Desktop
 1. Giải nén file ZIP này.
 2. Copy toàn bộ nội dung vào thư mục project GitHub hiện tại.
 3. Mở GitHub Desktop.
-4. Commit: `V4.10.19 - Referee Module`
+4. Commit: `V4.10.20 - Referee Tabs`
 5. Push origin.
 6. Cloudflare Pages tự deploy.
 
 ## Test
-/api/ping => version: 4.10.19-referee-module
+/api/ping => version: 4.10.20-referee-tabs
