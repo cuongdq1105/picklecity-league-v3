@@ -242,6 +242,10 @@ export default function ScoreCenter({ groups=[], schedule=[], setSchedule, knock
   </section>
 }
 
+function PlayerNameBlockV4111({text}){
+  const names = String(text||"").split(" + ").filter(Boolean);
+  return names.length ? <div className="playerNameBlockV4111">{names.map((n,i)=><span key={i}>👤 {n}</span>)}</div> : null;
+}
 function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,onUnlock,onClear}) {
   const scoreable = match._scope==="KO" ? makeKoScoreable(match) : match;
   const ss=scoreSummary(scoreable,rules);
@@ -256,9 +260,9 @@ function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,onUnl
       <em>{match.editing?"Đang sửa":match.status==="DONE"?"✓ Hoàn thành":match.status==="LIVE"?"LIVE":"Chờ điểm"}</em>
     </div>
     <div className="scoreMatchTeams scoreMatchTeamsFull">
-      <strong>{match._home}<small>{match._playersHome}</small></strong>
+      <strong>{match._playersHome ? <PlayerNameBlockV4111 text={match._playersHome}/> : match._home}</strong>
       <span>vs</span>
-      <strong>{match._away}<small>{match._playersAway}</small></strong>
+      <strong>{match._playersAway ? <PlayerNameBlockV4111 text={match._playersAway}/> : match._away}</strong>
     </div>
     {!canPlay && <p className="warnLine">Trận này chưa xác định đủ đội. Hãy kết thúc vòng trước để hệ thống tự điền đội.</p>}
     {(match.games||[{home:"",away:"",saved:false}]).map((g,i)=><div className={`scoreGameLine ${g.saved?"saved":""}`} key={i}>

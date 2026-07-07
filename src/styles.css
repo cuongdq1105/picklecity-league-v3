@@ -1379,3 +1379,36 @@ input,select,textarea{border-radius:12px!important}
   .scheduleTeamsPublic>strong,.resultVsV4110>strong{text-align:center}
   .pubTeamItemV4110 span{display:grid}
 }
+
+/* V4.11.1 Player Display System */
+.playerNameBlockV4111{
+  display:grid;
+  gap:4px;
+  text-align:left;
+}
+.playerNameBlockV4111 span{
+  display:block;
+  color:#0b3b2e;
+  font-weight:950;
+  line-height:1.25;
+}
+.pubTeamBox .playerNameBlockV4111,
+.refTeams .playerNameBlockV4111,
+.scoreMatchTeamsFull .playerNameBlockV4111{
+  text-align:left;
+}
+.pubTeamItemV4110>b{display:none!important}
+.playerPairLineV4111>b,
+.playerPairLineV4111 > b{display:none!important}
+.standingPlayersPrimaryV4111{
+  display:block!important;
+  color:#0b3b2e!important;
+  font-size:14px!important;
+  font-weight:950!important;
+  white-space:pre-line;
+}
+.teamNameStanding{display:none!important}
+.pubTeamBox b:empty{display:none!important}
+.teamLine .playerNameBlockV4111 span{font-size:13px}
+.scoreMatchTeamsFull strong{font-size:14px}
+.refTeams b{display:none}

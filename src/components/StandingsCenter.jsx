@@ -73,7 +73,7 @@ function GroupStandingCard({group,rows}) {
       <tbody>{rows.map(r=><tr key={r.name} className={r.rank<=3 ? `rank rank${r.rank}` : ""}>
         <td><b>{r.rank}</b></td>
         <td><span className={`rankPill rankPill${r.rank}`}>{rankLabel(r.rank)}</span></td>
-        <td><b className="teamNameStanding">{r.name}</b><small className="standingPlayers">{r.players}</small></td>
+        <td><small className="standingPlayers standingPlayersPrimaryV4111">{r.players}</small></td>
         <td>{r.played}</td>
         <td className="winCol">{r.win}</td>
         <td>{r.loss}</td>
@@ -95,7 +95,7 @@ function BestThirdTable({rows}) {
       <tbody>{rows.map((r,i)=><tr key={`${r.group}-${r.name}`} className={i<2 ? "qualified3" : ""}>
         <td><b>{i+1}</b>{i<2 && <em> vào nhánh</em>}</td>
         <td>{shortGroup(r.group)}</td>
-        <td><b className="teamNameStanding">{r.name}</b><small className="standingPlayers">{r.players}</small></td>
+        <td><small className="standingPlayers standingPlayersPrimaryV4111">{r.players}</small></td>
         <td>{r.played}</td>
         <td className="winCol">{r.win}</td>
         <td>{r.loss}</td>

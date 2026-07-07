@@ -10,7 +10,20 @@ function scoreText(m){
   return (m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ");
 }
 function matchDone(m){ return (m.games||[]).some(g=>g.saved) || m.status==="DONE"; }
-function groupPlayers(t){ return (t?.players||[]).map(p=>p.full_name).join(" + "); }
+function shortPhone(p){ const s=String(p?.phone||"").replace(/\D/g,""); return s ? s.slice(-4) : ""; }
+function displayPlayerName(p, dupNames=new Set()){
+  const name = p?.full_name || "";
+  if(!dupNames.has(name)) return name;
+  const tail = shortPhone(p);
+  return tail ? `${name} (${tail})` : name;
+}
+function groupPlayers(t, dupNames=new Set()){ return (t?.players||[]).map(p=>displayPlayerName(p,dupNames)).join(" + "); }
+function teamPlayersArray(t, dupNames=new Set()){ return (t?.players||[]).map(p=>displayPlayerName(p,dupNames)); }
+function duplicateNameSetFromList(list=[]){
+  const counts={};
+  (list||[]).forEach(p=>{ const n=p.full_name||""; if(n) counts[n]=(counts[n]||0)+1; });
+  return new Set(Object.entries(counts).filter(([,c])=>c>1).map(([n])=>n));
+}
 
 function koName(x){ return x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—"; }
 function koPlayers(x){ return x?.playerNames || (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
@@ -83,11 +96,18 @@ function statusLabel(m){
   return "Chưa đấu";
 }
 function koTeamForCard(x){
+  const players = koPlayers(x);
   return <div className="pubTeamBox">
-    <b>{koName(x)}</b>
-    {koPlayers(x) && <small>{koPlayers(x)}</small>}
+    {players ? <PlayerNameBlock names={players.split(" + ").filter(Boolean)}/> : <b>{koName(x)}</b>}
     {x?.slot && <em>{x.slot}</em>}
   </div>
+}
+function PlayerNameBlock({names=[]}){
+  return <div className="playerNameBlockV4111">{names.map((n,i)=><span key={i}>👤 {n}</span>)}</div>
+}
+function GroupTeamBox({team, duplicateNames=new Set()}){
+  const names = teamPlayersArray(team, duplicateNames);
+  return <div className="pubTeamBox">{names.length ? <PlayerNameBlock names={names}/> : <b>{team?.name || "—"}</b>}</div>
 }
 
 export default function Public({ list=[], draw, schedule = [], knockout = [], onRefresh }) {
@@ -99,6 +119,7 @@ export default function Public({ list=[], draw, schedule = [], knockout = [], on
   const confirmed = list.filter(x=>x.payment_status==="BTC_CONFIRMED").length;
   const pending = total - confirmed;
   const koList = useMemo(()=>normalizeKnockout(knockout||[]),[knockout]);
+  const duplicateNames = useMemo(()=>duplicateNameSetFromList(list||[]),[list]);
   const publicStandings = useMemo(()=>calcStandings(draw?.groups||[], schedule||[], DEFAULT_RULES),[draw,schedule]);
 
   const scheduleTabs = useMemo(()=>{
@@ -183,7 +204,7 @@ export default function Public({ list=[], draw, schedule = [], knockout = [], on
 
     {publicTab==="groups" && <section>
       <div className="sectionHeadV4110"><h2>Bảng đấu</h2><button className="inlineBtn" onClick={copyPublicDraw}><ClipboardCopy size={14}/> Copy bảng đấu</button></div>
-      {draw ? <PublicGroups groups={draw.groups||[]}/> : <p className="muted">BTC chưa công bố kết quả bốc thăm.</p>}
+      {draw ? <PublicGroups groups={draw.groups||[]} duplicateNames={duplicateNames}/> : <p className="muted">BTC chưa công bố kết quả bốc thăm.</p>}
     </section>}
 
     {publicTab==="schedule" && <section>
@@ -192,7 +213,7 @@ export default function Public({ list=[], draw, schedule = [], knockout = [], on
         <div className="publicFilterTabs">
           {scheduleTabs.map(t=><button key={t.key} className={scheduleFilter===t.key?"active":""} onClick={()=>setScheduleFilter(t.key)}>{t.label} <b>{t.count}</b></button>)}
         </div>
-        <ScheduleList matches={visibleSchedule}/>
+        <ScheduleList matches={visibleSchedule} duplicateNames={duplicateNames}/>
       </> : <p className="muted">BTC chưa xếp lịch thi đấu.</p>}
     </section>}
 
@@ -202,37 +223,36 @@ export default function Public({ list=[], draw, schedule = [], knockout = [], on
         {resultTabs.map(t=><button key={t.key} className={resultFilter===t.key?"active":""} onClick={()=>setResultFilter(t.key)}>{t.label} <b>{t.count}</b></button>)}
       </div>
       {visibleResults.length ? <div className="resultCardsPublic">
-        {visibleResults.map((m,i)=><MatchResultCard key={m.id||i} match={m}/>)}
+        {visibleResults.map((m,i)=><MatchResultCard key={m.id||i} match={m} duplicateNames={duplicateNames}/>)}
       </div> : <p className="muted">Chưa có kết quả trong mục này.</p>}
     </section>}
 
     {publicTab==="standings" && <section>
       <h2>Bảng xếp hạng</h2>
-      <PublicStandings standings={publicStandings} knockout={koList}/>
+      <PublicStandings standings={publicStandings} knockout={koList} duplicateNames={duplicateNames}/>
     </section>}
 
     {publicTab==="bracket" && <section>
       <h2>Nhánh đấu</h2>
-      <PublicBracket knockout={koList}/>
+      <PublicBracket knockout={koList} duplicateNames={duplicateNames}/>
     </section>}
   </main>
 }
 
-function PublicGroups({groups=[]}) {
+function PublicGroups({groups=[], duplicateNames=new Set()}) {
   return <div className="pubGroupGridV4110">
     {groups.map(g=><div className="pubGroupCardV4110" key={g.name}>
       <h3>{g.name}<span>{(g.teams||[]).length} đội</span></h3>
       <div className="pubTeamListV4110">
         {(g.teams||[]).map((t,i)=><div className="pubTeamItemV4110" key={t.name||i}>
-          <b>{t.name}</b>
-          <div>{(t.players||[]).map((p,idx)=><span key={idx}>👤 {p.full_name}{p.phone ? <small>{p.phone}</small> : null}</span>)}</div>
+          <div>{(t.players||[]).map((p,idx)=><span key={idx}>👤 {displayPlayerName(p, duplicateNames)}{p.phone ? <small>{p.phone}</small> : null}</span>)}</div>
         </div>)}
       </div>
     </div>)}
   </div>
 }
 
-function ScheduleList({matches=[]}) {
+function ScheduleList({matches=[], duplicateNames=new Set()}) {
   return <div className="scheduleTimelineV4110">
     {matches.map((m,i)=><div className="scheduleRowV4110" key={m.id||i}>
       <div className="scheduleTimeV4110"><b>{m.time || "Chưa giờ"}</b><span>{m.court ? `Sân ${m.court}` : koRoundLabel(m)}</span></div>
@@ -242,7 +262,7 @@ function ScheduleList({matches=[]}) {
           {m._kind==="KO" || m.type==="KO" || m.a ? <>
             {koTeamForCard(m.a)}<strong>vs</strong>{koTeamForCard(m.b)}
           </> : <>
-            <div className="pubTeamBox"><b>{m.home?.name}</b><small>{groupPlayers(m.home)}</small></div><strong>vs</strong><div className="pubTeamBox"><b>{m.away?.name}</b><small>{groupPlayers(m.away)}</small></div>
+            <GroupTeamBox team={m.home} duplicateNames={duplicateNames}/><strong>vs</strong><GroupTeamBox team={m.away} duplicateNames={duplicateNames}/>
           </>}
         </div>
         <span className="scoreSmallV4110">{scoreText(m)||statusLabel(m)}</span>
@@ -251,20 +271,20 @@ function ScheduleList({matches=[]}) {
   </div>
 }
 
-function MatchResultCard({match:m}) {
+function MatchResultCard({match:m, duplicateNames=new Set()}) {
   const isKo=m._kind==="KO" || m.type==="KO" || m.a;
   return <div className="publicResultCard">
     <div><b>{isKo?koRoundLabel(m):m.group}</b><span>{m.time || ""}{m.court ? ` · Sân ${m.court}` : ""}</span></div>
     <div className="resultVsV4110">
       {isKo ? <>{koTeamForCard(m.a)}<strong>vs</strong>{koTeamForCard(m.b)}</> :
-        <><div className="pubTeamBox"><b>{m.home?.name}</b><small>{groupPlayers(m.home)}</small></div><strong>vs</strong><div className="pubTeamBox"><b>{m.away?.name}</b><small>{groupPlayers(m.away)}</small></div></>}
+        <><GroupTeamBox team={m.home} duplicateNames={duplicateNames}/><strong>vs</strong><GroupTeamBox team={m.away} duplicateNames={duplicateNames}/></>}
     </div>
     <strong>{scoreText(m)}</strong>
     <em>{statusLabel(m)}</em>
   </div>
 }
 
-function PublicStandings({standings={}, knockout=[]}) {
+function PublicStandings({standings={}, knockout=[], duplicateNames=new Set()}) {
   const groups = Object.entries(standings||{});
   const final=knockout.find(m=>roundKey(m)==="FINAL");
   const third=knockout.find(m=>roundKey(m)==="THIRD");
@@ -280,7 +300,7 @@ function PublicStandings({standings={}, knockout=[]}) {
         <h3>{group}</h3>
         <table><thead><tr><th>Hạng</th><th>Xét hạng</th><th>Tên đội / VĐV</th><th>Thắng</th><th>Thua</th><th>HS</th><th>Điểm</th></tr></thead>
           <tbody>{rows.map(r=><tr key={r.name} className={r.rank<=3?"ranked":""}>
-            <td><b>{r.rank}</b></td><td><span className={`rankPill rankPill${r.rank}`}>{rankLabel(r.rank)}</span></td><td><b className="teamNameStanding">{r.name}</b><small className="standingPlayers">{r.players}</small></td><td>{r.win}</td><td>{r.loss}</td><td>{r.diff>0?`+${r.diff}`:r.diff}</td><td>{r.pf}</td>
+            <td><b>{r.rank}</b></td><td><span className={`rankPill rankPill${r.rank}`}>{rankLabel(r.rank)}</span></td><td><small className="standingPlayers standingPlayersPrimaryV4111">{r.players}</small></td><td>{r.win}</td><td>{r.loss}</td><td>{r.diff>0?`+${r.diff}`:r.diff}</td><td>{r.pf}</td>
           </tr>)}</tbody>
         </table>
       </div>)}
@@ -295,12 +315,12 @@ function KnockoutSummary({knockout=[]}) {
     {rounds.map(([key,label])=>{
       const rows=knockout.filter(m=>roundKey(m)===key);
       if(!rows.length) return null;
-      return <div key={key}><h3>{label}</h3>{rows.map(m=><MatchResultCard key={m.id} match={{...m,_kind:"KO"}} />)}</div>
+      return <div key={key}><h3>{label}</h3>{rows.map(m=><MatchResultCard key={m.id} match={{...m,_kind:"KO"}} duplicateNames={duplicateNames} />)}</div>
     })}
   </div>
 }
 
-function PublicBracket({knockout=[]}) {
+function PublicBracket({knockout=[], duplicateNames=new Set()}) {
   const qfs = knockout.filter(m=>roundKey(m)==="QF");
   const semis = knockout.filter(m=>roundKey(m)==="SF");
   const finals = knockout.filter(m=>roundKey(m)==="FINAL");
@@ -330,6 +350,7 @@ function PublicTeamLine({item,winner}) {
   const players = koPlayers(item);
   const isWinner = winner && (winner === name || slotMatches(item,winner));
   return <div className={isWinner ? "teamLine winner" : "teamLine"}>
-    {item?.slot && <small>{item.slot}</small>}<b>{name}</b>{players && <span>{players}</span>}
+    {item?.slot && <small>{item.slot}</small>}
+    {players ? <PlayerNameBlock names={players.split(" + ").filter(Boolean)}/> : <b>{name}</b>}
   </div>
 }

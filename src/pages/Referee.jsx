@@ -252,6 +252,10 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
   </main>
 }
 
+function PlayerNameBlockV4111({text}){
+  const names = String(text||"").split(" + ").filter(Boolean);
+  return names.length ? <div className="playerNameBlockV4111">{names.map((n,i)=><span key={i}>👤 {n}</span>)}</div> : null;
+}
 function RefMatchCard({m,rules,onDraft,onSave,onAdd,onFinish,onUnlock}) {
   const scoreable=m._scope==="KO"?makeKoScoreable(m):m;
   const ss=scoreSummary(scoreable,rules);
@@ -259,7 +263,7 @@ function RefMatchCard({m,rules,onDraft,onSave,onAdd,onFinish,onUnlock}) {
   return <section className={`refMatch ${m.status==="DONE"?"done":""}`}>
     <div className="refMatchHead"><b>{m._round} {m.time?`· ${m.time}`:""}</b><span>{m.status==="DONE"?"✓ Xong":m.status==="LIVE"?"LIVE":"Chờ"}</span></div>
     <div className="refTeams">
-      <div><b>{m._home}</b><small>{m._ph}</small></div><em>vs</em><div><b>{m._away}</b><small>{m._pa}</small></div>
+      <div>{m._ph ? <PlayerNameBlockV4111 text={m._ph}/> : <b>{m._home}</b>}</div><em>vs</em><div>{m._pa ? <PlayerNameBlockV4111 text={m._pa}/> : <b>{m._away}</b>}</div>
     </div>
     {!can && <p className="warnLine">Trận chưa đủ đội.</p>}
     {(m.games||[{home:"",away:"",saved:false}]).map((g,i)=><div className="refGame" key={i}>
