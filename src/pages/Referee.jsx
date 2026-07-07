@@ -20,6 +20,22 @@ function hasRealTeam(x){
   const nm = koRealTeamName(x);
   return !!(x?.team?.name || x?.row?.team?.name || (x?.teamName && !isPlaceholderName(x.teamName)) || koPlayers(x));
 }
+
+function slotMatchesWinner(slotObj,winner){
+  const w = String(winner||"").trim();
+  if(!w) return false;
+  const candidates = [
+    slotObj?.slot,
+    slotObj?.displaySlot,
+    slotObj?.originalSlot,
+    slotObj?.teamName,
+    slotObj?.winnerName,
+    slotObj?.team?.name,
+    slotObj?.row?.team?.name
+  ].filter(Boolean).map(x=>String(x).trim());
+  return candidates.includes(w);
+}
+
 function makeKoScoreable(m){ return {...m, home:{name:koTeamName(m.a)}, away:{name:koTeamName(m.b)}}; }
 function koRoundLabel(m){
   if(m.id?.startsWith("QF")) return "Tứ kết";
