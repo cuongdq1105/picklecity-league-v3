@@ -63,8 +63,8 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
   const [pin,setPin] = useState("");
   const [court,setCourt] = useState(localStorage.getItem("ptm_ref_court") || "1");
   const [authed,setAuthed] = useState(localStorage.getItem("ptm_referee")==="1");
-  const [filter,setFilter] = useState("court");
-  const [round,setRound] = useState("GROUP");
+  const [round,setRound] = useState("");
+  const [pickerOpen,setPickerOpen] = useState(false);
   const rules={...DEFAULT_RULES,...(config.rules||{})};
   const koList=useMemo(()=>normalizeKnockout(knockout||[]),[knockout]);
 
@@ -75,7 +75,7 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
     localStorage.setItem("ptm_referee","1");
     localStorage.setItem("ptm_ref_court",court);
     setAuthed(true);
-    setMsg?.(`Trọng tài đã đăng nhập Sân ${court}.`);
+    setMsg?.("Trọng tài đã đăng nhập.");
   }
   function logout(){
     localStorage.removeItem("ptm_referee");
@@ -86,21 +86,26 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
   const groupMatches=(schedule||[]).map(m=>({...m,_scope:"GROUP",_round:m.group,_home:m.home?.name,_away:m.away?.name,_ph:teamPlayers(m.home),_pa:teamPlayers(m.away)}));
   const koMatches=koList.map(m=>({...m,_scope:"KO",_round:koRoundLabel(m),_home:koTeamName(m.a),_away:koTeamName(m.b),_ph:koPlayers(m.a),_pa:koPlayers(m.b)}));
   const all=[...groupMatches,...koMatches];
-  const roundName = {
-    GROUP:"Bảng đấu",
-    QF:"Tứ kết",
-    SF:"Bán kết",
-    THIRD:"Tranh giải 3",
-    FINAL:"Chung kết"
-  }[round] || "Bảng đấu";
+  const groupNames = Array.from(new Set((schedule||[]).map(m=>m.group).filter(Boolean))).sort((a,b)=>String(a).localeCompare(String(b),"vi"));
+  const roundOptions = [
+    ...groupNames.map(g=>({key:`GROUP:${g}`, label:g, desc:"Vòng bảng"})),
+    {key:"QF", label:"Tứ kết", desc:"Knockout"},
+    {key:"SF", label:"Bán kết", desc:"Knockout"},
+    {key:"FINAL", label:"Chung kết", desc:"Knockout"},
+    {key:"THIRD", label:"Tranh giải 3", desc:"Knockout"}
+  ];
+  const selectedKey = round || roundOptions[0]?.key || "QF";
+  const selectedOption = roundOptions.find(x=>x.key===selectedKey) || roundOptions[0] || {label:"Chọn bảng/vòng",desc:""};
   const visible=all.filter(m=>{
-    const okCourt = filter==="all" || !m.court || String(m.court)===String(court);
-    const okRound = round==="GROUP" ? m._scope==="GROUP" :
-      round==="QF" ? m.id?.startsWith("QF") :
-      round==="SF" ? m.id?.startsWith("SF") :
-      round==="THIRD" ? m.id?.startsWith("THIRD") :
-      round==="FINAL" ? m.id?.startsWith("FINAL") : true;
-    return okCourt && okRound;
+    if(selectedKey.startsWith("GROUP:")){
+      const g = selectedKey.replace("GROUP:","");
+      return m._scope==="GROUP" && m.group===g;
+    }
+    if(selectedKey==="QF") return m.id?.startsWith("QF");
+    if(selectedKey==="SF") return m.id?.startsWith("SF");
+    if(selectedKey==="THIRD") return m.id?.startsWith("THIRD");
+    if(selectedKey==="FINAL") return m.id?.startsWith("FINAL");
+    return true;
   }).sort((a,b)=>(a.status==="DONE")-(b.status==="DONE") || String(a.time||"").localeCompare(String(b.time||"")));
 
   function mutateKo(fn){
@@ -176,12 +181,7 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
       <h1><Smartphone/> Trọng tài nhập điểm</h1>
       <p>Đăng nhập để nhập điểm nhanh trên điện thoại từng sân.</p>
       <form onSubmit={login}>
-        <label>Sân phụ trách
-          <select value={court} onChange={e=>setCourt(e.target.value)}>
-            {[1,2,3,4,5,6,7,8].map(c=><option key={c} value={c}>Sân {c}</option>)}
-          </select>
-        </label>
-        <label>Mật khẩu trọng tài
+<label>Mật khẩu trọng tài
           <input type="password" value={pin} onChange={e=>setPin(e.target.value)} placeholder="Nhập mật khẩu trọng tài"/>
         </label>
         <button className="primary">Vào nhập điểm</button>
@@ -192,21 +192,29 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
 
   return <main className="refPage">
     <div className="refTop">
-      <div><h1>Trọng tài · Sân {court}</h1><p>Chỉ hiển thị chức năng nhập điểm, tối ưu cho điện thoại.</p></div>
+      <div><h1>Trọng tài nhập điểm</h1><p>Chọn bảng/vòng đấu rồi nhập điểm nhanh trên điện thoại.</p></div>
       <div><button className="mini" onClick={()=>setMsg?.("Đã làm mới màn hình trọng tài.")}><RefreshCw size={14}/> Làm mới</button><button className="mini" onClick={logout}><LogOut size={14}/> Thoát</button></div>
     </div>
-    <div className="refScopeTabs">
-      <button className={round==="GROUP"?"active":""} onClick={()=>setRound("GROUP")}>Bảng đấu</button>
-      <button className={round==="QF"?"active":""} onClick={()=>setRound("QF")}>Tứ kết</button>
-      <button className={round==="SF"?"active":""} onClick={()=>setRound("SF")}>Bán kết</button>
-      <button className={round==="FINAL"?"active":""} onClick={()=>setRound("FINAL")}>Chung kết</button>
-      <button className={round==="THIRD"?"active":""} onClick={()=>setRound("THIRD")}>Tranh 3</button>
-    </div>
-    <div className="refTabs">
-      <button className={filter==="court"?"active":""} onClick={()=>setFilter("court")}>Sân {court}</button>
-      <button className={filter==="all"?"active":""} onClick={()=>setFilter("all")}>Tất cả trận</button>
-    </div>
-    <div className="refRoundTitle">{roundName} · {visible.length} trận</div>
+
+    <button className="refRoundPickerBtn" onClick={()=>setPickerOpen(true)}>
+      <span>Đang nhập</span>
+      <b>{selectedOption.label}</b>
+      <em>{selectedOption.desc} · {visible.length} trận</em>
+    </button>
+
+    {pickerOpen && <div className="refPickerOverlay" onClick={()=>setPickerOpen(false)}>
+      <div className="refPickerModal" onClick={e=>e.stopPropagation()}>
+        <h2>Chọn bảng / vòng đấu</h2>
+        <p>Trọng tài chọn đúng bảng hoặc vòng cần nhập điểm.</p>
+        <div className="refPickerList">
+          {roundOptions.map(opt=><button key={opt.key} className={selectedKey===opt.key?"active":""} onClick={()=>{setRound(opt.key);setPickerOpen(false);}}>
+            <b>{opt.label}</b>
+            <span>{opt.desc}</span>
+          </button>)}
+        </div>
+        <button className="mini" onClick={()=>setPickerOpen(false)}>Đóng</button>
+      </div>
+    </div>}
     <div className="refList">
       {visible.length ? visible.map(m=><RefMatchCard key={`${m._scope}-${m.id}`} m={m} rules={rules} onDraft={draft} onSave={saveGame} onAdd={addGame} onFinish={finish} onUnlock={unlock}/>) : <p className="muted">Chưa có trận trong mục này.</p>}
     </div>

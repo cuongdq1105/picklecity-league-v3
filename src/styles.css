@@ -744,3 +744,63 @@
   padding:10px 12px;
   margin-bottom:10px;
 }
+
+/* V4.10.21 Referee Round Selector */
+.refRoundPickerBtn{
+  width:100%;
+  border:1px solid #bce4c8;
+  background:#e9f8ee;
+  border-radius:18px;
+  padding:14px 16px;
+  display:grid;
+  gap:3px;
+  text-align:left;
+  margin:10px 0 12px;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,.04);
+}
+.refRoundPickerBtn span{font-weight:900;color:#456;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.refRoundPickerBtn b{font-size:22px;color:#006b3b}
+.refRoundPickerBtn em{font-style:normal;color:#456;font-weight:800}
+.refPickerOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:999;
+  display:grid;
+  place-items:end center;
+  padding:12px;
+}
+.refPickerModal{
+  width:min(520px,100%);
+  max-height:86vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.refPickerModal h2{margin:0 0 5px;color:#10201c}
+.refPickerModal p{margin:0 0 12px;color:#667;font-weight:800}
+.refPickerList{display:grid;gap:8px;margin-bottom:12px}
+.refPickerList button{
+  border:1px solid #dfe8cf;
+  background:#f8fbf2;
+  border-radius:15px;
+  padding:13px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  text-align:left;
+}
+.refPickerList button b{color:#064e3b;font-size:17px}
+.refPickerList button span{color:#667;font-weight:800}
+.refPickerList button.active{
+  background:#b8d72f;
+  border-color:#b8d72f;
+}
+.refScopeTabs,.refTabs{display:none!important}
+@media(min-width:700px){
+  .refPickerOverlay{place-items:center}
+}
