@@ -42,13 +42,15 @@ function adv(label, m){
   if(!m?.winner) return {slot:label};
   if(m.winnerTeam) return cloneSlotWithLabel(m.winnerTeam,label);
   const a=koTeamName(m.a), b=koTeamName(m.b);
-  const w = m.winner===a ? m.a : m.winner===b ? m.b : null;
+  const w = (m.winner===a || slotMatchesWinner(m.a,m.winner)) ? m.a : (m.winner===b || slotMatchesWinner(m.b,m.winner)) ? m.b : null;
   return w ? cloneSlotWithLabel(w,label) : {slot:label,teamName:m.winner,winnerName:m.winner};
 }
 function loser(label, m){
   if(!m?.winner) return {slot:label};
   const a=koTeamName(m.a), b=koTeamName(m.b);
-  const l = m.winner===a ? m.b : m.winner===b ? m.a : null;
+  const aWon = m.winner===a || slotMatchesWinner(m.a,m.winner);
+  const bWon = m.winner===b || slotMatchesWinner(m.b,m.winner);
+  const l = aWon ? m.b : bWon ? m.a : null;
   return l ? cloneSlotWithLabel(l,label) : {slot:label};
 }
 function mergeKeep(base, old){
@@ -143,7 +145,7 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
       games[idx]={...g,saved:true,savedAt:nowText()};
       const ss=scoreSummary({...fake,games},rules);
       const leftName = koTeamName(x.a), rightName = koTeamName(x.b);
-      const wSlot = ss.winner===leftName ? x.a : ss.winner===rightName ? x.b : null;
+      const wSlot = (ss.winner===leftName || slotMatchesWinner(x.a,ss.winner)) ? x.a : (ss.winner===rightName || slotMatchesWinner(x.b,ss.winner)) ? x.b : null;
       msg=`Đã lưu ${x.name}: ${g.home}-${g.away}`;
       return {...x,games,status:"LIVE",winner:ss.winner,winnerTeam:wSlot?cloneSlotWithLabel(wSlot,`Winner ${x.name}`):null};
     }));
@@ -170,7 +172,7 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
       const fake=makeKoScoreable(x), ss=scoreSummary(fake,rules);
       if(!ss.winner){msg="Chưa đủ game đã lưu để kết thúc trận."; return x;}
       const leftName = koTeamName(x.a), rightName = koTeamName(x.b);
-      const wSlot = ss.winner===leftName ? x.a : ss.winner===rightName ? x.b : null;
+      const wSlot = (ss.winner===leftName || slotMatchesWinner(x.a,ss.winner)) ? x.a : (ss.winner===rightName || slotMatchesWinner(x.b,ss.winner)) ? x.b : null;
       msg=`Đã kết thúc ${x.name}. Thắng: ${ss.winner}`;
       return {...x,status:"DONE",winner:ss.winner,winnerTeam:wSlot?cloneSlotWithLabel(wSlot,`Winner ${x.name}`):null,finishedAt:nowText(),editing:false};
     }));

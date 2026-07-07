@@ -1,18 +1,13 @@
-# PickleCity Tournament Manager V4.10.22 KO Referee Player Names
+# PickleCity Tournament Manager V4.10.23 KO Slot Winner Fix
 
 ## Đã sửa
-- Module Trọng tài hiển thị tên cặp VĐV ở Bán kết, Chung kết, Tranh giải 3 khi đã có kết quả vòng trước.
-- Không cho nhập điểm Bán kết/Chung kết/Tranh 3 khi vòng trước chưa có đội thật sự.
-- Cơ chế truyền đội thắng ưu tiên dữ liệu thật của đội: tên đội + danh sách VĐV, không chỉ dùng nhãn Best3/C1/C2.
-- Đồng bộ logic hiển thị với module Nhập điểm của BTC.
+- Sửa lỗi đội thắng ở Knockout lưu theo slot như `Best3-2`, `C1`, `C2` nên không đẩy được tên VĐV sang Bán kết/Chung kết.
+- Hệ thống giờ nhận diện cả tên đội thật và slot hiển thị.
+- Bán kết, Chung kết, Tranh giải 3 nhận đúng tên đội + danh sách VĐV.
+- Áp dụng cho Trọng tài, Nhập điểm BTC và Nhánh đấu.
 
-## Cách update bằng GitHub Desktop
-1. Giải nén file ZIP này.
-2. Copy toàn bộ nội dung vào thư mục project GitHub hiện tại.
-3. Mở GitHub Desktop.
-4. Commit: `V4.10.22 - KO Referee Player Names`
-5. Push origin.
-6. Cloudflare Pages tự deploy.
+## Lưu ý
+Nếu dữ liệu cũ đã lưu sai: Mở sửa trận Tứ kết/Bán kết → Lưu lại game → Kết thúc lại trận để hệ thống repair dữ liệu.
 
 ## Test
-/api/ping => version: 4.10.22-ko-referee-player-names
+/api/ping => version: 4.10.23-ko-slot-winner-fix

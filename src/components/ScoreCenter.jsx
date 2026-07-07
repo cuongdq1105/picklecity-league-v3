@@ -12,6 +12,13 @@ function koPlayers(x){ return x?.playerNames || (x?.team?.players || x?.row?.tea
 function koRealTeamName(x){ return x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—"; }
 function isPlaceholderName(name){ return /^(Winner|Loser|Best3|A\d|B\d|C\d|D\d|E\d|F\d)/i.test(String(name||"").trim()); }
 function hasRealTeam(x){ return !!(x?.team?.name || x?.row?.team?.name || (x?.teamName && !isPlaceholderName(x.teamName)) || koPlayers(x)); }
+function slotMatchesWinner(slotObj,winner){
+  const w = String(winner||"").trim();
+  if(!w) return false;
+  const candidates = [slotObj?.slot,slotObj?.displaySlot,slotObj?.originalSlot,slotObj?.teamName,slotObj?.winnerName,slotObj?.team?.name,slotObj?.row?.team?.name]
+    .filter(Boolean).map(x=>String(x).trim());
+  return candidates.includes(w);
+}
 function groupPlayers(t){ return (t?.players||[]).map(p=>p.full_name).join(" + "); }
 function makeKoScoreable(m){ return {...m, home:{name:koTeamName(m.a), players:m.a?.team?.players||m.a?.row?.team?.players||[]}, away:{name:koTeamName(m.b), players:m.b?.team?.players||m.b?.row?.team?.players||[]}}; }
 function koRoundLabel(m){

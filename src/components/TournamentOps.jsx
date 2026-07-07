@@ -110,19 +110,28 @@ function cloneBracketSlot(slotObj,label){
   const players = slotObj?.playerNames || (slotObj?.team?.players || slotObj?.row?.team?.players || []).map(p=>p.full_name).join(" + ");
   return {...slotObj, slot:label, teamName:bracketTeamName(slotObj), winnerName:bracketTeamName(slotObj), playerNames:players};
 }
+function slotMatchesBracketWinner(slotObj,winner){
+  const w = String(winner||"").trim();
+  if(!w) return false;
+  const candidates = [slotObj?.slot,slotObj?.displaySlot,slotObj?.originalSlot,slotObj?.teamName,slotObj?.winnerName,slotObj?.team?.name,slotObj?.row?.team?.name]
+    .filter(Boolean).map(x=>String(x).trim());
+  return candidates.includes(w);
+}
 function makeAdvancer(label, sourceMatch){
   if(!sourceMatch?.winner) return {slot: label, team:null};
   if(sourceMatch.winnerTeam) return cloneBracketSlot(sourceMatch.winnerTeam,label);
   const aName = bracketTeamName(sourceMatch.a);
   const bName = bracketTeamName(sourceMatch.b);
-  const winner = sourceMatch.winner === aName ? sourceMatch.a : sourceMatch.winner === bName ? sourceMatch.b : null;
+  const winner = (sourceMatch.winner === aName || slotMatchesBracketWinner(sourceMatch.a,sourceMatch.winner)) ? sourceMatch.a : (sourceMatch.winner === bName || slotMatchesBracketWinner(sourceMatch.b,sourceMatch.winner)) ? sourceMatch.b : null;
   return winner ? cloneBracketSlot(winner,label) : {slot:label, teamName:sourceMatch.winner, winnerName:sourceMatch.winner, playerNames:""};
 }
 function makeLoser(label, sourceMatch){
   if(!sourceMatch?.winner) return {slot: label, team:null};
   const aName = bracketTeamName(sourceMatch.a);
   const bName = bracketTeamName(sourceMatch.b);
-  const loser = sourceMatch.winner === aName ? sourceMatch.b : sourceMatch.winner === bName ? sourceMatch.a : null;
+  const aWon = sourceMatch.winner === aName || slotMatchesBracketWinner(sourceMatch.a,sourceMatch.winner);
+  const bWon = sourceMatch.winner === bName || slotMatchesBracketWinner(sourceMatch.b,sourceMatch.winner);
+  const loser = aWon ? sourceMatch.b : bWon ? sourceMatch.a : null;
   return loser ? cloneBracketSlot(loser,label) : {slot: label, team:null};
 }
 
