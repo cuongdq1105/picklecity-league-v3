@@ -994,3 +994,154 @@ input,select,textarea{border-radius:12px!important}
   .btcMainPanelV41013{margin:0 8px;padding:10px}
   .metricGridV41014{grid-template-columns:1fr!important}
 }
+
+/* V4.10.26 UI Payment Polish */
+.toastNoticeV41026{
+  position:fixed;
+  right:18px;
+  top:18px;
+  z-index:2000;
+  max-width:min(440px,calc(100vw - 28px));
+  background:#0b3b2e;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:16px;
+  padding:13px 16px;
+  font-weight:900;
+  box-shadow:0 18px 45px rgba(0,0,0,.26);
+  animation:toastInV41026 .18s ease-out;
+}
+@keyframes toastInV41026{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.syncNotice,.cleanSync{display:none!important}
+.refRoundPickerBtnV41026{
+  background:linear-gradient(135deg,#e9f8ee,#f7fff8)!important;
+  border:2px solid #9ad7a9!important;
+  padding:16px 18px!important;
+  position:relative;
+}
+.refRoundPickerBtnV41026:after{
+  content:"";
+  position:absolute;
+  right:18px;
+  top:50%;
+  width:12px;
+  height:12px;
+  border-right:3px solid #006b3b;
+  border-bottom:3px solid #006b3b;
+  transform:translateY(-60%) rotate(45deg);
+}
+.refRoundPickerBtnV41026 span{
+  color:#006b3b!important;
+  font-size:13px!important;
+  letter-spacing:.02em!important;
+}
+.refRoundPickerBtnV41026 b{
+  display:block;
+  font-size:26px!important;
+  line-height:1.1;
+  padding-right:36px;
+}
+.refRoundPickerBtnV41026 b em{font-style:normal;color:#006b3b;font-size:20px}
+.refRoundPickerBtnV41026 small{
+  display:block;
+  color:#456;
+  font-weight:900;
+  margin-top:5px;
+}
+.paymentCardV41026{
+  display:grid;
+  gap:14px;
+  align-content:start;
+}
+.paymentHeaderV41026{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:#f3fbec;
+  border:1px solid #dfe8cf;
+  border-radius:20px;
+  padding:14px;
+}
+.paymentHeaderV41026 p{
+  margin:5px 0 0;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:#335;
+  font-weight:850;
+}
+.qrOnlyBoxV41026{
+  background:#fff;
+  border:1px solid #e5eadb;
+  border-radius:22px;
+  padding:14px;
+  display:grid;
+  place-items:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.04);
+}
+.qrOnlyBoxV41026 img{
+  width:min(330px,100%);
+  max-height:430px;
+  object-fit:contain;
+  display:block;
+}
+.paymentCodeV41026{
+  background:#f8fbf2;
+  border:1px solid #dfe8cf;
+  border-radius:16px;
+  padding:12px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:6px 10px;
+  align-items:center;
+}
+.paymentCodeV41026 span{
+  grid-column:1/-1;
+  color:#667;
+  font-weight:900;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.paymentCodeV41026 b{
+  font-size:20px;
+  color:#006b3b;
+}
+.paymentCodeV41026 button{
+  border:1px solid #dfe8cf;
+  background:#fff;
+  border-radius:999px;
+  padding:9px 12px;
+  font-weight:950;
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+.paidConfirmV41026{
+  cursor:pointer;
+}
+.paidConfirmV41026 input{display:none}
+.paidConfirmV41026 span{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  border-radius:16px;
+  background:#007a3d;
+  color:white;
+  padding:14px;
+  font-size:18px;
+  font-weight:950;
+  box-shadow:0 10px 24px rgba(0,122,61,.22);
+}
+.paidConfirmV41026 input:checked + span{
+  background:#0b3b2e;
+}
+.transferBoxV497,.noteBoxV497{display:none!important}
+@media(max-width:650px){
+  .toastNoticeV41026{left:12px;right:12px;top:12px}
+  .paymentHeaderV41026{display:grid}
+  .qrOnlyBoxV41026 img{width:100%;max-height:360px}
+}

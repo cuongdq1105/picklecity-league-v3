@@ -227,10 +227,10 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
       <div><button className="mini" onClick={()=>setMsg?.("Đã làm mới màn hình trọng tài.")}><RefreshCw size={14}/> Làm mới</button><button className="mini" onClick={logout}><LogOut size={14}/> Thoát</button></div>
     </div>
 
-    <button className="refRoundPickerBtn" onClick={()=>setPickerOpen(true)}>
-      <span>Đang nhập</span>
-      <b>{selectedOption.label}</b>
-      <em>{selectedOption.desc} · {visible.length} trận</em>
+    <button className="refRoundPickerBtn refRoundPickerBtnV41026" onClick={()=>setPickerOpen(true)}>
+      <span>📋 Chọn bảng / vòng đấu</span>
+      <b>{selectedOption.label} <em>▾</em></b>
+      <small>{selectedOption.desc} · {visible.length} trận · Nhấn để đổi</small>
     </button>
 
     {pickerOpen && <div className="refPickerOverlay" onClick={()=>setPickerOpen(false)}>

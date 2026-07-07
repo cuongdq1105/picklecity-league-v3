@@ -1,28 +1,24 @@
-# PickleCity Tournament Manager V4.10.25 UI Polish
-
-## Mục tiêu
-Tối ưu giao diện để sản phẩm gọn, mượt và chuyên nghiệp hơn, không thêm luồng nghiệp vụ mới.
+# PickleCity Tournament Manager V4.10.26 UI Payment Polish
 
 ## Đã cập nhật
-- Dashboard BTC chuyển sang bố cục sản phẩm rõ ràng hơn.
-- Menu BTC được nhóm theo:
-  - Tổng quan
-  - Chuẩn bị giải
-  - Ngày thi đấu
-  - Công cụ
-- Header BTC mới gọn hơn, bỏ bớt thanh trạng thái gây rối.
-- Card, button, form, bảng, bộ lọc được đồng bộ style.
-- Giao diện desktop thoáng hơn, mobile gọn hơn.
-- Module Trọng tài được polish lại cho điện thoại.
-- Giữ nguyên các chức năng đã ổn định từ V4.10.24.
+- Thông báo hệ thống chuyển thành toast: hiện vài giây rồi tự ẩn.
+- Bỏ dòng trạng thái lưu cục bộ / đồng bộ khỏi màn hình chính.
+- Module Trọng tài: nút chọn bảng/vòng nổi bật hơn, có dấu dropdown và dòng "Nhấn để đổi".
+- Màn hình thanh toán gọn lại: tập trung vào QR.
+- QR thanh toán được sinh động theo số tiền giải và mã thanh toán riêng.
+- Mã thanh toán tạm thời dùng PCL + 6 số cuối điện thoại nếu có.
+
+## Lưu ý thanh toán
+- QR động dùng tài khoản Vietcombank hiện tại: 2022026868.
+- Nội dung chuyển khoản là mã thanh toán, ví dụ PCL123456.
+- Đây là bước chuẩn bị cho Payment Engine sau này.
 
 ## Cách update bằng GitHub Desktop
 1. Giải nén file ZIP này.
 2. Copy toàn bộ nội dung vào thư mục project GitHub hiện tại.
 3. Mở GitHub Desktop.
-4. Commit: `V4.10.25 - UI Polish`
+4. Commit: `V4.10.26 - UI Payment Polish`
 5. Push origin.
-6. Cloudflare Pages tự deploy.
 
 ## Test
-/api/ping => version: 4.10.25-ui-polish
+/api/ping => version: 4.10.26-ui-payment-polish

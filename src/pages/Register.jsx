@@ -1,13 +1,29 @@
 
-import { Trophy, CreditCard, Users, Copy, CheckCircle2, Landmark, QrCode, ShieldCheck, Bell } from "lucide-react";
+import { Trophy, CreditCard, Users, Copy, CheckCircle2, ShieldCheck } from "lucide-react";
 import { money } from "../utils/format";
 
 const BANK = {
+  bin: "970436",
   account: "2022026868",
-  owner: "TRẦN THỊ HOÀI THANH",
-  bank: "Vietcombank",
-  qr: localStorage.getItem("picklecity_payment_qr") || "/qr-vcb-final.png"
+  owner: "TRAN THI HOAI THANH",
+  bank: "Vietcombank"
 };
+
+function paymentCode(form){
+  const phone = String(form.phone || "").replace(/\D/g,"");
+  if(phone) return `PCL${phone.slice(-6)}`;
+  const name = String(form.full_name || "PICKLECITY").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Z0-9]/gi,"").toUpperCase().slice(0,8);
+  return `PCL${name || "DANGKY"}`;
+}
+
+function vietQrUrl(amount, content){
+  const params = new URLSearchParams({
+    amount: String(Number(amount)||0),
+    addInfo: content,
+    accountName: BANK.owner
+  });
+  return `https://img.vietqr.io/image/${BANK.bin}-${BANK.account}-compact2.png?${params.toString()}`;
+}
 
 function copyText(text) {
   try { navigator.clipboard.writeText(text); } catch {}
@@ -15,7 +31,9 @@ function copyText(text) {
 
 export default function Register({ tournament, form, setForm, onSubmit }) {
   const fee = Number(tournament?.fee || 0);
-  const payContent = `${form.full_name || "Họ tên"} ${form.phone || "Số điện thoại"}`.trim();
+  const code = paymentCode(form);
+  const payContent = code;
+  const qrSrc = vietQrUrl(fee, payContent);
 
   return <main className="grid registerGridV497">
     <section className="card tournamentInfoCard">
@@ -40,50 +58,28 @@ export default function Register({ tournament, form, setForm, onSubmit }) {
       </> : <p>Đang tải...</p>}
     </section>
 
-    <section className="card paymentCardV497">
-      <div className="paymentTopV497">
+    <section className="card paymentCardV41026">
+      <div className="paymentHeaderV41026">
         <div>
           <div className="card-title"><CreditCard/> Thanh toán lệ phí</div>
-          <p><ShieldCheck size={16}/> Chuyển khoản đúng thông tin để BTC xác nhận nhanh.</p>
+          <p><ShieldCheck size={16}/> QR đã gồm số tiền và mã thanh toán.</p>
         </div>
         <div className="feePillV497">{money(fee)}</div>
       </div>
 
-      <div className="paymentMainV497 paymentMainOnlyQR">
-        <div className="qrBlockV497">
-          <div className="bankLogoV497"><Landmark size={22}/> VIETCOMBANK</div>
-          <p>Quét QR để chuyển khoản nhanh</p>
-          <div className="qrFrameV497">
-            <img src={BANK.qr} alt="QR chuyển khoản Vietcombank"/>
-          </div>
-        </div></div>
-
-      <div className="transferBoxV497">
-        <div>
-          <h3>Nội dung chuyển khoản</h3>
-          <p>Ghi đúng nội dung để BTC xác nhận nhanh chóng</p>
-        </div>
-        <div className="transferValueV497">
-          <b>{payContent}</b>
-          <button type="button" onClick={()=>copyText(payContent)}><Copy size={15}/> Sao chép</button>
-        </div>
-        <p className="exampleV497">Ví dụ: <b>Nguyễn Văn A 0901234567</b></p>
+      <div className="qrOnlyBoxV41026">
+        <img src={qrSrc} alt="QR thanh toán động"/>
       </div>
 
-      <div className="noteBoxV497">
-        <Bell size={18}/>
-        <div>
-          <b>Lưu ý</b>
-          <ul>
-            <li>Sau khi chuyển khoản, vui lòng chụp màn hình giao dịch.</li>
-            <li>Chỉ sau khi tích “Tôi đã chuyển khoản”, hệ thống mới cho hoàn thành đăng ký.</li>
-          </ul>
-        </div>
+      <div className="paymentCodeV41026">
+        <span>Mã thanh toán</span>
+        <b>{payContent}</b>
+        <button type="button" onClick={()=>copyText(payContent)}><Copy size={15}/> Sao chép</button>
       </div>
 
-      <label className="paidConfirmV497">
+      <label className="paidConfirmV41026">
         <input type="checkbox" checked={form.marked_paid} onChange={e=>setForm({...form,marked_paid:e.target.checked})}/>
-        <span><CheckCircle2 size={24}/> Tôi đã chuyển khoản</span>
+        <span><CheckCircle2 size={22}/> Tôi đã chuyển khoản</span>
       </label>
     </section>
 

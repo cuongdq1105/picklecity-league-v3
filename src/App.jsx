@@ -130,6 +130,11 @@ export default function App() {
   useEffect(()=>{ writeLocal(LOCAL_KEYS.knockout, knockout); },[knockout]);
   useEffect(()=>{ if(adminAuthed && serverLoaded) { const t=setTimeout(()=>saveMatchStateToServer(false), 800); return ()=>clearTimeout(t); } },[matchConfig,schedule,knockout,adminAuthed,serverLoaded]);
   useEffect(()=>{ if(tab==="public") loadPublic(); if(tab==="admin"&&adminAuthed) { loadAdmin(); loadMatchStateFromServer(); } },[tab,adminAuthed]);
+  useEffect(()=>{
+    if(!msg) return;
+    const t = setTimeout(()=>setMsg(""), 3200);
+    return ()=>clearTimeout(t);
+  },[msg]);
 
   async function submit(e){
     e.preventDefault();
@@ -219,7 +224,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.10.25 UI Polish</div>
+      <div className="version">V4.10.26 UI Payment Polish</div>
     </header>
 
     <nav className="tabs">
@@ -229,8 +234,7 @@ export default function App() {
       <button className={tab==="referee"?"active":""} onClick={()=>setTab("referee")}>Trọng tài</button>
     </nav>
 
-    {adminAuthed && <div className="notice syncNotice cleanSync">💾 Đã lưu cục bộ: {localStorage.getItem(LOCAL_KEYS.lastSaved)||"chưa có"} · ☁️ {syncing ? "Đang đồng bộ..." : "Đã đồng bộ: " + serverSavedAt}</div>}
-    {msg && <div className="notice">{msg}</div>}
+    {msg && <div className="toastNoticeV41026">{msg}</div>}
 
     {tab==="register" && <Register tournament={tournament} form={form} setForm={setForm} onSubmit={submit}/>}
     {tab==="public" && <Public list={publicList} draw={publicDraw} schedule={schedule} knockout={knockout} onRefresh={loadPublic}/>}
