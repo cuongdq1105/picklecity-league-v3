@@ -804,3 +804,18 @@
 @media(min-width:700px){
   .refPickerOverlay{place-items:center}
 }
+
+/* V4.10.22 KO Referee Player Names */
+.refTeams small:not(:empty){
+  background:#ffffffb8;
+  border-radius:10px;
+  padding:5px 7px;
+}
+.refMatch .warnLine{
+  background:#fff7e6;
+  border:1px solid #f1c875;
+  color:#7c4a03;
+  border-radius:12px;
+  padding:8px 10px;
+  font-weight:900;
+}

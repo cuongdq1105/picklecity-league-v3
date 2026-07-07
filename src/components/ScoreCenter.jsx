@@ -7,8 +7,11 @@ function nowText(){
   const d = new Date();
   return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
 }
-function koTeamName(x){ return x?.teamName || x?.team?.name || x?.row?.team?.name || x?.winnerName || x?.slot || "—"; }
+function koTeamName(x){ return koRealTeamName(x); }
 function koPlayers(x){ return x?.playerNames || (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
+function koRealTeamName(x){ return x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—"; }
+function isPlaceholderName(name){ return /^(Winner|Loser|Best3|A\d|B\d|C\d|D\d|E\d|F\d)/i.test(String(name||"").trim()); }
+function hasRealTeam(x){ return !!(x?.team?.name || x?.row?.team?.name || (x?.teamName && !isPlaceholderName(x.teamName)) || koPlayers(x)); }
 function groupPlayers(t){ return (t?.players||[]).map(p=>p.full_name).join(" + "); }
 function makeKoScoreable(m){ return {...m, home:{name:koTeamName(m.a), players:m.a?.team?.players||m.a?.row?.team?.players||[]}, away:{name:koTeamName(m.b), players:m.b?.team?.players||m.b?.row?.team?.players||[]}}; }
 function koRoundLabel(m){
@@ -21,11 +24,12 @@ function koRoundLabel(m){
 function cloneSlotWithLabel(slotObj,label){
   if(!slotObj) return {slot:label};
   const players = slotObj?.playerNames || (slotObj?.team?.players || slotObj?.row?.team?.players || []).map(p=>p.full_name).join(" + ");
+  const realName = koRealTeamName(slotObj);
   return {
     ...slotObj,
     slot: label,
-    teamName: koTeamName(slotObj),
-    winnerName: koTeamName(slotObj),
+    teamName: realName,
+    winnerName: realName,
     playerNames: players
   };
 }
@@ -69,8 +73,7 @@ function normalizeKnockout(list=[]){
   return [...qfs, ...sfs, mergeKeep(finalBase,old["FINAL-1"]), mergeKeep(thirdBase,old["THIRD-1"])];
 }
 function canPlayKo(m){
-  const a=koTeamName(m.a), b=koTeamName(m.b);
-  return a && b && !String(a).includes("Winner") && !String(b).includes("Winner") && !String(a).includes("Loser") && !String(b).includes("Loser");
+  return hasRealTeam(m.a) && hasRealTeam(m.b);
 }
 
 export default function ScoreCenter({ groups=[], schedule=[], setSchedule, knockout=[], setKnockout, config={}, setMsg }) {

@@ -8,8 +8,18 @@ function nowText(){
   return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
 }
 function teamPlayers(t){ return (t?.players||[]).map(p=>p.full_name).join(" + "); }
-function koTeamName(x){ return x?.teamName || x?.team?.name || x?.row?.team?.name || x?.winnerName || x?.slot || "—"; }
+function koTeamName(x){ return koRealTeamName(x); }
 function koPlayers(x){ return x?.playerNames || (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
+function koRealTeamName(x){
+  return x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—";
+}
+function isPlaceholderName(name){
+  return /^(Winner|Loser|Best3|A\d|B\d|C\d|D\d|E\d|F\d)/i.test(String(name||"").trim());
+}
+function hasRealTeam(x){
+  const nm = koRealTeamName(x);
+  return !!(x?.team?.name || x?.row?.team?.name || (x?.teamName && !isPlaceholderName(x.teamName)) || koPlayers(x));
+}
 function makeKoScoreable(m){ return {...m, home:{name:koTeamName(m.a)}, away:{name:koTeamName(m.b)}}; }
 function koRoundLabel(m){
   if(m.id?.startsWith("QF")) return "Tứ kết";
@@ -19,13 +29,14 @@ function koRoundLabel(m){
   return m.round || "Knockout";
 }
 function canPlayKo(m){
-  const a=koTeamName(m.a), b=koTeamName(m.b);
-  return a && b && !String(a).includes("Winner") && !String(b).includes("Winner") && !String(a).includes("Loser") && !String(b).includes("Loser");
+  if(String(m.id||"").startsWith("QF")) return hasRealTeam(m.a) && hasRealTeam(m.b);
+  return hasRealTeam(m.a) && hasRealTeam(m.b);
 }
 function cloneSlotWithLabel(slotObj,label){
   if(!slotObj) return {slot:label};
   const players = slotObj?.playerNames || (slotObj?.team?.players || slotObj?.row?.team?.players || []).map(p=>p.full_name).join(" + ");
-  return {...slotObj,slot:label,teamName:koTeamName(slotObj),winnerName:koTeamName(slotObj),playerNames:players};
+  const realName = koRealTeamName(slotObj);
+  return {...slotObj,slot:label,teamName:realName,winnerName:realName,playerNames:players};
 }
 function adv(label, m){
   if(!m?.winner) return {slot:label};
@@ -131,7 +142,8 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
       if(!valid.ok){msg=valid.message; return x;}
       games[idx]={...g,saved:true,savedAt:nowText()};
       const ss=scoreSummary({...fake,games},rules);
-      const wSlot = ss.winner===koTeamName(x.a) ? x.a : ss.winner===koTeamName(x.b) ? x.b : null;
+      const leftName = koTeamName(x.a), rightName = koTeamName(x.b);
+      const wSlot = ss.winner===leftName ? x.a : ss.winner===rightName ? x.b : null;
       msg=`Đã lưu ${x.name}: ${g.home}-${g.away}`;
       return {...x,games,status:"LIVE",winner:ss.winner,winnerTeam:wSlot?cloneSlotWithLabel(wSlot,`Winner ${x.name}`):null};
     }));
@@ -157,7 +169,8 @@ export default function Referee({ schedule=[], setSchedule, knockout=[], setKnoc
       if(x.id!==m.id) return x;
       const fake=makeKoScoreable(x), ss=scoreSummary(fake,rules);
       if(!ss.winner){msg="Chưa đủ game đã lưu để kết thúc trận."; return x;}
-      const wSlot = ss.winner===koTeamName(x.a) ? x.a : ss.winner===koTeamName(x.b) ? x.b : null;
+      const leftName = koTeamName(x.a), rightName = koTeamName(x.b);
+      const wSlot = ss.winner===leftName ? x.a : ss.winner===rightName ? x.b : null;
       msg=`Đã kết thúc ${x.name}. Thắng: ${ss.winner}`;
       return {...x,status:"DONE",winner:ss.winner,winnerTeam:wSlot?cloneSlotWithLabel(wSlot,`Winner ${x.name}`):null,finishedAt:nowText(),editing:false};
     }));
