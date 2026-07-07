@@ -21,41 +21,48 @@ export default function Admin(props) {
 
   const [active,setActive] = useState("overview");
 
-  const tabs = [
-    {key:"overview", label:"Tổng quan", icon:<Shield size={16}/>},
-    {key:"settings", label:"Cấu hình giải", icon:<Settings size={16}/>},
-    {key:"players", label:"VĐV / Thanh toán", icon:<Users size={16}/>},
-    {key:"draw", label:"Bốc thăm / Bảng", icon:<Shuffle size={16}/>},
-    {key:"score", label:"Nhập điểm", icon:<CalendarClock size={16}/>},
-    {key:"standings", label:"BXH", icon:<Trophy size={16}/>},
-    {key:"bracket", label:"Nhánh đấu", icon:<GitBranch size={16}/>},
-    {key:"print", label:"In ấn", icon:<Printer size={16}/>},
-    {key:"qr", label:"QR thanh toán", icon:<QrCode size={16}/>}
+  const sections = [
+    {title:"Tổng quan", items:[
+      {key:"overview", label:"Dashboard", icon:<Shield size={16}/>}
+    ]},
+    {title:"Chuẩn bị giải", items:[
+      {key:"settings", label:"Cấu hình giải", icon:<Settings size={16}/>},
+      {key:"players", label:"VĐV & thanh toán", icon:<Users size={16}/>},
+      {key:"draw", label:"Bốc thăm & bảng", icon:<Shuffle size={16}/>}
+    ]},
+    {title:"Ngày thi đấu", items:[
+      {key:"score", label:"Nhập điểm", icon:<CalendarClock size={16}/>},
+      {key:"standings", label:"Bảng xếp hạng", icon:<Trophy size={16}/>},
+      {key:"bracket", label:"Nhánh đấu", icon:<GitBranch size={16}/>}
+    ]},
+    {title:"Công cụ", items:[
+      {key:"print", label:"In ấn", icon:<Printer size={16}/>},
+      {key:"qr", label:"QR thanh toán", icon:<QrCode size={16}/>}
+    ]}
   ];
 
-  return <main className="card wide btcDashboardV41013">
-    <div className="topline btcToplineV41013">
-      <div className="card-title"><Shield/> Dashboard BTC</div>
+  return <main className="card wide btcDashboardV41025">
+    <div className="btcShellHeadV41025">
+      <div>
+        <p>BTC Console</p>
+        <h1>{tournament?.name || "Điều hành giải đấu"}</h1>
+        <span>Thiết kế lại gọn hơn: mỗi module chỉ làm một việc chính.</span>
+      </div>
       <div className="btcTopActionsV41013">
-        <button className="mini" onClick={onRefresh}><RefreshCw size={14}/> Tải lại</button>
+        <button className="mini" onClick={onRefresh}><RefreshCw size={14}/> Đồng bộ</button>
         <button className="mini" onClick={onLogout}>Đăng xuất</button>
       </div>
     </div>
 
-    <div className="btcStatusFlowV41013">
-      <span>Đăng ký</span><span>Thanh toán</span><span>Phân hạng</span>
-      <span className={Number(tournament?.list_locked)===1?"done":""}>Khóa DS</span>
-      <span className={draw.savedStatus?"done":""}>Bốc thăm</span>
-      <span className={draw.savedStatus==="FINALIZED"||draw.savedStatus==="PUBLISHED"?"done":""}>Chốt</span>
-      <span className={draw.savedStatus==="PUBLISHED"?"done":""}>Công bố</span>
-    </div>
-
     <div className="btcLayoutV41013">
-      <aside className="btcSideNavV41013">
-        <h3>Điều hành giải</h3>
-        {tabs.map(t=><button key={t.key} className={active===t.key?"active":""} onClick={()=>setActive(t.key)}>
-          {t.icon}<span>{t.label}</span>
-        </button>)}
+      <aside className="btcSideNavV41025">
+        <div className="sideBrandV41025"><Shield size={22}/><b>PickleCity</b><span>Manager</span></div>
+        {sections.map(sec=><div className="sideSectionV41025" key={sec.title}>
+          <h3>{sec.title}</h3>
+          {sec.items.map(t=><button key={t.key} className={active===t.key?"active":""} onClick={()=>setActive(t.key)}>
+            {t.icon}<span>{t.label}</span>
+          </button>)}
+        </div>)}
       </aside>
 
       <section className="btcMainPanelV41013">

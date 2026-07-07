@@ -1,2 +1,2 @@
 import { json } from './_utils.js';
-export async function onRequestGet(){ return json({ok:true,message:'PickleCity Tournament Manager API running',version:'4.10.24-referee-hotfix'}); }
+export async function onRequestGet(){ return json({ok:true,message:'PickleCity Tournament Manager API running',version:'4.10.25-ui-polish'}); }

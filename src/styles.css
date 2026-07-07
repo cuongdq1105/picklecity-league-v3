@@ -819,3 +819,178 @@
   padding:8px 10px;
   font-weight:900;
 }
+
+/* V4.10.25 UI Polish - product layout */
+:root{
+  --pl-green:#0b3b2e;
+  --pl-green-2:#006b3b;
+  --pl-lime:#b8d72f;
+  --pl-soft:#f5f8ee;
+  --pl-line:#dfe8cf;
+  --pl-text:#10201c;
+  --pl-muted:#60766c;
+}
+body{background:linear-gradient(180deg,#eef8df 0,#f7faf3 260px,#f7faf3 100%)!important;color:var(--pl-text)}
+.app{max-width:1600px;margin:0 auto}
+.hero{
+  max-width:1500px;
+  margin:14px auto 10px!important;
+  border-radius:26px!important;
+  padding:20px 24px!important;
+  background:linear-gradient(135deg,#08251d,#0f5c3f)!important;
+  box-shadow:0 18px 45px rgba(0,0,0,.16)!important;
+}
+.hero h1{margin:4px 0!important;font-size:32px!important}
+.hero p{margin:0!important;opacity:.9}
+.tabs{
+  max-width:1500px;
+  margin:0 auto 12px!important;
+  background:#fff!important;
+  border:1px solid var(--pl-line)!important;
+  border-radius:18px!important;
+  padding:8px!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.04);
+}
+.tabs button{
+  border-radius:13px!important;
+  padding:11px 16px!important;
+  font-weight:950!important;
+}
+.tabs button.active{background:var(--pl-lime)!important;color:var(--pl-text)!important}
+.notice{max-width:1500px;margin:8px auto!important;border-radius:14px!important}
+.btcDashboardV41025{
+  max-width:1500px!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+.btcShellHeadV41025{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin:0 0 14px;
+  padding:18px 20px;
+  background:#fff;
+  border:1px solid var(--pl-line);
+  border-radius:22px;
+  box-shadow:0 8px 24px rgba(0,0,0,.05);
+}
+.btcShellHeadV41025 p{margin:0 0 4px;color:var(--pl-green-2);font-weight:950;text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+.btcShellHeadV41025 h1{margin:0;font-size:26px;color:var(--pl-text)}
+.btcShellHeadV41025 span{display:block;margin-top:5px;color:var(--pl-muted);font-weight:800}
+.btcLayoutV41013{grid-template-columns:270px minmax(0,1fr)!important;gap:16px!important}
+.btcSideNavV41025{
+  position:sticky;
+  top:12px;
+  background:#0b2d22;
+  border-radius:24px;
+  padding:14px;
+  display:grid;
+  gap:10px;
+  box-shadow:0 18px 45px rgba(0,0,0,.18);
+}
+.sideBrandV41025{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  column-gap:9px;
+  align-items:center;
+  color:#fff;
+  padding:10px 10px 14px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+.sideBrandV41025 svg{grid-row:1/3;color:var(--pl-lime)}
+.sideBrandV41025 b{font-size:18px;line-height:1}
+.sideBrandV41025 span{font-size:12px;color:#d8f2df;font-weight:800}
+.sideSectionV41025{display:grid;gap:6px}
+.sideSectionV41025 h3{
+  margin:10px 8px 2px;
+  color:#bce4c8;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.sideSectionV41025 button{
+  border:0;
+  background:transparent;
+  color:#fff;
+  text-align:left;
+  padding:11px 12px;
+  border-radius:14px;
+  font-weight:950;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+}
+.sideSectionV41025 button:hover{background:rgba(255,255,255,.08)}
+.sideSectionV41025 button.active{background:var(--pl-lime);color:var(--pl-text)}
+.btcMainPanelV41013{
+  background:#fff;
+  border:1px solid var(--pl-line);
+  border-radius:24px;
+  padding:16px;
+  box-shadow:0 10px 28px rgba(0,0,0,.05);
+}
+.btcMainPanelV41013 > section,.btcMainPanelV41013 > .card{
+  border-radius:20px!important;
+  box-shadow:none!important;
+}
+.overviewHeroV41014{
+  box-shadow:none!important;
+  border-radius:22px!important;
+  padding:22px!important;
+}
+.metricGridV41014{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.metricCardV41014{
+  border-radius:18px!important;
+  transition:.16s ease;
+}
+.metricCardV41014:hover{transform:translateY(-2px)}
+.scoreCenterHead,.panelTitle,.printHead,.drawHead,.settingsHead{
+  background:#f8fbf2;
+  border:1px solid var(--pl-line);
+  border-radius:18px;
+  padding:14px!important;
+}
+.scoreFilters,.scoreStats,.scoreGroupTabs,.quickActionsV41014,.refScopeTabs{
+  background:#f8fbf2!important;
+  border:1px solid var(--pl-line)!important;
+  border-radius:16px!important;
+}
+button.primary,.primary{background:var(--pl-green-2)!important;color:white!important;border:0!important}
+button.mini{border-radius:999px!important;font-weight:950!important}
+.tablewrap,table{border-radius:16px!important}
+input,select,textarea{border-radius:12px!important}
+.refPage{max-width:760px!important}
+.refTop{
+  background:linear-gradient(135deg,#08251d,#0f5c3f)!important;
+  border-radius:24px!important;
+}
+.refRoundPickerBtn{
+  border-radius:20px!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.05)!important;
+}
+.refMatch{
+  border-radius:22px!important;
+  padding:16px!important;
+}
+.refGame input{font-size:22px!important}
+@media(max-width:1050px){
+  .btcLayoutV41013{grid-template-columns:1fr!important}
+  .btcSideNavV41025{position:relative;top:auto;display:block}
+  .sideSectionV41025{display:flex;overflow-x:auto;padding-bottom:4px}
+  .sideSectionV41025 h3{min-width:86px;margin:12px 6px;color:#d8f2df}
+  .sideSectionV41025 button{white-space:nowrap}
+  .metricGridV41014{grid-template-columns:repeat(2,1fr)!important}
+}
+@media(max-width:650px){
+  .hero{margin:8px!important;border-radius:20px!important}
+  .hero h1{font-size:24px!important}
+  .tabs{margin:0 8px 10px!important;overflow-x:auto;justify-content:flex-start!important}
+  .btcShellHeadV41025{margin:0 8px 12px;display:block}
+  .btcTopActionsV41013{margin-top:12px}
+  .btcMainPanelV41013{margin:0 8px;padding:10px}
+  .metricGridV41014{grid-template-columns:1fr!important}
+}
