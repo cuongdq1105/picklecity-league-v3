@@ -1145,3 +1145,237 @@ input,select,textarea{border-radius:12px!important}
   .paymentHeaderV41026{display:grid}
   .qrOnlyBoxV41026 img{width:100%;max-height:360px}
 }
+
+/* V4.11.0 Public UX Upgrade */
+.publicUxV4110 .muted:first-of-type{display:none}
+.sectionHeadV4110{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.sectionHeadV4110 h2{margin:0}
+.pubGroupGridV4110{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:14px;
+}
+.pubGroupCardV4110{
+  border:1px solid #dfe8cf;
+  background:#fbfff7;
+  border-radius:20px;
+  padding:14px;
+}
+.pubGroupCardV4110 h3{
+  margin:0 0 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color:#006b3b;
+}
+.pubGroupCardV4110 h3 span{
+  font-size:12px;
+  background:#e9f8ee;
+  border:1px solid #bce4c8;
+  border-radius:999px;
+  padding:5px 9px;
+  color:#456;
+}
+.pubTeamListV4110{display:grid;gap:10px}
+.pubTeamItemV4110{
+  background:#fff;
+  border:1px solid #e5eadb;
+  border-radius:16px;
+  padding:12px;
+}
+.pubTeamItemV4110>b{
+  display:block;
+  color:#0b3b2e;
+  font-size:17px;
+  margin-bottom:7px;
+}
+.pubTeamItemV4110 div{display:grid;gap:5px}
+.pubTeamItemV4110 span{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  font-weight:850;
+  color:#334;
+}
+.pubTeamItemV4110 small{color:#667;font-weight:750}
+.contactNote{display:none!important}
+.scheduleTimelineV4110{display:grid;gap:10px}
+.scheduleRowV4110{
+  display:grid;
+  grid-template-columns:110px 1fr;
+  gap:12px;
+  border:1px solid #dfe8cf;
+  background:#fff;
+  border-radius:18px;
+  padding:12px;
+}
+.scheduleTimeV4110{
+  background:#0b3b2e;
+  color:#fff;
+  border-radius:14px;
+  padding:10px;
+  display:grid;
+  align-content:center;
+  gap:4px;
+}
+.scheduleTimeV4110 b{font-size:18px}
+.scheduleTimeV4110 span{font-size:12px;color:#d8f2df;font-weight:850}
+.scheduleContentV4110{display:grid;gap:8px}
+.scheduleContentV4110>em{
+  font-style:normal;
+  color:#006b3b;
+  font-weight:950;
+}
+.scheduleTeamsPublic{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:10px;
+}
+.scheduleTeamsPublic>strong,.resultVsV4110>strong{
+  color:#10201c;
+  font-weight:950;
+}
+.pubTeamBox{
+  background:#e9f8ee;
+  border:1px solid #bce4c8;
+  border-radius:14px;
+  padding:10px;
+  min-height:62px;
+  display:grid;
+  align-content:center;
+  gap:3px;
+  text-align:center;
+}
+.pubTeamBox b{color:#006b3b;font-size:16px}
+.pubTeamBox small{color:#456;font-weight:850;line-height:1.25}
+.pubTeamBox em{font-style:normal;color:#667;font-size:11px;font-weight:850}
+.scoreSmallV4110{
+  display:inline-flex;
+  justify-self:start;
+  background:#f3fbec;
+  border:1px solid #dfe8cf;
+  border-radius:999px;
+  padding:5px 10px;
+  color:#0b3b2e;
+  font-weight:950;
+}
+.resultVsV4110{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:10px;
+  align-items:center;
+  margin:8px 0;
+}
+.publicResultCard{
+  border-radius:18px!important;
+  border:1px solid #dfe8cf!important;
+  background:#fff!important;
+}
+.publicResultCard>strong{
+  display:inline-block;
+  color:#007a3d;
+  font-size:22px;
+  margin-top:4px;
+}
+.koSummaryV4110{
+  display:grid;
+  gap:14px;
+  margin-bottom:18px;
+}
+.koSummaryV4110>div{
+  border:1px solid #dfe8cf;
+  background:#fbfff7;
+  border-radius:20px;
+  padding:12px;
+}
+.koSummaryV4110 h3{margin:0 0 10px;color:#006b3b}
+.podiumV4110{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+  margin:0 0 14px;
+}
+.podiumV4110 div{
+  background:linear-gradient(135deg,#e9f8ee,#fff);
+  border:1px solid #bce4c8;
+  border-radius:18px;
+  padding:13px;
+}
+.podiumV4110 span{display:block;color:#667;font-weight:900;font-size:12px;text-transform:uppercase}
+.podiumV4110 b{display:block;color:#006b3b;font-size:18px;margin-top:5px}
+.publicBracketTreeWrap{overflow-x:auto;padding-bottom:4px}
+.publicBracketTree{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(260px,1fr));
+  gap:14px;
+  min-width:820px;
+}
+.publicBracketRound{
+  background:#fbfff7;
+  border:1px solid #dfe8cf;
+  border-radius:20px;
+  padding:12px;
+  display:grid;
+  gap:10px;
+  align-content:start;
+}
+.publicBracketRound h3{margin:0;color:#006b3b}
+.publicTreeMatch{
+  border:1px solid #dfe8cf;
+  background:#fff;
+  border-radius:18px;
+  padding:12px;
+}
+.publicTreeMatch.done{border-color:#86efac;background:#f0fdf4}
+.publicTreeMatchHead{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:8px;
+}
+.publicTreeMatchHead b{
+  background:#0b3b2e;
+  color:#fff;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:12px;
+}
+.publicTreeMatchHead span{font-weight:950}
+.publicTreeTeams{
+  display:grid;
+  gap:6px;
+}
+.publicTreeTeams em{text-align:center;font-style:normal;font-weight:950;color:#667}
+.teamLine{
+  display:grid;
+  gap:2px;
+  background:#f8fbf2;
+  border:1px solid #dfe8cf;
+  border-radius:13px;
+  padding:8px;
+}
+.teamLine.winner{background:#e9f8ee;border-color:#86efac}
+.teamLine small{color:#667;font-size:11px;font-weight:850}
+.teamLine b{color:#006b3b}
+.teamLine span{color:#456;font-size:12px;font-weight:850;line-height:1.25}
+.publicTreeScore{
+  display:block;
+  text-align:center;
+  color:#007a3d;
+  font-size:20px;
+  margin-top:7px;
+}
+.publicStandingCard table small.standingPlayers{
+  display:block;
+  color:#456;
+  font-weight:800;
+  margin-top:3px;
+}
+@media(max-width:700px){
+  .sectionHeadV4110{display:grid}
+  .scheduleRowV4110{grid-template-columns:1fr}
+  .scheduleTeamsPublic,.resultVsV4110{grid-template-columns:1fr;gap:6px}
+  .scheduleTeamsPublic>strong,.resultVsV4110>strong{text-align:center}
+  .pubTeamItemV4110 span{display:grid}
+}
