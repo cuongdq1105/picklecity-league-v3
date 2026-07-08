@@ -288,7 +288,7 @@ function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,onUnl
         {isWinnerSideV4116(match,ss,"home") && <b className="winnerBadgeV4116">✓ Thắng</b>}
         {match._playersHome ? <PlayerNameBlockV4111 text={match._playersHome}/> : match._home}
       </strong>
-      <span>vs</span>
+      <span className="vsHiddenV4118">vs</span>
       <strong className={isWinnerSideV4116(match,ss,"away") ? "winnerSideV4116" : ""}>
         {isWinnerSideV4116(match,ss,"away") && <b className="winnerBadgeV4116">✓ Thắng</b>}
         {match._playersAway ? <PlayerNameBlockV4111 text={match._playersAway}/> : match._away}

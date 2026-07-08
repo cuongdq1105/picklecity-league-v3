@@ -290,7 +290,7 @@ function RefMatchCard({m,rules,onDraft,onSave,onAdd,onFinish,onUnlock}) {
       <div className={isWinnerSideV4116(m,ss,"home") ? "winnerSideV4116" : ""}>
         {isWinnerSideV4116(m,ss,"home") && <b className="winnerBadgeV4116">✓ Thắng</b>}
         {m._ph ? <PlayerNameBlockV4111 text={m._ph}/> : <b>{m._home}</b>}
-      </div><em>vs</em><div className={isWinnerSideV4116(m,ss,"away") ? "winnerSideV4116" : ""}>
+      </div><em className="vsHiddenV4118">vs</em><div className={isWinnerSideV4116(m,ss,"away") ? "winnerSideV4116" : ""}>
         {isWinnerSideV4116(m,ss,"away") && <b className="winnerBadgeV4116">✓ Thắng</b>}
         {m._pa ? <PlayerNameBlockV4111 text={m._pa}/> : <b>{m._away}</b>}
       </div>

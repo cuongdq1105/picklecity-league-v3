@@ -287,9 +287,9 @@ function ScheduleList({matches=[], duplicateNames=new Set()}) {
         <em>{m.group || koRoundLabel(m)}</em>
         <div className="scheduleTeamsPublic">
           {m._kind==="KO" || m.type==="KO" || m.a ? <>
-            {koTeamForCard(m.a,isKoWinnerSide(m,"home"))}<strong>vs</strong>{koTeamForCard(m.b,isKoWinnerSide(m,"away"))}
+            {koTeamForCard(m.a,isKoWinnerSide(m,"home"))}<strong className="vsHiddenV4118">vs</strong>{koTeamForCard(m.b,isKoWinnerSide(m,"away"))}
           </> : <>
-            <GroupTeamBox team={m.home} duplicateNames={duplicateNames} isWinner={isGroupWinnerSide(m,"home")}/><strong>vs</strong><GroupTeamBox team={m.away} duplicateNames={duplicateNames} isWinner={isGroupWinnerSide(m,"away")}/>
+            <GroupTeamBox team={m.home} duplicateNames={duplicateNames} isWinner={isGroupWinnerSide(m,"home")}/><strong className="vsHiddenV4118">vs</strong><GroupTeamBox team={m.away} duplicateNames={duplicateNames} isWinner={isGroupWinnerSide(m,"away")}/>
           </>}
         </div>
         <span className="scoreSmallV4110">{scoreText(m)||statusLabel(m)}</span>
@@ -300,14 +300,14 @@ function ScheduleList({matches=[], duplicateNames=new Set()}) {
 
 function MatchResultCard({match:m, duplicateNames=new Set()}) {
   const isKo=m._kind==="KO" || m.type==="KO" || m.a;
-  return <div className="publicResultCard">
-    <div><b>{isKo?koRoundLabel(m):m.group}</b><span>{m.time || ""}{m.court ? ` · Sân ${m.court}` : ""}</span></div>
-    <div className="resultVsV4110">
-      {isKo ? <>{koTeamForCard(m.a,isKoWinnerSide(m,"home"))}<strong>vs</strong>{koTeamForCard(m.b,isKoWinnerSide(m,"away"))}</> :
-        <><GroupTeamBox team={m.home} duplicateNames={duplicateNames} isWinner={isGroupWinnerSide(m,"home")}/><strong>vs</strong><GroupTeamBox team={m.away} duplicateNames={duplicateNames} isWinner={isGroupWinnerSide(m,"away")}/></>}
+  const score = scoreText(m);
+  return <div className="publicResultCard resultCardUnifiedV4118">
+    <div className="resultCardHeadV4118"><b>{isKo?koRoundLabel(m):m.group}</b><span>{m.time || ""}{m.court ? ` · Sân ${m.court}` : ""}</span></div>
+    <div className="resultVsV4110 resultUnifiedV4118">
+      {isKo ? <>{koTeamForCard(m.a,isKoWinnerSide(m,"home"))}{score && <strong className="scorePillV4118">{score}</strong>}{koTeamForCard(m.b,isKoWinnerSide(m,"away"))}</> :
+        <><GroupTeamBox team={m.home} duplicateNames={duplicateNames} isWinner={isGroupWinnerSide(m,"home")}/>{score && <strong className="scorePillV4118">{score}</strong>}<GroupTeamBox team={m.away} duplicateNames={duplicateNames} isWinner={isGroupWinnerSide(m,"away")}/></>}
     </div>
-    <strong>{scoreText(m)}</strong>
-    <em>{statusLabel(m)}</em>
+    {!score && <em>{statusLabel(m)}</em>}
   </div>
 }
 
@@ -367,7 +367,7 @@ function PublicBracketMatch({match,code,champion=false}) {
   const score = scoreText(match);
   return <div className={`publicTreeMatch ${done?"done":live?"live":"pending"} ${champion?"champion":""}`}>
     <div className="publicTreeMatchHead"><b>{code}</b><span>{match.name}</span></div>
-    <div className="publicTreeTeams"><PublicTeamLine item={match.a} winner={match.winner}/><em>vs</em><PublicTeamLine item={match.b} winner={match.winner}/></div>
+    <div className="publicTreeTeams"><PublicTeamLine item={match.a} winner={match.winner}/><em className="vsHiddenV4118">vs</em><PublicTeamLine item={match.b} winner={match.winner}/></div>
     {score && <strong className="publicTreeScore">{score}</strong>}
 
   </div>

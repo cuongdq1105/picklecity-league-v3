@@ -1,12 +1,13 @@
-# PickleCity Tournament Manager V4.11.7 Public Result Winner Badge
+# PickleCity Tournament Manager V4.11.8 UI Polish Stable
 
-## Đã sửa
-- Tab công khai **Kết quả** đánh dấu cặp thắng giống BTC bằng huy hiệu `✓ Thắng` ngay trên card đội.
-- Áp dụng cho kết quả vòng bảng và knockout.
-- Lịch thi đấu nếu trận đã có kết quả cũng đánh dấu cặp thắng thống nhất.
+## Đã cập nhật
+- Bỏ chữ `VS` ở các khu vực kết quả/nhánh/nhập điểm.
+- Điểm số được đưa vào cùng cụm card trận đấu.
+- Đánh dấu cặp thắng bằng huy hiệu `✓ Thắng` đồng nhất ở Công khai, BTC và Trọng tài.
+- Tinh chỉnh responsive điện thoại để card gọn hơn.
 
 ## Cách update
-Commit gợi ý: `V4.11.7 - Public Result Winner Badge`
+Commit gợi ý: `V4.11.8 - UI Polish Stable`
 
 ## Test
-/api/ping => version: 4.11.7-public-result-winner-badge
+/api/ping => version: 4.11.8-ui-polish-stable

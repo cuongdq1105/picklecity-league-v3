@@ -197,8 +197,8 @@ function KnockoutStandings({knockout=[], filter="", compact=false}) {
         <h3>{label}</h3>
         <div className="koStandingCardsV4113">
           {rows.map((m,idx)=><div className={`koStandingCardV4113 ${matchDone(m)?"done":""}`} key={m.id}>
-            <div className="koStandingTitleV4113"><b>{m.name || `${label} ${idx+1}`}</b><span>{scoreText(m)||"Chưa đấu"}</span></div>
-            <div className="koStandingVsV4113">{teamBlock(m.a,isWinnerSlot(m.a,m))}<em>vs</em>{teamBlock(m.b,isWinnerSlot(m.b,m))}</div>
+            <div className="koStandingTitleV4113"><b>{m.name || `${label} ${idx+1}`}</b></div>
+            <div className="koStandingVsV4113 koUnifiedV4118">{teamBlock(m.a,isWinnerSlot(m.a,m))}{scoreText(m) && <strong className="scorePillV4118">{scoreText(m)}</strong>}{teamBlock(m.b,isWinnerSlot(m.b,m))}</div>
           </div>)}
         </div>
       </div>
