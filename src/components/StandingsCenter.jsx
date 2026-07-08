@@ -68,18 +68,16 @@ function roundKey(m){
 function roundLabelByKey(key){
   return {QF:"Tứ kết",SF:"Bán kết",THIRD:"Tranh hạng 3",FINAL:"Chung kết"}[key] || "Knockout";
 }
-function teamBlock(x){
+function teamBlock(x, isWinner=false){
   const players=koPlayers(x);
-  return <div className="koStandingTeamV4113">
+  return <div className={`koStandingTeamV4113 ${isWinner ? "winnerTeamV4115" : ""}`}>
+    {isWinner && <b className="winnerBadgeV4115">✓ Thắng</b>}
     {players ? players.split(" + ").filter(Boolean).map((p,i)=><span key={i}>{p}</span>) : <span>{koName(x)}</span>}
   </div>
 }
-function winnerText(m){
-  if(!m?.winner) return "";
-  const aWon=m.winner===koName(m.a)||slotMatches(m.a,m.winner);
-  const bWon=m.winner===koName(m.b)||slotMatches(m.b,m.winner);
-  const slot=aWon?m.a:bWon?m.b:m.winnerTeam;
-  return koPlayers(slot)||m.winner;
+function isWinnerSlot(slot,m){
+  if(!m?.winner || !slot) return false;
+  return m.winner===koName(slot) || slotMatches(slot,m.winner);
 }
 
 export default function StandingsCenter({ groups=[], schedule=[], knockout=[], config={}, setMsg }) {
@@ -200,8 +198,7 @@ function KnockoutStandings({knockout=[], filter="", compact=false}) {
         <div className="koStandingCardsV4113">
           {rows.map((m,idx)=><div className={`koStandingCardV4113 ${matchDone(m)?"done":""}`} key={m.id}>
             <div className="koStandingTitleV4113"><b>{m.name || `${label} ${idx+1}`}</b><span>{scoreText(m)||"Chưa đấu"}</span></div>
-            <div className="koStandingVsV4113">{teamBlock(m.a)}<em>vs</em>{teamBlock(m.b)}</div>
-            {m.winner && <p>Thắng: <b>{winnerText(m)}</b></p>}
+            <div className="koStandingVsV4113">{teamBlock(m.a,isWinnerSlot(m.a,m))}<em>vs</em>{teamBlock(m.b,isWinnerSlot(m.b,m))}</div>
           </div>)}
         </div>
       </div>

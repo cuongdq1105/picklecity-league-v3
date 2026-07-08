@@ -358,7 +358,7 @@ function PublicBracketMatch({match,code,champion=false}) {
     <div className="publicTreeMatchHead"><b>{code}</b><span>{match.name}</span></div>
     <div className="publicTreeTeams"><PublicTeamLine item={match.a} winner={match.winner}/><em>vs</em><PublicTeamLine item={match.b} winner={match.winner}/></div>
     {score && <strong className="publicTreeScore">{score}</strong>}
-    {match.winner && <p>Thắng: <b>{displayWinner(match)}</b></p>}
+
   </div>
 }
 function PublicTeamLine({item,winner}) {

@@ -1591,3 +1591,44 @@ input,select,textarea{border-radius:12px!important}
 @media(max-width:700px){
   .koStandingCardsV4113{grid-template-columns:1fr!important}
 }
+
+/* V4.11.5 Winner Badge */
+.koStandingTeamV4113{
+  position:relative;
+}
+.koStandingTeamV4113.winnerTeamV4115{
+  background:#e9f8ee!important;
+  border-color:#22c55e!important;
+  box-shadow:0 0 0 2px rgba(34,197,94,.12);
+}
+.winnerBadgeV4115{
+  display:inline-flex!important;
+  justify-self:start;
+  align-items:center;
+  gap:4px;
+  background:#007a3d;
+  color:#fff!important;
+  border-radius:999px;
+  padding:4px 8px!important;
+  font-size:12px!important;
+  line-height:1!important;
+  margin-bottom:4px;
+}
+.koStandingCardV4113 p{display:none!important}
+.publicTreeMatch p{display:none!important}
+.teamLine.winner{
+  border-color:#22c55e!important;
+  box-shadow:0 0 0 2px rgba(34,197,94,.10);
+}
+.teamLine.winner:before{
+  content:"✓ Thắng";
+  display:inline-flex;
+  justify-self:start;
+  background:#007a3d;
+  color:white;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:12px;
+  font-weight:950;
+  margin-bottom:4px;
+}
