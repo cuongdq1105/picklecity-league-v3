@@ -30,6 +30,21 @@ function copyText(text) {
   try { navigator.clipboard.writeText(text); } catch {}
 }
 
+function titleCaseVietnamese(value=""){
+  return String(value)
+    .toLowerCase()
+    .replace(/(^|\s|-)(\p{L})/gu, (m, sep, ch) => sep + ch.toUpperCase())
+    .replace(/\s+/g, " ")
+    .trimStart();
+}
+
+function defaultGenderForEvent(name=""){
+  const s=String(name||"").toLowerCase();
+  if(s.includes("nữ")) return "female";
+  if(s.includes("nam")) return "male";
+  return "male";
+}
+
 export default function Register({ tournament, form, setForm, onSubmit, onLookupMember }) {
   const fee = Number(tournament?.fee || 0);
   const [knownMember,setKnownMember] = useState(null);
@@ -38,7 +53,7 @@ export default function Register({ tournament, form, setForm, onSubmit, onLookup
     const m = await onLookupMember(form.phone);
     setKnownMember(m);
     if(m?.full_name){
-      setForm({...form, full_name: form.full_name || m.full_name, gender: m.gender || form.gender});
+      setForm({...form, full_name: form.full_name || titleCaseVietnamese(m.full_name), gender: m.gender || form.gender});
     }
   }
   const code = paymentCode(form);
@@ -97,10 +112,10 @@ export default function Register({ tournament, form, setForm, onSubmit, onLookup
       <div className="card-title"><Users/> Form đăng ký</div>
       {Number(tournament?.list_locked)===1 ? <div className="lockedBox">🔒 Danh sách đã khóa. Vui lòng liên hệ BTC.</div> :
       <form onSubmit={onSubmit} className={!form.marked_paid ? "formRequirePaid" : ""}>
-        <label>Họ và tên<input required value={form.full_name} onChange={e=>setForm({...form,full_name:e.target.value})}/></label>
+        <label>Họ và tên<input required value={form.full_name} onChange={e=>setForm({...form,full_name:titleCaseVietnamese(e.target.value)})}/></label>
         <label>Số điện thoại<input required value={form.phone} onChange={e=>{setForm({...form,phone:e.target.value});setKnownMember(null);}} onBlur={handlePhoneBlur}/></label>
         {knownMember && <div className="knownMemberBoxV4112">✓ Đã nhận diện hồ sơ: <b>{knownMember.full_name}</b>. Bạn chỉ cần xác nhận đăng ký giải này.</div>}
-        <label>Giới tính<select value={form.gender} onChange={e=>setForm({...form,gender:e.target.value})}><option value="male">Nam</option><option value="female">Nữ</option></select></label>
+        <label>Giới tính<select value={form.gender || defaultGenderForEvent(tournament?.event_name)} onChange={e=>setForm({...form,gender:e.target.value})}><option value="male">Nam</option><option value="female">Nữ</option></select></label>
         <button className="primary" disabled={!form.marked_paid}>Hoàn thành đăng ký</button>
         {!form.marked_paid && <p className="paidRequiredText">Vui lòng chuyển khoản và tích “Tôi đã chuyển khoản” để hoàn tất đăng ký.</p>}
       </form>}

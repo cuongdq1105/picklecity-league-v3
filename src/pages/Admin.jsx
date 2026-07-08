@@ -69,7 +69,7 @@ export default function Admin(props) {
       <section className="btcMainPanelV41013">
         {active==="overview" && <OverviewPanel tournament={tournament} admin={admin} draw={draw} schedule={schedule} knockout={knockout} setActive={setActive}/>}
 
-        {active==="settings" && <TournamentSettings form={tForm} setForm={setTForm} onSave={onSaveTournament}/>}
+        {active==="settings" && <TournamentSettings form={tForm} setForm={setTForm} onSave={onSaveTournament} matchConfig={matchConfig} setMatchConfig={setMatchConfig}/>}
 
         {active==="players" && <RegistrationManager
           registrations={admin.registrations}

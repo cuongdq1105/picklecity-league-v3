@@ -1,9 +1,21 @@
 
-import { Settings } from "lucide-react";
+import { Settings, SlidersHorizontal } from "lucide-react";
 
 const EVENT_TYPES = ["Đôi nam", "Đôi nữ", "Đôi nam nữ", "Đôi vợ chồng", "Đơn nam", "Đơn nữ"];
 
-export default function TournamentSettings({ form, setForm, onSave }) {
+export default function TournamentSettings({ form, setForm, onSave, matchConfig={}, setMatchConfig }) {
+  const rules = matchConfig.rules || {};
+  function setRule(key,value){
+    setMatchConfig?.({...matchConfig, rules:{...rules,[key]:value}});
+  }
+  function applyWeeklyOpen(){
+    setMatchConfig?.({...matchConfig, rules:{
+      ...rules,
+      groupGamesToWin:1, groupPointTarget:11, groupWinByTwo:true, groupMaxPoint:15,
+      knockoutGamesToWin:1, knockoutPointTarget:11, knockoutWinByTwo:true, knockoutMaxPoint:15,
+      thirdPlace:true
+    }});
+  }
   return <section className="settingsBox">
     <div className="card-title"><Settings/> Cấu hình giải đấu</div>
     <form onSubmit={onSave}>
@@ -21,6 +33,49 @@ export default function TournamentSettings({ form, setForm, onSave }) {
         <label>Số giải ba<input type="number" value={form.third_prize_count||2} onChange={e=>setForm({...form,third_prize_count:e.target.value})}/></label>
         <label>Ghi chú tài trợ / giải thưởng<input value={form.sponsor_note||""} onChange={e=>setForm({...form,sponsor_note:e.target.value})}/></label>
       </div>
+      <div className="rulesConfigV4120">
+        <div className="rulesHeadV4120">
+          <h3><SlidersHorizontal size={18}/> Luật thi đấu</h3>
+          <button type="button" className="mini" onClick={applyWeeklyOpen}>Preset Weekly Open</button>
+        </div>
+        <div className="rulesGridV4120">
+          <label>Vòng bảng - số game
+            <select value={rules.groupGamesToWin ?? 1} onChange={e=>setRule("groupGamesToWin",Number(e.target.value))}>
+              <option value={1}>1 game</option><option value={2}>Best of 3</option><option value={3}>Best of 5</option>
+            </select>
+          </label>
+          <label>Vòng bảng - điểm thắng
+            <input type="number" value={rules.groupPointTarget ?? 11} onChange={e=>setRule("groupPointTarget",Number(e.target.value))}/>
+          </label>
+          <label>Vòng bảng - hơn 2 điểm
+            <select value={rules.groupWinByTwo === false ? "0" : "1"} onChange={e=>setRule("groupWinByTwo",e.target.value==="1")}>
+              <option value="1">Có</option><option value="0">Không</option>
+            </select>
+          </label>
+          <label>Vòng bảng - điểm tối đa
+            <input type="number" value={rules.groupMaxPoint ?? 15} onChange={e=>setRule("groupMaxPoint",Number(e.target.value))}/>
+          </label>
+
+          <label>Knockout - số game
+            <select value={rules.knockoutGamesToWin ?? 1} onChange={e=>setRule("knockoutGamesToWin",Number(e.target.value))}>
+              <option value={1}>1 game</option><option value={2}>Best of 3</option><option value={3}>Best of 5</option>
+            </select>
+          </label>
+          <label>Knockout - điểm thắng
+            <input type="number" value={rules.knockoutPointTarget ?? 11} onChange={e=>setRule("knockoutPointTarget",Number(e.target.value))}/>
+          </label>
+          <label>Knockout - hơn 2 điểm
+            <select value={rules.knockoutWinByTwo === false ? "0" : "1"} onChange={e=>setRule("knockoutWinByTwo",e.target.value==="1")}>
+              <option value="1">Có</option><option value="0">Không</option>
+            </select>
+          </label>
+          <label>Knockout - điểm tối đa
+            <input type="number" value={rules.knockoutMaxPoint ?? 15} onChange={e=>setRule("knockoutMaxPoint",Number(e.target.value))}/>
+          </label>
+        </div>
+        <p className="rulesNoteV4120">Ví dụ Weekly Open: đánh 1 game, đến 11 điểm, hơn 2 điểm, tối đa 15 điểm.</p>
+      </div>
+
       <button className="saveSettingsBtn">Lưu cấu hình giải</button>
     </form>
   </section>

@@ -57,12 +57,15 @@ export default function App() {
 
   function hydrateTournament(t) {
     setTournament(t);
-    if (t) setTForm({
-      name:t.name||"", event_name:t.event_name||"Đôi nam", fee:t.fee||150000, max_players:t.max_players||40,
-      start_time:t.start_time||"", draw_time:t.draw_time||"", register_deadline:t.register_deadline||"",
-      first_prize:t.first_prize||0, second_prize:t.second_prize||0, third_prize:t.third_prize||0,
-      third_prize_count:t.third_prize_count||2, sponsor_note:t.sponsor_note||""
-    });
+    if (t) {
+      setTForm({
+        name:t.name||"", event_name:t.event_name||"Đôi nam", fee:t.fee||150000, max_players:t.max_players||40,
+        start_time:t.start_time||"", draw_time:t.draw_time||"", register_deadline:t.register_deadline||"",
+        first_prize:t.first_prize||0, second_prize:t.second_prize||0, third_prize:t.third_prize||0,
+        third_prize_count:t.third_prize_count||2, sponsor_note:t.sponsor_note||""
+      });
+      setForm(f=>f.full_name || f.phone ? f : {...f, gender: defaultGenderForEvent(t.event_name || t.event_code || "")});
+    }
   }
 
   async function loadTournament(){ try { hydrateTournament((await api("/tournament")).tournament); } catch(e){ setMsg(e.message); } }
@@ -217,15 +220,40 @@ export default function App() {
     const timer=setInterval(()=>{ i++; if(i>=teams.length){ clearInterval(timer); setTimeout(()=>setMc(null),1200); } else setMc({i,team:teams[i]}); },1800);
   }
 
+  function autoCreateScheduleFromDraw(groups){
+    if(!groups?.length) return 0;
+    const s = makeSchedule(groups,{courtCount:matchConfig.courtCount,startTime:matchConfig.startTime,minutesPerMatch:matchConfig.minutesPerMatch});
+    setSchedule(s);
+    setMsg(`Đã bốc thăm và tự tạo ${s.length} trận trong Giờ thi đấu.`);
+    return s.length;
+  }
+
   async function saveDraft(){
     if(!draw.groups.length){ setMsg("Chưa có kết quả bốc thăm."); return; }
     try { await post("/draw",{action:"save_draft",groups:draw.groups}); setDraw(d=>({...d,savedStatus:"DRAFT"})); setMsg("Đã lưu bản bốc thăm nháp. Chỉ BTC thấy."); loadAdmin(); } catch(e){ setMsg(e.message); }
   }
   async function finalizeDraw(){
-    try { if(draw.groups.length) await post("/draw",{action:"save_draft",groups:draw.groups}); await post("/draw",{action:"finalize"}); setDraw(d=>({...d,savedStatus:"FINALIZED"})); setMsg("Đã chốt kết quả bốc thăm."); loadAdmin(); } catch(e){ setMsg(e.message); }
+    try {
+      if(draw.groups.length) await post("/draw",{action:"save_draft",groups:draw.groups});
+      await post("/draw",{action:"finalize"});
+      setDraw(d=>({...d,savedStatus:"FINALIZED"}));
+      const n = draw.groups.length ? autoCreateScheduleFromDraw(draw.groups) : 0;
+      if(!n) setMsg("Đã chốt kết quả bốc thăm.");
+      loadAdmin();
+    } catch(e){ setMsg(e.message); }
   }
   async function publishDraw(){
-    try { if(draw.groups.length){ await post("/draw",{action:"save_draft",groups:draw.groups}); await post("/draw",{action:"finalize"}); } await post("/draw",{action:"publish"}); setDraw(d=>({...d,savedStatus:"PUBLISHED"})); setMsg("Đã công bố bảng đấu cho VĐV/khán giả. Màn hình công khai không hiển thị hạng nội bộ."); loadAdmin(); loadPublic(); } catch(e){ setMsg(e.message); }
+    try {
+      if(draw.groups.length){
+        await post("/draw",{action:"save_draft",groups:draw.groups});
+        await post("/draw",{action:"finalize"});
+      }
+      await post("/draw",{action:"publish"});
+      setDraw(d=>({...d,savedStatus:"PUBLISHED"}));
+      const n = draw.groups.length ? autoCreateScheduleFromDraw(draw.groups) : 0;
+      if(!n) setMsg("Đã công bố bảng đấu cho VĐV/khán giả.");
+      loadAdmin(); loadPublic();
+    } catch(e){ setMsg(e.message); }
   }
 
 
@@ -253,7 +281,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.11.9 Player Names Sync</div>
+      <div className="version">V4.12.0 Stable Fixes</div>
     </header>
 
     <nav className="tabs">

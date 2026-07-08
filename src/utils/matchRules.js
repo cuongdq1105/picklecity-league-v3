@@ -2,18 +2,24 @@
 export const DEFAULT_RULES = {
   groupFormat: "ROUND_ROBIN",
   rankingCriteria: ["win", "pointDiff", "pointFor", "headToHead", "draw"],
+  groupGamesToWin: 1,
   groupPointTarget: 11,
   groupWinByTwo: true,
-  knockoutPointTarget: 15,
+  groupMaxPoint: 15,
+  knockoutGamesToWin: 1,
+  knockoutPointTarget: 11,
   knockoutWinByTwo: true,
+  knockoutMaxPoint: 15,
   thirdPlace: true
 };
 
 export function targetForMatch(match, rules = DEFAULT_RULES) {
   const isKo = match?.type === "KO";
-  const target = Number(isKo ? (rules.knockoutPointTarget || 15) : (rules.groupPointTarget || 11));
+  const target = Number(isKo ? (rules.knockoutPointTarget || 11) : (rules.groupPointTarget || 11));
   const winByTwo = isKo ? rules.knockoutWinByTwo !== false : rules.groupWinByTwo !== false;
-  return { target, winByTwo, label: `${target} điểm${winByTwo ? " · cách 2" : ""}` };
+  const maxPointRaw = isKo ? rules.knockoutMaxPoint : rules.groupMaxPoint;
+  const maxPoint = maxPointRaw === "" || maxPointRaw == null ? 0 : Number(maxPointRaw || 0);
+  return { target, winByTwo, maxPoint, label: `${target} điểm${winByTwo ? " · cách 2" : ""}${maxPoint ? " · tối đa " + maxPoint : ""}` };
 }
 
 export function validateGameScore(home, away, rule) {
@@ -24,8 +30,10 @@ export function validateGameScore(home, away, rule) {
   if (h === a) return { ok:false, message:"Hai đội không thể bằng điểm khi lưu game." };
   const high = Math.max(h, a);
   const low = Math.min(h, a);
+  const cap = Number(rule.maxPoint || 0);
+  if (cap && high > cap) return { ok:false, message:`Điểm tối đa là ${cap}.` };
   if (high < Number(rule.target || 11)) return { ok:false, message:`Đội thắng phải đạt tối thiểu ${rule.target} điểm.` };
-  if (rule.winByTwo && high - low < 2) return { ok:false, message:"Phải thắng cách 2 điểm." };
+  if (rule.winByTwo && high - low < 2 && (!cap || high < cap)) return { ok:false, message:"Phải thắng cách 2 điểm." };
   return { ok:true, winner: h > a ? "home" : "away" };
 }
 
@@ -45,7 +53,7 @@ export function scoreSummary(match, rules = DEFAULT_RULES) {
 
 export function formatRulesText(rules = DEFAULT_RULES) {
   return {
-    group: `Vòng bảng: đấu vòng tròn tính điểm · ${rules.groupPointTarget || 11} điểm${rules.groupWinByTwo !== false ? " cách 2" : ""} · Xếp hạng: thắng → hiệu số điểm → tổng điểm ghi được`,
-    ko: `Loại trực tiếp: Tứ kết, Bán kết${rules.thirdPlace !== false ? ", Tranh giải 3" : ""}, Chung kết · ${rules.knockoutPointTarget || 15} điểm${rules.knockoutWinByTwo !== false ? " cách 2" : ""}`
+    group: `Vòng bảng: ${rules.groupGamesToWin || 1} game · đến ${rules.groupPointTarget || 11} điểm${rules.groupWinByTwo !== false ? " cách 2" : ""}${rules.groupMaxPoint ? " · tối đa " + rules.groupMaxPoint : ""} · Xếp hạng: thắng → hiệu số điểm → tổng điểm ghi được`,
+    ko: `Loại trực tiếp: ${rules.knockoutGamesToWin || 1} game · đến ${rules.knockoutPointTarget || 11} điểm${rules.knockoutWinByTwo !== false ? " cách 2" : ""}${rules.knockoutMaxPoint ? " · tối đa " + rules.knockoutMaxPoint : ""}`
   };
 }

@@ -99,6 +99,7 @@ export default function StandingsCenter({ groups=[], schedule=[], knockout=[], c
   },[allRows]);
 
   const visibleGroups = tab==="all" ? groupNames : [tab].filter(Boolean);
+  const hasGroupScores = (schedule||[]).some(m=>m.type!=="KO" && matchDone(m));
 
   return <section className="standingsCenter">
     <div className="standingsHead">
@@ -128,15 +129,22 @@ export default function StandingsCenter({ groups=[], schedule=[], knockout=[], c
       <button className={tab==="FINAL"?"active":""} onClick={()=>setTab("FINAL")}>Chung kết</button>
     </div>
 
-    {tab==="best3" ? <BestThirdTable rows={top3}/> :
+    {tab==="best3" ? (hasGroupScores ? <BestThirdTable rows={top3}/> : <EmptyStandingsNotice/>) :
     ["QF","SF","THIRD","FINAL"].includes(tab) ? <KnockoutStandings knockout={koList} filter={tab} compact /> :
     <>
-      <div className="standingGrid">
+      {hasGroupScores ? <div className="standingGrid">
         {visibleGroups.map(group=><GroupStandingCard key={group} group={group} rows={standings[group]||[]}/>)}
-      </div>
+      </div> : <EmptyStandingsNotice/>}
       <KnockoutStandings knockout={koList}/>
     </>}
   </section>
+}
+
+function EmptyStandingsNotice(){
+  return <div className="emptyStandingsV4120">
+    <b>Chưa có kết quả thi đấu</b>
+    <span>BXH sẽ tự động hiển thị sau khi BTC hoặc trọng tài nhập điểm và kết thúc trận đầu tiên.</span>
+  </div>
 }
 
 function GroupStandingCard({group,rows}) {
