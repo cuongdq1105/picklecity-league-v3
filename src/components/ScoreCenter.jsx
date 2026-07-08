@@ -20,6 +20,17 @@ function slotMatchesWinner(slotObj,winner){
   return candidates.includes(w);
 }
 function groupPlayers(t){ return (t?.players||[]).map(p=>p.full_name).join(" + "); }
+function buildTeamPlayerMap(groups=[]){
+  const map={};
+  (groups||[]).forEach(g=>(g.teams||[]).forEach(t=>{
+    const players=groupPlayers(t);
+    if(t?.name && players) map[t.name]=players;
+  }));
+  return map;
+}
+function displayTeamLabel(team,map={}){
+  return groupPlayers(team) || map[team?.name] || team?.name || "—";
+}
 function makeKoScoreable(m){ return {...m, home:{name:koTeamName(m.a), players:m.a?.team?.players||m.a?.row?.team?.players||[]}, away:{name:koTeamName(m.b), players:m.b?.team?.players||m.b?.row?.team?.players||[]}}; }
 function koRoundLabel(m){
   if(m.id?.startsWith("QF")) return "Tứ kết";
@@ -90,11 +101,12 @@ export default function ScoreCenter({ groups=[], schedule=[], setSchedule, knock
   const [group,setGroup] = useState(groupNames[1] || "Tất cả");
   const [status,setStatus] = useState("all");
 
+  const teamPlayerMap = useMemo(()=>buildTeamPlayerMap(groups||[]),[groups]);
   const allMatches = useMemo(()=>{
-    const groupMatches=(schedule||[]).map(m=>({...m,_scope:"GROUP",_filter:m.group,_title:m.group,_home:m.home?.name,_away:m.away?.name,_playersHome:groupPlayers(m.home),_playersAway:groupPlayers(m.away)}));
-    const koMatches=koList.map(m=>({...m,_scope:"KO",_filter:koRoundLabel(m),_title:koRoundLabel(m),_home:koTeamName(m.a),_away:koTeamName(m.b),_playersHome:koPlayers(m.a),_playersAway:koPlayers(m.b)}));
+    const groupMatches=(schedule||[]).map(m=>({...m,_scope:"GROUP",_filter:m.group,_title:m.group,_home:m.home?.name,_away:m.away?.name,_playersHome:displayTeamLabel(m.home,teamPlayerMap),_playersAway:displayTeamLabel(m.away,teamPlayerMap)}));
+    const koMatches=koList.map(m=>({...m,_scope:"KO",_filter:koRoundLabel(m),_title:koRoundLabel(m),_home:koTeamName(m.a),_away:koTeamName(m.b),_playersHome:koPlayers(m.a)||koTeamName(m.a),_playersAway:koPlayers(m.b)||koTeamName(m.b)}));
     return [...groupMatches,...koMatches];
-  },[schedule,koList]);
+  },[schedule,koList,teamPlayerMap]);
 
   const filtered = useMemo(()=>{
     return allMatches.filter(m=>{

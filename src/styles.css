@@ -1737,3 +1737,13 @@ input,select,textarea{border-radius:12px!important}
   .resultUnifiedV4118,.koUnifiedV4118,.publicTreeTeams,.scoreMatchTeamsFull,.refTeams{grid-template-columns:1fr!important}
   .scorePillV4118{width:100%!important;max-width:140px!important;margin:0 auto!important}
 }
+
+/* V4.11.9 Player Names Sync */
+.scoreMatchTeamsFull strong:empty,
+.refTeams>div:empty{
+  display:none!important;
+}
+.scoreMatchTeamsFull .playerNameBlockV4111 span,
+.refTeams .playerNameBlockV4111 span{
+  display:block;
+}

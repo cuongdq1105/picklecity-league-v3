@@ -197,7 +197,7 @@ export default function Public({ list=[], draw, schedule = [], knockout = [], on
   }
 
   function copySchedule() {
-    const lines = (visibleSchedule || []).map((m,i)=>`${i+1}. ${m.time ? m.time + " - " : ""}${m.court? "Sân "+m.court+" - ":""}${m.group||koRoundLabel(m)}: ${m.home?.name||koName(m.a)} vs ${m.away?.name||koName(m.b)}`);
+    const lines = (visibleSchedule || []).map((m,i)=>`${i+1}. ${m.time ? m.time + " - " : ""}${m.court? "Sân "+m.court+" - ":""}${m.group||koRoundLabel(m)}: ${groupPlayers(m.home, duplicateNames)||koPlayers(m.a)||koName(m.a)} gặp ${groupPlayers(m.away, duplicateNames)||koPlayers(m.b)||koName(m.b)}`);
     navigator.clipboard.writeText(lines.join("\n"));
   }
 
