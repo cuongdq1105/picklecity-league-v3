@@ -1,3 +1,4 @@
+import { useState } from "react";
 
 import { Trophy, CreditCard, Users, Copy, CheckCircle2, ShieldCheck } from "lucide-react";
 import { money } from "../utils/format";
@@ -29,8 +30,17 @@ function copyText(text) {
   try { navigator.clipboard.writeText(text); } catch {}
 }
 
-export default function Register({ tournament, form, setForm, onSubmit }) {
+export default function Register({ tournament, form, setForm, onSubmit, onLookupMember }) {
   const fee = Number(tournament?.fee || 0);
+  const [knownMember,setKnownMember] = useState(null);
+  async function handlePhoneBlur(){
+    if(!onLookupMember || !form.phone) return;
+    const m = await onLookupMember(form.phone);
+    setKnownMember(m);
+    if(m?.full_name){
+      setForm({...form, full_name: form.full_name || m.full_name, gender: m.gender || form.gender});
+    }
+  }
   const code = paymentCode(form);
   const payContent = code;
   const qrSrc = vietQrUrl(fee, payContent);
@@ -88,7 +98,8 @@ export default function Register({ tournament, form, setForm, onSubmit }) {
       {Number(tournament?.list_locked)===1 ? <div className="lockedBox">🔒 Danh sách đã khóa. Vui lòng liên hệ BTC.</div> :
       <form onSubmit={onSubmit} className={!form.marked_paid ? "formRequirePaid" : ""}>
         <label>Họ và tên<input required value={form.full_name} onChange={e=>setForm({...form,full_name:e.target.value})}/></label>
-        <label>Số điện thoại<input required value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})}/></label>
+        <label>Số điện thoại<input required value={form.phone} onChange={e=>{setForm({...form,phone:e.target.value});setKnownMember(null);}} onBlur={handlePhoneBlur}/></label>
+        {knownMember && <div className="knownMemberBoxV4112">✓ Đã nhận diện hồ sơ: <b>{knownMember.full_name}</b>. Bạn chỉ cần xác nhận đăng ký giải này.</div>}
         <label>Giới tính<select value={form.gender} onChange={e=>setForm({...form,gender:e.target.value})}><option value="male">Nam</option><option value="female">Nữ</option></select></label>
         <button className="primary" disabled={!form.marked_paid}>Hoàn thành đăng ký</button>
         {!form.marked_paid && <p className="paidRequiredText">Vui lòng chuyển khoản và tích “Tôi đã chuyển khoản” để hoàn tất đăng ký.</p>}

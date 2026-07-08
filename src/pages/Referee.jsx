@@ -256,6 +256,21 @@ function PlayerNameBlockV4111({text}){
   const names = String(text||"").split(" + ").filter(Boolean);
   return names.length ? <div className="playerNameBlockV4111">{names.map((n,i)=><span key={i}>👤 {n}</span>)}</div> : null;
 }
+
+function displayMatchWinnerV4112(m, ss){
+  const winner = ss?.winner || m?.winner || "";
+  if(!winner) return "";
+  if(m._scope==="KO" || m.a || m.b){
+    const aWon = winner===koTeamName(m.a) || slotMatchesWinner(m.a,winner);
+    const bWon = winner===koTeamName(m.b) || slotMatchesWinner(m.b,winner);
+    const slot = aWon ? m.a : bWon ? m.b : m.winnerTeam;
+    const players = koPlayers(slot);
+    return players || winner;
+  }
+  if(winner===m._home) return m._ph || winner;
+  if(winner===m._away) return m._pa || winner;
+  return winner;
+}
 function RefMatchCard({m,rules,onDraft,onSave,onAdd,onFinish,onUnlock}) {
   const scoreable=m._scope==="KO"?makeKoScoreable(m):m;
   const ss=scoreSummary(scoreable,rules);
@@ -275,7 +290,7 @@ function RefMatchCard({m,rules,onDraft,onSave,onAdd,onFinish,onUnlock}) {
         <button className="mini" disabled={!can} onClick={()=>onAdd(m)}>+ Game</button>
         <button className="mini primary" disabled={!can} onClick={()=>onFinish(m)}><CheckCircle2 size={14}/> Kết thúc</button>
       </>}
-      {ss.winner && <strong>Thắng: {ss.winner}</strong>}
+      {ss.winner && <strong>Thắng: {displayMatchWinnerV4112(m, ss)}</strong>}
     </div>
   </section>
 }

@@ -246,6 +246,21 @@ function PlayerNameBlockV4111({text}){
   const names = String(text||"").split(" + ").filter(Boolean);
   return names.length ? <div className="playerNameBlockV4111">{names.map((n,i)=><span key={i}>👤 {n}</span>)}</div> : null;
 }
+
+function displayMatchWinnerV4112(match, ss){
+  const winner = ss?.winner || match?.winner || "";
+  if(!winner) return "";
+  if(match._scope==="KO" || match.a || match.b){
+    const aWon = winner===koTeamName(match.a) || slotMatchesWinner(match.a,winner);
+    const bWon = winner===koTeamName(match.b) || slotMatchesWinner(match.b,winner);
+    const slot = aWon ? match.a : bWon ? match.b : match.winnerTeam;
+    const players = koPlayers(slot);
+    return players || winner;
+  }
+  if(winner===match._home) return match._playersHome || winner;
+  if(winner===match._away) return match._playersAway || winner;
+  return winner;
+}
 function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,onUnlock,onClear}) {
   const scoreable = match._scope==="KO" ? makeKoScoreable(match) : match;
   const ss=scoreSummary(scoreable,rules);
@@ -281,7 +296,7 @@ function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,onUnl
         <button className="mini" disabled={!canPlay} onClick={onAddGame}>+ Game</button>
         <button className="mini primary" disabled={!canPlay} onClick={onFinish}><CheckCircle2 size={14}/> Kết thúc trận</button>
       </>}
-      {ss.winner && <strong>Thắng: {ss.winner}</strong>}
+      {ss.winner && <strong>Thắng: {displayMatchWinnerV4112(match, ss)}</strong>}
       {match.editing && <em className="editingBadge">Đang sửa điểm</em>}
     </div>
   </div>

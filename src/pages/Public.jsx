@@ -95,6 +95,22 @@ function statusLabel(m){
   if(m.status==="LIVE") return "Đang cập nhật";
   return "Chưa đấu";
 }
+
+function displayWinner(m){
+  if(!m?.winner) return "";
+  const isKo = m.a || m.b || m.type==="KO" || m._kind==="KO";
+  if(isKo){
+    const aWon = m.winner===koName(m.a) || slotMatches(m.a,m.winner);
+    const bWon = m.winner===koName(m.b) || slotMatches(m.b,m.winner);
+    const slot = aWon ? m.a : bWon ? m.b : m.winnerTeam;
+    const players = koPlayers(slot);
+    return players || m.winner;
+  }
+  if(m.winner===m.home?.name) return groupPlayers(m.home);
+  if(m.winner===m.away?.name) return groupPlayers(m.away);
+  return m.winner;
+}
+
 function koTeamForCard(x){
   const players = koPlayers(x);
   return <div className="pubTeamBox">
@@ -296,11 +312,11 @@ function PublicStandings({standings={}, knockout=[], duplicateNames=new Set()}) 
     </div>}
     <KnockoutSummary knockout={knockout}/>
     {!groups.length ? <p className="muted">BTC chưa công bố bảng xếp hạng.</p> : <div className="publicStandingGrid">
-      {groups.map(([group,rows])=><div className="publicStandingCard" key={group}>
+      {groups.map(([group,rows=[]])=><div className="publicStandingCard" key={group}>
         <h3>{group}</h3>
         <table><thead><tr><th>Hạng</th><th>Xét hạng</th><th>Tên đội / VĐV</th><th>Thắng</th><th>Thua</th><th>HS</th><th>Điểm</th></tr></thead>
           <tbody>{rows.map(r=><tr key={r.name} className={r.rank<=3?"ranked":""}>
-            <td><b>{r.rank}</b></td><td><span className={`rankPill rankPill${r.rank}`}>{rankLabel(r.rank)}</span></td><td><small className="standingPlayers standingPlayersPrimaryV4111">{r.players}</small></td><td>{r.win}</td><td>{r.loss}</td><td>{r.diff>0?`+${r.diff}`:r.diff}</td><td>{r.pf}</td>
+            <td><b>{r.rank}</b></td><td><span className={`rankPill rankPill${r.rank}`}>{rankLabel(r.rank)}</span></td><td><small className="standingPlayers standingPlayersPrimaryV4111">{r.players}</small></td><td>{r.win}</td><td>{r.loss}</td><td>{r.diff>0?`+${r.diff}`:r.diff}</td><td>{r.pf ?? 0}</td>
           </tr>)}</tbody>
         </table>
       </div>)}
@@ -342,7 +358,7 @@ function PublicBracketMatch({match,code,champion=false}) {
     <div className="publicTreeMatchHead"><b>{code}</b><span>{match.name}</span></div>
     <div className="publicTreeTeams"><PublicTeamLine item={match.a} winner={match.winner}/><em>vs</em><PublicTeamLine item={match.b} winner={match.winner}/></div>
     {score && <strong className="publicTreeScore">{score}</strong>}
-    {match.winner && <p>Thắng: <b>{match.winner}</b></p>}
+    {match.winner && <p>Thắng: <b>{displayWinner(match)}</b></p>}
   </div>
 }
 function PublicTeamLine({item,winner}) {
@@ -350,7 +366,7 @@ function PublicTeamLine({item,winner}) {
   const players = koPlayers(item);
   const isWinner = winner && (winner === name || slotMatches(item,winner));
   return <div className={isWinner ? "teamLine winner" : "teamLine"}>
-    {item?.slot && <small>{item.slot}</small>}
+    {!players && item?.slot && <small>{item.slot}</small>}
     {players ? <PlayerNameBlock names={players.split(" + ").filter(Boolean)}/> : <b>{name}</b>}
   </div>
 }

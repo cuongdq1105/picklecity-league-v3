@@ -136,6 +136,35 @@ export default function App() {
     return ()=>clearTimeout(t);
   },[msg]);
 
+
+  async function lookupMemberByPhone(phone){
+    const clean = String(phone||"").trim();
+    if(clean.length < 6) return null;
+    try {
+      const d = await api(`/member-lookup?phone=${encodeURIComponent(clean)}`);
+      return d.member || null;
+    } catch(e) { return null; }
+  }
+
+  async function createNewTournament(){
+    const name = prompt("Tên giải mới:", "PickleCity Weekly Open - Giải mới");
+    if(!name) return;
+    if(!confirm("Tạo giải mới sẽ đóng giải hiện tại và mở danh sách đăng ký mới. Hồ sơ VĐV cũ vẫn được giữ lại. Tiếp tục?")) return;
+    try {
+      setMsg("Đang tạo giải mới...");
+      const d = await post("/reset-tournament", {name, copy_config:1});
+      hydrateTournament(d.tournament);
+      setAdmin({registrations:[],stats:{total:0,confirmed:0,pending:0},loading:false});
+      setPublicList([]);
+      setPublicDraw(null);
+      setDraw({source:"confirmed",method:"balanced",groupMethod:"balancedGroups",tableCount:2,teams:[],groups:[],leftover:[],savedStatus:""});
+      setSchedule([]);
+      setKnockout([]);
+      setMsg("Đã tạo giải mới. VĐV có thể đăng ký lại bằng số điện thoại cũ.");
+      loadTournament(); loadPublic(); if(adminAuthed) loadAdmin();
+    } catch(e) { setMsg("Lỗi tạo giải mới: " + e.message); }
+  }
+
   async function submit(e){
     e.preventDefault();
     if(!form.marked_paid){
@@ -224,7 +253,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.11.1 Player Display System</div>
+      <div className="version">V4.11.2 PickleCity Stable</div>
     </header>
 
     <nav className="tabs">
@@ -236,7 +265,7 @@ export default function App() {
 
     {msg && <div className="toastNoticeV41026">{msg}</div>}
 
-    {tab==="register" && <Register tournament={tournament} form={form} setForm={setForm} onSubmit={submit}/>}
+    {tab==="register" && <Register tournament={tournament} form={form} setForm={setForm} onSubmit={submit} onLookupMember={lookupMemberByPhone}/>}
     {tab==="public" && <Public list={publicList} draw={publicDraw} schedule={schedule} knockout={knockout} onRefresh={loadPublic}/>}
     {tab==="admin" && !adminAuthed && <AdminLogin pin={pin} setPin={setPin} onLogin={login}/>}
     {tab==="referee" && <Referee
@@ -259,6 +288,7 @@ export default function App() {
       matchConfig={matchConfig} setMatchConfig={setMatchConfig}
       schedule={schedule} setSchedule={setSchedule} knockout={knockout} setKnockout={setKnockout}
       setMsg={setMsg}
+      onCreateNewTournament={createNewTournament}
     />}
 
     <EditPlayerModal player={editing} setPlayer={setEditing} onSave={saveEdit} onClose={()=>setEditing(null)}/>

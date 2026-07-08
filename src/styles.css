@@ -1412,3 +1412,37 @@ input,select,textarea{border-radius:12px!important}
 .teamLine .playerNameBlockV4111 span{font-size:13px}
 .scoreMatchTeamsFull strong{font-size:14px}
 .refTeams b{display:none}
+
+/* V4.11.2 PickleCity Stable */
+.newTournamentBtnV4112{
+  background:#b8d72f!important;
+  color:#10201c!important;
+  border:0!important;
+}
+.knownMemberBoxV4112{
+  background:#e9f8ee;
+  border:1px solid #86efac;
+  border-radius:14px;
+  padding:10px 12px;
+  color:#0b3b2e;
+  font-weight:900;
+}
+.refActions strong,
+.scoreMatchActions strong,
+.publicTreeMatch p b{
+  white-space:pre-line;
+}
+.refActions strong,
+.scoreMatchActions strong{
+  color:#006b3b;
+  line-height:1.25;
+}
+.publicTreeMatch p{
+  margin:8px 0 0;
+  color:#006b3b;
+  font-weight:950;
+}
+.publicTreeMatch p b{
+  display:block;
+  margin-top:3px;
+}

@@ -16,7 +16,7 @@ export default function Admin(props) {
     admin, filters, setFilters, onLock, onSetPayment, onEdit, onCancel, onUpdateLevel,
     draw, setDraw, onSaveDraft, onFinalize, onPublish,
     manualPair, setManualPair, onAddManualPair, onStartMC,
-    matchConfig, setMatchConfig, schedule, setSchedule, knockout, setKnockout, setMsg
+    matchConfig, setMatchConfig, schedule, setSchedule, knockout, setKnockout, setMsg, onCreateNewTournament
   } = props;
 
   const [active,setActive] = useState("overview");
@@ -50,6 +50,7 @@ export default function Admin(props) {
       </div>
       <div className="btcTopActionsV41013">
         <button className="mini" onClick={onRefresh}><RefreshCw size={14}/> Đồng bộ</button>
+        <button className="mini newTournamentBtnV4112" onClick={onCreateNewTournament}>+ Tạo giải mới</button>
         <button className="mini" onClick={onLogout}>Đăng xuất</button>
       </div>
     </div>

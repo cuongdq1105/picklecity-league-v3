@@ -1,27 +1,30 @@
-# PickleCity Tournament Manager V4.11.1 Player Display System
+# PickleCity Tournament Manager V4.11.2 PickleCity Stable
 
-## Đã cập nhật
-- Bỏ hiển thị "Đội 1, Đội 2..." ở các màn hình chính.
-- Giao diện ưu tiên hiển thị trực tiếp tên VĐV trong từng cặp.
-- Nếu có VĐV trùng họ tên trong danh sách đăng ký, hệ thống bổ sung 4 số cuối điện thoại ở khu vực công khai/bảng đấu.
-- Áp dụng cho:
-  - Bảng đấu công khai
-  - Giờ thi đấu
-  - Kết quả
-  - BXH
-  - Nhánh đấu
-  - Module Trọng tài
-  - Module Nhập điểm BTC
+## Mục tiêu
+Bản ổn định tạm thời để PickleCity tổ chức giải trong khi phát triển V5.
+
+## Đã sửa
+- Sửa các chỗ còn hiển thị "Thắng: Đội xx" ở Trọng tài, Nhập điểm, Nhánh đấu công khai.
+- Người thắng ưu tiên hiển thị cặp VĐV thay vì tên đội nội bộ.
+- Tab BXH được làm an toàn hơn để tránh lỗi render khi dữ liệu thiếu.
+- Bỏ slot A1/B1/Best3 trên nhánh khi đã có tên VĐV.
+
+## Đã bổ sung
+- BTC có nút **+ Tạo giải mới**.
+- Tạo giải mới sẽ đóng giải hiện tại và mở giải mới, giữ lại cấu hình cơ bản.
+- Hồ sơ VĐV được giữ lại theo số điện thoại.
+- VĐV cũ nhập số điện thoại sẽ được nhận diện và tự điền tên/giới tính nếu đã có hồ sơ.
 
 ## Lưu ý
-- ID đội vẫn được giữ trong dữ liệu nội bộ để tính điểm, BXH và sinh nhánh.
-- Giao diện người dùng không còn lấy "Đội số" làm thông tin chính.
+- Đây chưa phải kiến trúc multi-tournament hoàn chỉnh của V5.
+- Bản này phù hợp để dùng tạm cho PickleCity.
+- V5 sẽ tách dữ liệu theo sân/đơn vị/giải đấu bài bản hơn.
 
 ## Cách update bằng GitHub Desktop
 1. Giải nén ZIP.
 2. Copy toàn bộ nội dung vào thư mục project hiện tại.
-3. Commit: `V4.11.1 - Player Display System`
+3. Commit: `V4.11.2 - PickleCity Stable`
 4. Push origin.
 
 ## Test
-/api/ping => version: 4.11.1-player-display-system
+/api/ping => version: 4.11.2-picklecity-stable
