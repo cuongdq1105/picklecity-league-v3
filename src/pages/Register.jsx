@@ -31,17 +31,19 @@ function copyText(text) {
 }
 
 function titleCaseVietnamese(value=""){
-  return String(value)
+  return String(value || "")
     .toLowerCase()
-    .replace(/(^|\s|-)(\p{L})/gu, (m, sep, ch) => sep + ch.toUpperCase())
+    .split(" ")
+    .map(part => part ? part.charAt(0).toUpperCase() + part.slice(1) : "")
+    .join(" ")
     .replace(/\s+/g, " ")
     .trimStart();
 }
 
 function defaultGenderForEvent(name=""){
-  const s=String(name||"").toLowerCase();
-  if(s.includes("nữ")) return "female";
-  if(s.includes("nam")) return "male";
+  const s = String(name || "").toLowerCase();
+  if (s.includes("nữ")) return "female";
+  if (s.includes("nam")) return "male";
   return "male";
 }
 

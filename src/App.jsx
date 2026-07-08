@@ -7,6 +7,7 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import Referee from "./pages/Referee";
 import EditPlayerModal from "./components/EditPlayerModal";
+import { makeSchedule } from "./utils/draw";
 
 const LOCAL_KEYS = {
   matchConfig: "ptm_v491_match_config",
@@ -31,6 +32,13 @@ function writeLocal(key, value) {
   } catch {}
 }
 
+function defaultGenderForEvent(name="") {
+  const s = String(name || "").toLowerCase();
+  if (s.includes("nữ")) return "female";
+  if (s.includes("nam")) return "male";
+  return "male";
+}
+
 
 export default function App() {
   const [tab,setTab] = useState("register");
@@ -46,7 +54,7 @@ export default function App() {
   const [editing,setEditing] = useState(null);
   const [draw,setDraw] = useState({source:"confirmed",method:"balanced",groupMethod:"balancedGroups",tableCount:2,teams:[],groups:[],leftover:[],savedStatus:""});
   const [manualPair,setManualPair] = useState({group:"Bảng A",p1:"",p1phone:"",p2:"",p2phone:"",teamName:""});
-  const [matchConfig,setMatchConfig] = useState(()=>readLocal(LOCAL_KEYS.matchConfig, {qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",rankingCriteria:["win","pointDiff","pointFor","headToHead","draw"],groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}}));
+  const [matchConfig,setMatchConfig] = useState(()=>readLocal(LOCAL_KEYS.matchConfig, {qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",rankingCriteria:["win","pointDiff","pointFor","headToHead","draw"],groupGamesToWin:1,groupPointTarget:11,groupWinByTwo:true,groupMaxPoint:15,knockoutGamesToWin:1,knockoutPointTarget:11,knockoutWinByTwo:true,knockoutMaxPoint:15,thirdPlace:true}}));
   const [schedule,setSchedule] = useState(()=>readLocal(LOCAL_KEYS.schedule, []));
   const [knockout,setKnockout] = useState(()=>readLocal(LOCAL_KEYS.knockout, []));
   const [serverLoaded,setServerLoaded] = useState(false);
@@ -64,7 +72,7 @@ export default function App() {
         first_prize:t.first_prize||0, second_prize:t.second_prize||0, third_prize:t.third_prize||0,
         third_prize_count:t.third_prize_count||2, sponsor_note:t.sponsor_note||""
       });
-      setForm(f=>f.full_name || f.phone ? f : {...f, gender: defaultGenderForEvent(t.event_name || t.event_code || "")});
+      setForm(f => (f.full_name || f.phone) ? f : {...f, gender: defaultGenderForEvent(t.event_name || "")});
     }
   }
 
@@ -221,8 +229,12 @@ export default function App() {
   }
 
   function autoCreateScheduleFromDraw(groups){
-    if(!groups?.length) return 0;
-    const s = makeSchedule(groups,{courtCount:matchConfig.courtCount,startTime:matchConfig.startTime,minutesPerMatch:matchConfig.minutesPerMatch});
+    if(!groups || !groups.length) return 0;
+    const s = makeSchedule(groups,{
+      courtCount:matchConfig.courtCount || 3,
+      startTime:matchConfig.startTime || "08:00",
+      minutesPerMatch:matchConfig.minutesPerMatch || 20
+    });
     setSchedule(s);
     setMsg(`Đã bốc thăm và tự tạo ${s.length} trận trong Giờ thi đấu.`);
     return s.length;
@@ -265,7 +277,7 @@ export default function App() {
     localStorage.removeItem(LOCAL_KEYS.lastSaved);
     setSchedule([]);
     setKnockout([]);
-    setMatchConfig({qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",rankingCriteria:["win","pointDiff","pointFor","headToHead","draw"],groupPointTarget:11,groupWinByTwo:true,knockoutPointTarget:15,knockoutWinByTwo:true,thirdPlace:true}});
+    setMatchConfig({qualifyTop:2,bestRank:3,bestCount:2,quarterTeams:8,courtCount:3,startTime:"08:00",minutesPerMatch:20,rules:{groupFormat:"ROUND_ROBIN",rankingCriteria:["win","pointDiff","pointFor","headToHead","draw"],groupGamesToWin:1,groupPointTarget:11,groupWinByTwo:true,groupMaxPoint:15,knockoutGamesToWin:1,knockoutPointTarget:11,knockoutWinByTwo:true,knockoutMaxPoint:15,thirdPlace:true}});
     setMsg("Đã xóa dữ liệu lịch/kết quả/nhánh lưu cục bộ trên trình duyệt này.");
   }
 
@@ -281,7 +293,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.12.0 Stable Fixes</div>
+      <div className="version">V4.12.1 Stable</div>
     </header>
 
     <nav className="tabs">

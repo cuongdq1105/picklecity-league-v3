@@ -141,7 +141,7 @@ export default function StandingsCenter({ groups=[], schedule=[], knockout=[], c
 }
 
 function EmptyStandingsNotice(){
-  return <div className="emptyStandingsV4120">
+  return <div className="emptyStandingsV4121">
     <b>Chưa có kết quả thi đấu</b>
     <span>BXH sẽ tự động hiển thị sau khi BTC hoặc trọng tài nhập điểm và kết thúc trận đầu tiên.</span>
   </div>
