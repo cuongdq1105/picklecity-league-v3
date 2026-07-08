@@ -1545,3 +1545,49 @@ input,select,textarea{border-radius:12px!important}
   .koStandingVsV4113{grid-template-columns:1fr}
   .koStandingVsV4113 em{text-align:center}
 }
+
+/* V4.11.4 BXH KO Tabs */
+.standingTabs{
+  flex-wrap:wrap;
+  gap:8px!important;
+  padding:8px!important;
+  background:#f8fbf2;
+  border:1px solid #dfe8cf;
+  border-radius:16px;
+}
+.standingTabs button{
+  min-height:38px;
+}
+.koStandingBlockV4113.compactKoV4114{
+  margin-top:12px;
+}
+.koStandingRoundV4113{
+  background:#fff;
+  border:1px solid #dfe8cf;
+  border-radius:18px;
+  padding:12px;
+}
+.koStandingRoundV4113 + .koStandingRoundV4113{
+  margin-top:14px;
+}
+.koStandingCardsV4113{
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr))!important;
+}
+.koStandingCardV4113{
+  box-shadow:0 8px 20px rgba(0,0,0,.035);
+}
+.koStandingVsV4113{
+  align-items:stretch!important;
+}
+.koStandingTeamV4113{
+  min-height:72px;
+  justify-content:center;
+}
+.koStandingTeamV4113 span{
+  display:block;
+  text-align:left;
+  padding:2px 0;
+}
+@media(max-width:700px){
+  .koStandingCardsV4113{grid-template-columns:1fr!important}
+}

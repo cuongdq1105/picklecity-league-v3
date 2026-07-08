@@ -124,14 +124,20 @@ export default function StandingsCenter({ groups=[], schedule=[], knockout=[], c
       <button className={tab==="all"?"active":""} onClick={()=>setTab("all")}><Table2 size={14}/> Tất cả</button>
       {groupNames.map(g=><button key={g} className={tab===g?"active":""} onClick={()=>setTab(g)}>{g}</button>)}
       <button className={tab==="best3"?"active":""} onClick={()=>setTab("best3")}><Medal size={14}/> Xét hạng 3</button>
+      <button className={tab==="QF"?"active":""} onClick={()=>setTab("QF")}>Tứ kết</button>
+      <button className={tab==="SF"?"active":""} onClick={()=>setTab("SF")}>Bán kết</button>
+      <button className={tab==="THIRD"?"active":""} onClick={()=>setTab("THIRD")}>Tranh hạng 3</button>
+      <button className={tab==="FINAL"?"active":""} onClick={()=>setTab("FINAL")}>Chung kết</button>
     </div>
 
     {tab==="best3" ? <BestThirdTable rows={top3}/> :
-    <div className="standingGrid">
-      {visibleGroups.map(group=><GroupStandingCard key={group} group={group} rows={standings[group]||[]}/>)}
-    </div>}
-
-    <KnockoutStandings knockout={koList}/>
+    ["QF","SF","THIRD","FINAL"].includes(tab) ? <KnockoutStandings knockout={koList} filter={tab} compact /> :
+    <>
+      <div className="standingGrid">
+        {visibleGroups.map(group=><GroupStandingCard key={group} group={group} rows={standings[group]||[]}/>)}
+      </div>
+      <KnockoutStandings knockout={koList}/>
+    </>}
   </section>
 }
 
@@ -179,20 +185,21 @@ function BestThirdTable({rows}) {
   </div>
 }
 
-function KnockoutStandings({knockout=[]}) {
+function KnockoutStandings({knockout=[], filter="", compact=false}) {
   const rounds=[["QF","Tứ kết"],["SF","Bán kết"],["THIRD","Tranh hạng 3"],["FINAL","Chung kết"]];
-  const any=knockout.some(m=>roundKey(m)!=="KO");
-  if(!any) return null;
-  return <div className="koStandingBlockV4113">
-    <div className="koStandingHeadV4113"><h2><GitBranch/> Kết quả loại trực tiếp</h2><span>Tứ kết · Bán kết · Tranh hạng 3 · Chung kết</span></div>
-    {rounds.map(([key,label])=>{
+  const activeRounds = filter ? rounds.filter(([key])=>key===filter) : rounds;
+  const any=activeRounds.some(([key])=>knockout.some(m=>roundKey(m)===key));
+  if(!any) return <div className="koStandingBlockV4113"><p className="muted">Chưa có dữ liệu vòng này.</p></div>;
+  return <div className={`koStandingBlockV4113 ${compact?"compactKoV4114":""}`}>
+    {!compact && <div className="koStandingHeadV4113"><h2><GitBranch/> Kết quả loại trực tiếp</h2><span>Tứ kết · Bán kết · Tranh hạng 3 · Chung kết</span></div>}
+    {activeRounds.map(([key,label])=>{
       const rows=knockout.filter(m=>roundKey(m)===key);
       if(!rows.length) return null;
       return <div className="koStandingRoundV4113" key={key}>
         <h3>{label}</h3>
         <div className="koStandingCardsV4113">
-          {rows.map(m=><div className={`koStandingCardV4113 ${matchDone(m)?"done":""}`} key={m.id}>
-            <div className="koStandingTitleV4113"><b>{m.name || label}</b><span>{scoreText(m)||"Chưa đấu"}</span></div>
+          {rows.map((m,idx)=><div className={`koStandingCardV4113 ${matchDone(m)?"done":""}`} key={m.id}>
+            <div className="koStandingTitleV4113"><b>{m.name || `${label} ${idx+1}`}</b><span>{scoreText(m)||"Chưa đấu"}</span></div>
             <div className="koStandingVsV4113">{teamBlock(m.a)}<em>vs</em>{teamBlock(m.b)}</div>
             {m.winner && <p>Thắng: <b>{winnerText(m)}</b></p>}
           </div>)}
