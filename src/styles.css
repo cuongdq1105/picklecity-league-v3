@@ -1446,3 +1446,102 @@ input,select,textarea{border-radius:12px!important}
   display:block;
   margin-top:3px;
 }
+
+/* V4.11.3 BTC KO Standings */
+.koStandingBlockV4113{
+  margin-top:18px;
+  border:1px solid #dfe8cf;
+  background:#fbfff7;
+  border-radius:22px;
+  padding:14px;
+}
+.koStandingHeadV4113{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+}
+.koStandingHeadV4113 h2{
+  margin:0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#0b3b2e;
+}
+.koStandingHeadV4113 span{color:#667;font-weight:900}
+.koStandingRoundV4113{
+  margin-top:12px;
+}
+.koStandingRoundV4113 h3{
+  margin:0 0 10px;
+  color:#006b3b;
+}
+.koStandingCardsV4113{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:10px;
+}
+.koStandingCardV4113{
+  background:#fff;
+  border:1px solid #dfe8cf;
+  border-radius:18px;
+  padding:12px;
+}
+.koStandingCardV4113.done{
+  background:#f0fdf4;
+  border-color:#86efac;
+}
+.koStandingTitleV4113{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  margin-bottom:10px;
+}
+.koStandingTitleV4113 b{color:#10201c}
+.koStandingTitleV4113 span{
+  background:#e9f8ee;
+  color:#006b3b;
+  border-radius:999px;
+  padding:5px 9px;
+  font-weight:950;
+}
+.koStandingVsV4113{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:8px;
+  align-items:center;
+}
+.koStandingVsV4113 em{
+  font-style:normal;
+  font-weight:950;
+  color:#667;
+}
+.koStandingTeamV4113{
+  background:#f8fbf2;
+  border:1px solid #dfe8cf;
+  border-radius:14px;
+  padding:9px;
+  display:grid;
+  gap:3px;
+}
+.koStandingTeamV4113 span{
+  color:#0b3b2e;
+  font-weight:950;
+  line-height:1.25;
+}
+.koStandingCardV4113 p{
+  margin:10px 0 0;
+  color:#006b3b;
+  font-weight:900;
+}
+.koStandingCardV4113 p b{
+  display:block;
+  white-space:pre-line;
+}
+@media(max-width:700px){
+  .koStandingHeadV4113{display:grid}
+  .koStandingVsV4113{grid-template-columns:1fr}
+  .koStandingVsV4113 em{text-align:center}
+}

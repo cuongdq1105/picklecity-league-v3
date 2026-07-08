@@ -253,7 +253,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.11.2 PickleCity Stable</div>
+      <div className="version">V4.11.3 BTC KO Standings</div>
     </header>
 
     <nav className="tabs">

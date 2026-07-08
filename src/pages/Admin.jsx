@@ -111,6 +111,7 @@ export default function Admin(props) {
         {active==="standings" && <StandingsCenter
           groups={draw.groups}
           schedule={schedule}
+          knockout={knockout}
           config={matchConfig}
           setMsg={setMsg}
         />}
