@@ -246,6 +246,15 @@ function PlayerNameBlockV4111({text}){
   const names = String(text||"").split(" + ").filter(Boolean);
   return names.length ? <div className="playerNameBlockV4111">{names.map((n,i)=><span key={i}>👤 {n}</span>)}</div> : null;
 }
+function isWinnerSideV4116(match, ss, side){
+  const winner = ss?.winner || match?.winner || "";
+  if(!winner) return false;
+  if(match._scope==="KO" || match.a || match.b){
+    const slot = side==="home" ? match.a : match.b;
+    return winner===koTeamName(slot) || slotMatchesWinner(slot,winner);
+  }
+  return side==="home" ? winner===match._home : winner===match._away;
+}
 
 function displayMatchWinnerV4112(match, ss){
   const winner = ss?.winner || match?.winner || "";
@@ -274,10 +283,16 @@ function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,onUnl
       </div>
       <em>{match.editing?"Đang sửa":match.status==="DONE"?"✓ Hoàn thành":match.status==="LIVE"?"LIVE":"Chờ điểm"}</em>
     </div>
-    <div className="scoreMatchTeams scoreMatchTeamsFull">
-      <strong>{match._playersHome ? <PlayerNameBlockV4111 text={match._playersHome}/> : match._home}</strong>
+    <div className="scoreMatchTeams scoreMatchTeamsFull unifiedWinnerTeamsV4116">
+      <strong className={isWinnerSideV4116(match,ss,"home") ? "winnerSideV4116" : ""}>
+        {isWinnerSideV4116(match,ss,"home") && <b className="winnerBadgeV4116">✓ Thắng</b>}
+        {match._playersHome ? <PlayerNameBlockV4111 text={match._playersHome}/> : match._home}
+      </strong>
       <span>vs</span>
-      <strong>{match._playersAway ? <PlayerNameBlockV4111 text={match._playersAway}/> : match._away}</strong>
+      <strong className={isWinnerSideV4116(match,ss,"away") ? "winnerSideV4116" : ""}>
+        {isWinnerSideV4116(match,ss,"away") && <b className="winnerBadgeV4116">✓ Thắng</b>}
+        {match._playersAway ? <PlayerNameBlockV4111 text={match._playersAway}/> : match._away}
+      </strong>
     </div>
     {!canPlay && <p className="warnLine">Trận này chưa xác định đủ đội. Hãy kết thúc vòng trước để hệ thống tự điền đội.</p>}
     {(match.games||[{home:"",away:"",saved:false}]).map((g,i)=><div className={`scoreGameLine ${g.saved?"saved":""}`} key={i}>
@@ -296,7 +311,7 @@ function ScoreMatchCard({match,rules,onDraft,onSaveGame,onAddGame,onFinish,onUnl
         <button className="mini" disabled={!canPlay} onClick={onAddGame}>+ Game</button>
         <button className="mini primary" disabled={!canPlay} onClick={onFinish}><CheckCircle2 size={14}/> Kết thúc trận</button>
       </>}
-      {ss.winner && <strong>Thắng: {displayMatchWinnerV4112(match, ss)}</strong>}
+      {ss.winner && <span className="winnerHintV4116">Đã đánh dấu cặp thắng ở trên</span>}
       {match.editing && <em className="editingBadge">Đang sửa điểm</em>}
     </div>
   </div>

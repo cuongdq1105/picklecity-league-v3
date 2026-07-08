@@ -256,6 +256,15 @@ function PlayerNameBlockV4111({text}){
   const names = String(text||"").split(" + ").filter(Boolean);
   return names.length ? <div className="playerNameBlockV4111">{names.map((n,i)=><span key={i}>👤 {n}</span>)}</div> : null;
 }
+function isWinnerSideV4116(m, ss, side){
+  const winner = ss?.winner || m?.winner || "";
+  if(!winner) return false;
+  if(m._scope==="KO" || m.a || m.b){
+    const slot = side==="home" ? m.a : m.b;
+    return winner===koTeamName(slot) || slotMatchesWinner(slot,winner);
+  }
+  return side==="home" ? winner===m._home : winner===m._away;
+}
 
 function displayMatchWinnerV4112(m, ss){
   const winner = ss?.winner || m?.winner || "";
@@ -278,7 +287,13 @@ function RefMatchCard({m,rules,onDraft,onSave,onAdd,onFinish,onUnlock}) {
   return <section className={`refMatch ${m.status==="DONE"?"done":""}`}>
     <div className="refMatchHead"><b>{m._round} {m.time?`· ${m.time}`:""}</b><span>{m.status==="DONE"?"✓ Xong":m.status==="LIVE"?"LIVE":"Chờ"}</span></div>
     <div className="refTeams">
-      <div>{m._ph ? <PlayerNameBlockV4111 text={m._ph}/> : <b>{m._home}</b>}</div><em>vs</em><div>{m._pa ? <PlayerNameBlockV4111 text={m._pa}/> : <b>{m._away}</b>}</div>
+      <div className={isWinnerSideV4116(m,ss,"home") ? "winnerSideV4116" : ""}>
+        {isWinnerSideV4116(m,ss,"home") && <b className="winnerBadgeV4116">✓ Thắng</b>}
+        {m._ph ? <PlayerNameBlockV4111 text={m._ph}/> : <b>{m._home}</b>}
+      </div><em>vs</em><div className={isWinnerSideV4116(m,ss,"away") ? "winnerSideV4116" : ""}>
+        {isWinnerSideV4116(m,ss,"away") && <b className="winnerBadgeV4116">✓ Thắng</b>}
+        {m._pa ? <PlayerNameBlockV4111 text={m._pa}/> : <b>{m._away}</b>}
+      </div>
     </div>
     {!can && <p className="warnLine">Trận chưa đủ đội.</p>}
     {(m.games||[{home:"",away:"",saved:false}]).map((g,i)=><div className="refGame" key={i}>
@@ -290,7 +305,7 @@ function RefMatchCard({m,rules,onDraft,onSave,onAdd,onFinish,onUnlock}) {
         <button className="mini" disabled={!can} onClick={()=>onAdd(m)}>+ Game</button>
         <button className="mini primary" disabled={!can} onClick={()=>onFinish(m)}><CheckCircle2 size={14}/> Kết thúc</button>
       </>}
-      {ss.winner && <strong>Thắng: {displayMatchWinnerV4112(m, ss)}</strong>}
+      {ss.winner && <span className="winnerHintV4116">Đã đánh dấu cặp thắng ở trên</span>}
     </div>
   </section>
 }

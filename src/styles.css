@@ -1632,3 +1632,66 @@ input,select,textarea{border-radius:12px!important}
   font-weight:950;
   margin-bottom:4px;
 }
+
+/* V4.11.6 Unified Winner Badge */
+.unifiedWinnerTeamsV4116 strong,
+.refTeams>div{
+  position:relative;
+}
+.winnerSideV4116{
+  background:#e9f8ee!important;
+  border-color:#22c55e!important;
+  box-shadow:0 0 0 2px rgba(34,197,94,.12)!important;
+}
+.winnerBadgeV4116{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  width:max-content;
+  background:#007a3d;
+  color:#fff!important;
+  border-radius:999px;
+  padding:4px 8px!important;
+  font-size:12px!important;
+  line-height:1!important;
+  margin:0 0 6px!important;
+  font-weight:950!important;
+}
+.winnerHintV4116{
+  color:#006b3b;
+  background:#e9f8ee;
+  border:1px solid #bce4c8;
+  border-radius:999px;
+  padding:6px 10px;
+  font-weight:950;
+  margin-left:auto;
+}
+.scoreMatchActions>strong,
+.refActions>strong{
+  display:none!important;
+}
+@media(max-width:700px){
+  .winnerHintV4116{margin-left:0}
+}
+
+/* V4.11.7 Public Result Winner Badge */
+.publicResultCard .pubTeamBox.winnerSideV4117,
+.scheduleRowV4110 .pubTeamBox.winnerSideV4117{
+  background:#e9f8ee!important;
+  border-color:#22c55e!important;
+  box-shadow:0 0 0 2px rgba(34,197,94,.12);
+}
+.publicResultCard .winnerBadgeV4116,
+.scheduleRowV4110 .winnerBadgeV4116{
+  display:inline-flex!important;
+  align-items:center;
+  width:max-content;
+  background:#007a3d;
+  color:#fff!important;
+  border-radius:999px;
+  padding:4px 8px!important;
+  font-size:12px!important;
+  line-height:1!important;
+  margin:0 0 6px!important;
+  font-weight:950!important;
+}

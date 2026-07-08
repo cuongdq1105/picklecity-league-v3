@@ -1,14 +1,12 @@
-# PickleCity Tournament Manager V4.11.5 Winner Badge
+# PickleCity Tournament Manager V4.11.7 Public Result Winner Badge
 
 ## Đã sửa
-- Bỏ dòng lặp lại `Thắng: tên VĐV...` trong kết quả loại trực tiếp.
-- Đội/cặp thắng được đánh dấu trực tiếp trên card bằng huy hiệu `✓ Thắng`.
-- Áp dụng cho:
-  - BTC → BXH → Tứ kết/Bán kết/Tranh hạng 3/Chung kết
-  - Nhánh đấu công khai
+- Tab công khai **Kết quả** đánh dấu cặp thắng giống BTC bằng huy hiệu `✓ Thắng` ngay trên card đội.
+- Áp dụng cho kết quả vòng bảng và knockout.
+- Lịch thi đấu nếu trận đã có kết quả cũng đánh dấu cặp thắng thống nhất.
 
 ## Cách update
-Commit gợi ý: `V4.11.5 - Winner Badge`
+Commit gợi ý: `V4.11.7 - Public Result Winner Badge`
 
 ## Test
-/api/ping => version: 4.11.5-winner-badge
+/api/ping => version: 4.11.7-public-result-winner-badge
