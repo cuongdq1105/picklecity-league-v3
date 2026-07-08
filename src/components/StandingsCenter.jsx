@@ -83,8 +83,11 @@ function isWinnerSlot(slot,m){
 export default function StandingsCenter({ groups=[], schedule=[], knockout=[], config={}, setMsg }) {
   const [tab,setTab] = useState("all");
   const rules = {...DEFAULT_RULES,...(config.rules||{})};
+  const groupMatches = (schedule||[]).filter(m=>m.type!=="KO");
+  const hasGroupScores = groupMatches.some(m=>matchDone(m));
+  const groupStageComplete = groupMatches.length > 0 && groupMatches.every(m=>m.status==="DONE");
   const standings = useMemo(()=>calcStandings(groups||[], schedule||[], rules), [groups,schedule,config]);
-  const koList = useMemo(()=>normalizeKnockout(knockout||[]),[knockout]);
+  const koList = useMemo(()=> groupStageComplete ? normalizeKnockout(knockout||[]) : [],[knockout, groupStageComplete]);
   const groupNames = useMemo(()=>Object.keys(standings||{}).sort((a,b)=>a.localeCompare(b,"vi")), [standings]);
   const allRows = useMemo(()=>{
     const rows=[];
@@ -99,7 +102,6 @@ export default function StandingsCenter({ groups=[], schedule=[], knockout=[], c
   },[allRows]);
 
   const visibleGroups = tab==="all" ? groupNames : [tab].filter(Boolean);
-  const hasGroupScores = (schedule||[]).some(m=>m.type!=="KO" && matchDone(m));
 
   return <section className="standingsCenter">
     <div className="standingsHead">

@@ -1,22 +1,17 @@
-# PickleCity Tournament Manager V4.12.2 Rules Logic
+# PickleCity Tournament Manager V4.12.3 Stage Gate
 
 ## Đã sửa
-- Cấu hình luật thi đấu đúng logic, không còn mô tả lệch với dữ liệu thật.
-- Preset cập nhật đầy đủ toàn bộ luật:
-  - Weekly Open
-  - DUPR
-  - MLP
-- Chuyển "hơn 2 điểm" từ combobox sang nút Có/Không dễ bấm hơn.
-- Dòng mô tả luật được sinh từ cấu hình thật.
-- Có cảnh báo nếu điểm tối đa nhỏ hơn điểm thắng hoặc cấu hình chưa hợp lý.
-- Weekly Open chuẩn:
-  - 1 game
-  - đến 11 điểm
-  - hơn 2 điểm
-  - tối đa 15 điểm
+- Khi chưa có điểm vòng bảng:
+  - Không hiển thị BXH.
+  - Không hiển thị danh sách đội vào Tứ kết/Bán kết/Chung kết.
+  - Không sinh nhánh từ dữ liệu giả.
+- Khi vòng bảng chưa hoàn thành:
+  - Chưa cho sinh Tứ kết.
+  - Nhánh đấu hiển thị thông báo chờ hoàn thành vòng bảng.
+- Chỉ sau khi toàn bộ trận vòng bảng kết thúc, hệ thống mới cho sinh vòng tiếp theo.
 
 ## Cách update
-Commit gợi ý: `V4.12.2 - Rules Logic`
+Commit gợi ý: `V4.12.3 - Stage Gate`
 
 ## Test
-/api/ping => version: 4.12.2-rules-logic
+/api/ping => version: 4.12.3-stage-gate

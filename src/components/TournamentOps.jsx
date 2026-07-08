@@ -11,6 +11,12 @@ function matchNameV4119(m){
   if(m?.home || m?.away) return `${playersOfTeamV4119(m.home)} gặp ${playersOfTeamV4119(m.away)}`;
   return "";
 }
+function groupMatchesOnly(schedule=[]){ return (schedule||[]).filter(m=>m.type!=="KO"); }
+function hasGroupScoresV4123(schedule=[]){ return groupMatchesOnly(schedule).some(m=>(m.games||[]).some(g=>g.saved) || m.status==="DONE"); }
+function isGroupStageCompleteV4123(schedule=[]){
+  const rows = groupMatchesOnly(schedule);
+  return rows.length > 0 && rows.every(m=>m.status==="DONE");
+}
 
 export default function TournamentOps({groups, config, setConfig, schedule, setSchedule, knockout, setKnockout, setMsg}) {
   const [opsTab,setOpsTab]=useState("control");
@@ -26,6 +32,8 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
   const live=(schedule||[]).filter(m=>m.status==="LIVE").length;
   const done=(schedule||[]).filter(m=>m.status==="DONE").length;
   const pending=(schedule||[]).filter(m=>m.status!=="DONE").length;
+  const hasGroupScores = hasGroupScoresV4123(schedule);
+  const groupStageComplete = isGroupStageCompleteV4123(schedule);
   const nextMatches=(schedule||[]).filter(m=>m.status!=="DONE").slice(0,8);
   const totalTeams=(groups||[]).reduce((s,g)=>s+(g.teams?.length||0),0);
   const progress=pct(done,schedule.length);
@@ -36,7 +44,10 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
   function copySchedule(){ navigator.clipboard.writeText(exportScheduleText(schedule)); setMsg("Đã copy lịch thi đấu."); }
   function genKO(){
     if(!groups.length){setMsg("Chưa có bảng đấu.");return;}
+    if(!hasGroupScores){setMsg("Chưa có điểm vòng bảng. Hệ thống chưa xếp hạng và chưa sinh vòng tiếp theo.");return;}
+    if(!groupStageComplete){setMsg("Vòng bảng chưa hoàn thành. Chỉ sinh tứ kết sau khi tất cả trận vòng bảng đã kết thúc.");return;}
     const pairs=makeKnockout(groups,config,standings);
+    if(!pairs.length){setMsg("Chưa đủ dữ liệu BXH để sinh tứ kết.");return;}
     const sf=buildSemis(pairs);
     const fn=buildFinals(sf);
     const th=buildThirdPlace(sf);
@@ -64,11 +75,11 @@ export default function TournamentOps({groups, config, setConfig, schedule, setS
       <button className={opsTab==="bracket"?"active":""} onClick={()=>setOpsTab("bracket")}><GitBranch size={15}/> Nhánh đấu</button>
     </div>
     {opsTab==="rules" && <RulesScreen rules={rules} setRules={setRules} rulesText={rulesText} config={config} setConfig={setConfig}/>}
-    {opsTab==="control" && <ControlScreen schedule={schedule} rules={rules} selectedMatch={selectedMatch} setSelectedId={setSelectedId} nextMatches={nextMatches} config={config} genSchedule={genSchedule} copySchedule={copySchedule} genKO={genKO}/>}
+    {opsTab==="control" && <ControlScreen schedule={schedule} rules={rules} selectedMatch={selectedMatch} setSelectedId={setSelectedId} nextMatches={nextMatches} config={config} genSchedule={genSchedule} copySchedule={copySchedule} genKO={genKO} hasGroupScores={hasGroupScores} groupStageComplete={groupStageComplete}/>}
     {opsTab==="schedule" && <ScheduleScreen schedule={schedule} genSchedule={genSchedule} copySchedule={copySchedule} config={config} setConfig={setConfig}/>}
     {opsTab==="results" && <ResultsScreen schedule={schedule} selectedMatch={selectedMatch} setSelectedId={setSelectedId} rules={rules} updateDraft={updateDraft} saveGame={saveGame} addGame={addGame} finishMatch={finishMatch}/>}
-    {opsTab==="standings" && <StandingsScreen standings={standings} schedule={schedule}/>}
-    {opsTab==="bracket" && <BracketScreen knockout={qfMatches.length?qfMatches:koForDisplay} semis={semis.length?semis:buildSemis(qfMatches)} finals={finals.length?finals:buildFinals(semis.length?semis:buildSemis(qfMatches))} thirdPlace={thirdPlace.length?thirdPlace:buildThirdPlace(semis.length?semis:buildSemis(qfMatches))} genKO={genKO} rules={rules} updateKoDraft={updateKoDraft} saveKoGame={saveKoGame} addKoGame={addKoGame} finishKo={finishKo}/>}
+    {opsTab==="standings" && <StandingsScreen standings={standings} schedule={schedule} hasGroupScores={hasGroupScores}/>}
+    {opsTab==="bracket" && <BracketScreen knockout={groupStageComplete?(qfMatches.length?qfMatches:koForDisplay):[]} semis={groupStageComplete?(semis.length?semis:buildSemis(qfMatches)):[]} finals={groupStageComplete?(finals.length?finals:buildFinals(semis.length?semis:buildSemis(qfMatches))):[]} thirdPlace={groupStageComplete?(thirdPlace.length?thirdPlace:buildThirdPlace(semis.length?semis:buildSemis(qfMatches))):[]} genKO={genKO} rules={rules} updateKoDraft={updateKoDraft} saveKoGame={saveKoGame} addKoGame={addKoGame} finishKo={finishKo} hasGroupScores={hasGroupScores} groupStageComplete={groupStageComplete}/>}
   </section>
 }
 
@@ -97,7 +108,12 @@ function ControlScreen({schedule,rules,selectedMatch,setSelectedId,nextMatches,c
 }
 function ScheduleScreen({schedule,genSchedule,copySchedule,config,setConfig}) {return <section className="panelClean"><div className="panelTitle"><h3>Giờ thi đấu</h3><p>Lịch riêng để BTC và khán giả theo dõi. Hệ thống xếp xen kẽ các bảng trên cùng cung giờ.</p></div><div className="scheduleToolsClean"><label>Số sân<input type="number" value={config.courtCount||3} onChange={e=>setConfig({...config,courtCount:e.target.value})}/></label><label>Giờ bắt đầu<input value={config.startTime||"08:00"} onChange={e=>setConfig({...config,startTime:e.target.value})}/></label><label>Phút/trận<input type="number" value={config.minutesPerMatch||20} onChange={e=>setConfig({...config,minutesPerMatch:e.target.value})}/></label><button className="primary" onClick={genSchedule}>Xếp lịch</button><button className="mini" onClick={copySchedule}>Copy lịch</button></div><div className="tablewrap"><table><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Bảng</th><th>Trận</th><th>Trạng thái</th></tr></thead><tbody>{(schedule||[]).map((m,i)=><tr key={m.id}><td>{i+1}</td><td><b>{m.time}</b></td><td>Sân {m.court}</td><td>{m.group}</td><td>{playersOfTeamV4119(m.home)} vs {playersOfTeamV4119(m.away)}</td><td>{m.status==="DONE"?"Hoàn thành":m.status==="LIVE"?"LIVE":"Chờ"}</td></tr>)}</tbody></table></div></section>}
 function ResultsScreen({schedule,selectedMatch,setSelectedId,rules,updateDraft,saveGame,addGame,finishMatch}) {return <section className="resultsGridClean"><div className="panelClean"><div className="panelTitle"><h3>Danh sách trận</h3><p>Chọn trận cần nhập điểm.</p></div><div className="matchListClean">{(schedule||[]).map(m=>{const ss=scoreSummary(m,rules);return <button className={`matchRowClean ${selectedMatch?.id===m.id?"active":""}`} key={m.id} onClick={()=>setSelectedId(m.id)}><b>{m.time} · Sân {m.court}</b><span>{m.group}: {playersOfTeamV4119(m.home)} vs {playersOfTeamV4119(m.away)}</span><em>{m.status==="DONE"?"✓ "+ss.scoreText:ss.scoreText||"Chưa nhập"}</em></button>})}</div></div><div className="panelClean"><div className="panelTitle"><h3>Cập nhật tỷ số từng game</h3><p>Mỗi game có nút Lưu riêng. Game đã lưu sẽ khóa.</p></div>{selectedMatch ? <MatchScoreCard match={selectedMatch} rules={rules} onDraft={updateDraft} onSaveGame={saveGame} onAddGame={addGame} onFinish={finishMatch}/> : <p className="muted">Chưa có trận.</p>}</div></section>}
-function StandingsScreen({standings,schedule}) {return <section className="panelClean"><div className="panelTitle"><h3>Bảng xếp hạng</h3><p>Tự tính theo trận thắng, hiệu số game, hiệu số điểm.</p></div>{schedule.length ? Object.entries(standings).map(([group,rows])=><div className="standingGroup" key={group}><h4>{group}</h4><div className="tablewrap"><table><thead><tr><th>Hạng</th><th>Đội</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>Điểm ghi</th><th>HS điểm</th></tr></thead><tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{r.name}</td><td>{r.played}</td><td>{r.win}</td><td>{r.loss}</td><td>{r.pf}</td><td>{r.diff}</td></tr>)}</tbody></table></div></div>) : <p className="muted">Chưa có lịch thi đấu.</p>}</section>}
+function StandingsScreen({standings,schedule,hasGroupScores}) {
+  return <section className="panelClean">
+    <div className="panelTitle"><h3>Bảng xếp hạng</h3><p>BXH chỉ hiển thị sau khi có điểm vòng bảng.</p></div>
+    {!schedule.length ? <p className="muted">Chưa có lịch thi đấu.</p> : !hasGroupScores ? <div className="stageGateNoticeV4123"><b>Chưa có kết quả vòng bảng</b><span>Hệ thống chưa xếp hạng đội và chưa xác định các đội vào vòng tiếp theo.</span></div> : Object.entries(standings).map(([group,rows])=><div className="standingGroup" key={group}><h4>{group}</h4><div className="tablewrap"><table><thead><tr><th>Hạng</th><th>VĐV</th><th>Trận</th><th>Thắng</th><th>Thua</th><th>Điểm ghi</th><th>HS điểm</th></tr></thead><tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{r.players}</td><td>{r.played}</td><td>{r.win}</td><td>{r.loss}</td><td>{r.pf}</td><td>{r.diff}</td></tr>)}</tbody></table></div></div>)}
+  </section>
+}
 
 function bracketTeamName(slotObj){
   return slotObj?.teamName || slotObj?.team?.name || slotObj?.row?.team?.name || slotObj?.winnerName || slotObj?.slot || "—";
@@ -140,15 +156,9 @@ function makeLoser(label, sourceMatch){
   return loser ? cloneBracketSlot(loser,label) : {slot: label, team:null};
 }
 
-function BracketScreen({knockout,semis,finals,thirdPlace,genKO,rules,updateKoDraft,saveKoGame,addKoGame,finishKo}) {
-  const qfs = knockout || [];
-  const demoQf = [
-    {id:"demo1",name:"Tứ kết 1",a:{slot:"A1"},b:{slot:"Best3-2"}},
-    {id:"demo2",name:"Tứ kết 2",a:{slot:"B1"},b:{slot:"Best3-1"}},
-    {id:"demo3",name:"Tứ kết 3",a:{slot:"C1"},b:{slot:"A2"}},
-    {id:"demo4",name:"Tứ kết 4",a:{slot:"B2"},b:{slot:"C2"}}
-  ];
-  const qfShow = qfs.length ? qfs : demoQf;
+function BracketScreen({knockout,semis,finals,thirdPlace,genKO,rules,updateKoDraft,saveKoGame,addKoGame,finishKo,hasGroupScores,groupStageComplete}) {
+  const qfs = groupStageComplete ? (knockout || []) : [];
+  const qfShow = qfs;
   return <section className="bracketScreenV499 fullBracketV4104">
     <div className="bracketHeroV499">
       <div>
@@ -160,9 +170,10 @@ function BracketScreen({knockout,semis,finals,thirdPlace,genKO,rules,updateKoDra
           </div>
         </div>
       </div>
-      <button className="regenBracketV499" onClick={genKO}>↻ Tạo lại nhánh</button>
+      <button className="regenBracketV499" onClick={genKO} disabled={!groupStageComplete}>↻ Tạo lại nhánh</button>
     </div>
 
+    {!hasGroupScores ? <div className="stageGateNoticeV4123"><b>Chưa có kết quả vòng bảng</b><span>Chưa xếp hạng và chưa xác định đội vào vòng tiếp theo.</span></div> : !groupStageComplete ? <div className="stageGateNoticeV4123"><b>Vòng bảng chưa hoàn thành</b><span>Nhánh đấu sẽ hiển thị sau khi toàn bộ trận vòng bảng kết thúc.</span></div> : null}
     <div className="bracketExplainV499">
       <h4>Công thức nhánh</h4>
       <p><b>QF1:</b> A1 vs Best3-2 · <b>QF2:</b> B1 vs Best3-1 · <b>QF3:</b> C1 vs A2 · <b>QF4:</b> B2 vs C2</p>

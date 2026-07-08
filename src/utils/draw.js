@@ -108,6 +108,8 @@ export function calcStandings(groups, schedule, rules={}){
 }
 
 export function selectQualified(standingsByGroup,cfg){
+  const allRows = Object.values(standingsByGroup||{}).flat();
+  if(!allRows.length || !allRows.some(r=>Number(r.played||0)>0)) return [];
   const qualifyTop=Number(cfg.qualifyTop||2), bestRank=Number(cfg.bestRank||3), bestCount=Number(cfg.bestCount||2), quarterTeams=Number(cfg.quarterTeams||8);
   const direct=[], bestPool=[];
   Object.entries(standingsByGroup||{}).forEach(([group,rows])=>rows.forEach(r=>{if(r.rank<=qualifyTop)direct.push({slot:`${group} - Hạng ${r.rank}`,row:r,team:r.team}); else if(r.rank===bestRank)bestPool.push({slot:`${group} - Hạng ${bestRank}`,row:r,team:r.team});}));
@@ -119,9 +121,8 @@ export function makeKnockout(groups,cfg,standingsByGroup=null){
   let selected;
   if(standingsByGroup) selected=selectQualified(standingsByGroup,cfg);
   else {
-    const fake={};
-    (groups||[]).forEach(g=>fake[g.name]=(g.teams||[]).map((team,i)=>({group:g.name,rank:i+1,team,players:teamLabel(team),win:0,diff:0,pf:0})));
-    selected=selectQualified(fake,cfg);
+    // Không sinh nhánh từ dữ liệu giả. Phải có BXH thật sau khi đã nhập điểm vòng bảng.
+    selected=[];
   }
 
   // Lấy ký hiệu bảng chính xác từ "Bảng A/B/C", tránh lỗi chữ "B" trong từ "Bảng".

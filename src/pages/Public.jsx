@@ -145,7 +145,10 @@ export default function Public({ list=[], draw, schedule = [], knockout = [], on
   const total = list.length;
   const confirmed = list.filter(x=>x.payment_status==="BTC_CONFIRMED").length;
   const pending = total - confirmed;
-  const koList = useMemo(()=>normalizeKnockout(knockout||[]),[knockout]);
+  const groupMatches = useMemo(()=> (schedule||[]).filter(m=>m.type!=="KO"),[schedule]);
+  const hasGroupScores = groupMatches.some(m=>matchDone(m));
+  const groupStageComplete = groupMatches.length > 0 && groupMatches.every(m=>m.status==="DONE");
+  const koList = useMemo(()=> groupStageComplete ? normalizeKnockout(knockout||[]) : [],[knockout,groupStageComplete]);
   const duplicateNames = useMemo(()=>duplicateNameSetFromList(list||[]),[list]);
   const publicStandings = useMemo(()=>calcStandings(draw?.groups||[], schedule||[], DEFAULT_RULES),[draw,schedule]);
 
@@ -256,12 +259,12 @@ export default function Public({ list=[], draw, schedule = [], knockout = [], on
 
     {publicTab==="standings" && <section>
       <h2>Bảng xếp hạng</h2>
-      <PublicStandings standings={publicStandings} knockout={koList} duplicateNames={duplicateNames}/>
+      <PublicStandings standings={publicStandings} knockout={koList} duplicateNames={duplicateNames} hasGroupScores={hasGroupScores}/>
     </section>}
 
     {publicTab==="bracket" && <section>
       <h2>Nhánh đấu</h2>
-      <PublicBracket knockout={koList} duplicateNames={duplicateNames}/>
+      <PublicBracket knockout={koList} duplicateNames={duplicateNames} hasGroupScores={hasGroupScores} groupStageComplete={groupStageComplete}/>
     </section>}
   </main>
 }
@@ -311,10 +314,11 @@ function MatchResultCard({match:m, duplicateNames=new Set()}) {
   </div>
 }
 
-function PublicStandings({standings={}, knockout=[], duplicateNames=new Set()}) {
+function PublicStandings({standings={}, knockout=[], duplicateNames=new Set(), hasGroupScores=false}) {
   const groups = Object.entries(standings||{});
   const final=knockout.find(m=>roundKey(m)==="FINAL");
   const third=knockout.find(m=>roundKey(m)==="THIRD");
+  if(!hasGroupScores) return <div className="stageGateNoticeV4123"><b>Chưa có kết quả vòng bảng</b><span>BXH sẽ hiển thị sau khi có trận đầu tiên được nhập điểm và kết thúc.</span></div>;
   return <>
     {(final?.winner || third?.winner) && <div className="podiumV4110">
       {final?.winner && <div><span>🥇 Vô địch</span><b>{final.winner}</b></div>}
@@ -347,11 +351,13 @@ function KnockoutSummary({knockout=[]}) {
   </div>
 }
 
-function PublicBracket({knockout=[], duplicateNames=new Set()}) {
+function PublicBracket({knockout=[], duplicateNames=new Set(), hasGroupScores=false, groupStageComplete=false}) {
   const qfs = knockout.filter(m=>roundKey(m)==="QF");
   const semis = knockout.filter(m=>roundKey(m)==="SF");
   const finals = knockout.filter(m=>roundKey(m)==="FINAL");
   const third = knockout.filter(m=>roundKey(m)==="THIRD");
+  if(!hasGroupScores) return <div className="stageGateNoticeV4123"><b>Chưa có kết quả vòng bảng</b><span>Chưa xếp hạng và chưa xác định các đội vào vòng tiếp theo.</span></div>;
+  if(!groupStageComplete) return <div className="stageGateNoticeV4123"><b>Vòng bảng chưa hoàn thành</b><span>Nhánh đấu sẽ hiển thị sau khi toàn bộ trận vòng bảng kết thúc.</span></div>;
   if(!qfs.length && !semis.length && !finals.length && !third.length) return <p className="muted">BTC chưa sinh nhánh đấu.</p>;
   return <div className="publicBracketTreeWrap">
     <div className="publicBracketTree">
