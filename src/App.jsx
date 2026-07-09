@@ -39,6 +39,47 @@ function defaultGenderForEvent(name="") {
   return "male";
 }
 
+function isPlaceholderTeamNameV4126(name) {
+  return /^Đội\s*\d+$/i.test(String(name || '').trim());
+}
+
+function flattenDrawTeamsV4126(groups=[]) {
+  return (groups || []).flatMap(g => g?.teams || []);
+}
+
+function hydrateTeamFromDrawV4126(team, allTeams=[]) {
+  if (!team || !allTeams.length) return team;
+  const hasPlayers = Array.isArray(team.players) && team.players.some(p => p?.full_name);
+  const name = String(team.name || team.displayName || '').trim();
+  if (hasPlayers && !isPlaceholderTeamNameV4126(name)) return team;
+
+  const byExact = allTeams.find(t =>
+    String(t?.name || '').trim() === name ||
+    String(t?.displayName || '').trim() === name
+  );
+  if (byExact && Array.isArray(byExact.players) && byExact.players.length) return byExact;
+
+  const m = name.match(/^Đội\s*(\d+)$/i);
+  if (m) {
+    const byIndex = allTeams[Number(m[1]) - 1];
+    if (byIndex && Array.isArray(byIndex.players) && byIndex.players.length) return byIndex;
+  }
+  return team;
+}
+
+function hydrateScheduleTeamsV4126(schedule=[], groups=[]) {
+  const allTeams = flattenDrawTeamsV4126(groups);
+  if (!allTeams.length) return schedule || [];
+  let changed = false;
+  const next = (schedule || []).map(m => {
+    const home = hydrateTeamFromDrawV4126(m.home, allTeams);
+    const away = hydrateTeamFromDrawV4126(m.away, allTeams);
+    if (home !== m.home || away !== m.away) changed = true;
+    return changed ? {...m, home, away} : m;
+  });
+  return changed ? next : schedule;
+}
+
 
 export default function App() {
   const [tab,setTab] = useState("register");
@@ -146,6 +187,15 @@ export default function App() {
     const t = setTimeout(()=>setMsg(""), 3200);
     return ()=>clearTimeout(t);
   },[msg]);
+
+  useEffect(()=>{
+    if(!(draw?.groups||[]).length || !(schedule||[]).length) return;
+    const hydrated = hydrateScheduleTeamsV4126(schedule, draw.groups);
+    if(hydrated !== schedule) {
+      setSchedule(hydrated);
+      setMsg("Đã tự đồng bộ lại tên VĐV thật cho lịch thi đấu.");
+    }
+  },[draw?.groups, schedule]);
 
 
   async function lookupMemberByPhone(phone){
@@ -293,7 +343,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.12.5 Real Player Names</div>
+      <div className="version">V4.12.6 Real Player Names Sync</div>
     </header>
 
     <nav className="tabs">
