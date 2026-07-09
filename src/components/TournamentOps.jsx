@@ -116,7 +116,7 @@ function StandingsScreen({standings,schedule,hasGroupScores}) {
 }
 
 function bracketTeamName(slotObj){
-  return slotObj?.teamName || slotObj?.team?.name || slotObj?.row?.team?.name || slotObj?.winnerName || slotObj?.slot || "—";
+  return bracketPlayers(slotObj) || slotObj?.teamName || slotObj?.team?.name || slotObj?.row?.team?.name || slotObj?.winnerName || slotObj?.slot || "—";
 }
 function bracketPlayers(slotObj){
   if(slotObj?.playerNames) return slotObj.playerNames;

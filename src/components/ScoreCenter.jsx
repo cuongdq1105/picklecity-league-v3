@@ -9,7 +9,7 @@ function nowText(){
 }
 function koTeamName(x){ return koRealTeamName(x); }
 function koPlayers(x){ return x?.playerNames || (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
-function koRealTeamName(x){ return x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—"; }
+function koRealTeamName(x){ return koPlayers(x) || x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—"; }
 function isPlaceholderName(name){ return /^(Winner|Loser|Best3|A\d|B\d|C\d|D\d|E\d|F\d)/i.test(String(name||"").trim()); }
 function hasRealTeam(x){ return !!(x?.team?.name || x?.row?.team?.name || (x?.teamName && !isPlaceholderName(x.teamName)) || koPlayers(x)); }
 function slotMatchesWinner(slotObj,winner){

@@ -211,7 +211,9 @@ export default function App() {
     if(!groups.length){ setMsg("Chưa có bảng đấu để gán cặp bổ sung. Hãy bốc thăm/chia bảng trước."); return; }
     let idx=groups.findIndex(g=>g.name===manualPair.group); if(idx<0) idx=0;
     const nextNo=groups.reduce((sum,g)=>sum+(g.teams||[]).length,0)+1;
-    const team={name:manualPair.teamName.trim()||`Đội bổ sung ${nextNo}`,manual:true,players:[
+    const p1Name = manualPair.p1.trim();
+    const p2Name = manualPair.p2.trim();
+    const team={name:manualPair.teamName.trim()||[p1Name,p2Name].filter(Boolean).join(" + ")||`Cặp bổ sung ${nextNo}`,manual:true,players:[
       {full_name:manualPair.p1.trim(),phone:manualPair.p1phone.trim(),gender:"male",level_group:"SUPPLEMENT"},
       {full_name:manualPair.p2.trim(),phone:manualPair.p2phone.trim(),gender:"male",level_group:"SUPPLEMENT"}
     ]};
@@ -224,24 +226,9 @@ export default function App() {
   function startMC(){
     const teams=draw.groups.flatMap(g=>g.teams||[]);
     if(!teams.length){ setMsg("Chưa có kết quả bốc thăm nháp."); return; }
-    setMc({mode:"ready",i:0,team:teams[0],teams,finished:false});
+    let i=0; setMc({i:0,team:teams[0]});
+    const timer=setInterval(()=>{ i++; if(i>=teams.length){ clearInterval(timer); setTimeout(()=>setMc(null),1200); } else setMc({i,team:teams[i]}); },1800);
   }
-  function runMC(){
-    if(!mc?.teams?.length) return;
-    let i=0;
-    setMc(m=>({...m,mode:"running",i:0,team:m.teams[0],finished:false}));
-    const timer=setInterval(()=>{
-      i++;
-      if(i>=mc.teams.length){
-        clearInterval(timer);
-        setMc(m=>({...m,mode:"finish",finished:true}));
-        setMsg("Finish");
-      } else {
-        setMc(m=>({...m,i,team:m.teams[i]}));
-      }
-    },1400);
-  }
-  function closeMC(){ setMc(null); }
 
   function autoCreateScheduleFromDraw(groups){
     if(!groups || !groups.length) return 0;
@@ -308,7 +295,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.12.4 Final Sync</div>
+      <div className="version">V4.12.3 Stage Gate</div>
     </header>
 
     <nav className="tabs">
@@ -348,13 +335,11 @@ export default function App() {
 
     <EditPlayerModal player={editing} setPlayer={setEditing} onSave={saveEdit} onClose={()=>setEditing(null)}/>
 
-    {mc && <div className={`mc mcV4124 ${mc.mode==="running" ? "rolling" : ""}`}>
-      <div className="diceV4124">🎲</div>
-      <h2>{mc.mode==="finish" ? "Finish" : "Bốc thăm ghép cặp"}</h2>
-      {mc.mode!=="finish" && <div className="mcTeam">Cặp {mc.i+1}/{mc.teams?.length || 0}</div>}
-      {mc.mode!=="finish" && <div className="mcNames">{mc.team?.players?.map(p=>p.full_name).join(" + ")}</div>}
-      {mc.mode==="ready" && <button className="mcStartBtnV4124" onClick={runMC}>Start</button>}
-      {mc.mode==="finish" && <button className="mcStartBtnV4124" onClick={closeMC}>Đóng</button>}
+    {mc && <div className="mc">
+      <h2>🎲 ĐANG BỐC THĂM</h2>
+      <div className="mcTeam">Cặp {mc.i+1}</div>
+      <div className="mcNames">{mc.team.players.map(p=>p.full_name).join(" + ")}</div>
+      <p>Không hiển thị phân hạng VĐV trên màn hình quay.</p>
     </div>}
   </div>
 }
