@@ -39,45 +39,82 @@ function defaultGenderForEvent(name="") {
   return "male";
 }
 
-function isPlaceholderTeamNameV4126(name) {
+function isPlaceholderTeamNameV4127(name) {
   return /^Đội\s*\d+$/i.test(String(name || '').trim());
 }
 
-function flattenDrawTeamsV4126(groups=[]) {
-  return (groups || []).flatMap(g => g?.teams || []);
+function realTeamDisplayNameV4127(team) {
+  const players = (team?.players || []).map(p => p?.full_name).filter(Boolean).join(" + ");
+  return players || team?.displayName || team?.name || "";
 }
 
-function hydrateTeamFromDrawV4126(team, allTeams=[]) {
-  if (!team || !allTeams.length) return team;
-  const hasPlayers = Array.isArray(team.players) && team.players.some(p => p?.full_name);
-  const name = String(team.name || team.displayName || '').trim();
-  if (hasPlayers && !isPlaceholderTeamNameV4126(name)) return team;
+function cloneRealTeamV4127(team) {
+  if (!team) return team;
+  const displayName = realTeamDisplayNameV4127(team);
+  return displayName ? { ...team, displayName, name: displayName } : team;
+}
 
-  const byExact = allTeams.find(t =>
-    String(t?.name || '').trim() === name ||
-    String(t?.displayName || '').trim() === name
-  );
-  if (byExact && Array.isArray(byExact.players) && byExact.players.length) return byExact;
+function flattenDrawTeamsV4127(drawOrGroups=[]) {
+  const groups = Array.isArray(drawOrGroups) ? drawOrGroups : (drawOrGroups?.groups || []);
+  const teamsFromGroups = (groups || []).flatMap(g => (g?.teams || []).map((t, idx) => ({...t, __groupName:g.name, __groupIndex:idx})));
+  const extraTeams = Array.isArray(drawOrGroups?.teams) ? drawOrGroups.teams : [];
+  return [...extraTeams, ...teamsFromGroups];
+}
 
-  const m = name.match(/^Đội\s*(\d+)$/i);
-  if (m) {
-    const byIndex = allTeams[Number(m[1]) - 1];
-    if (byIndex && Array.isArray(byIndex.players) && byIndex.players.length) return byIndex;
+function buildTeamLookupV4127(drawOrGroups=[]) {
+  const allTeams = flattenDrawTeamsV4127(drawOrGroups);
+  const map = new Map();
+  const add = (key, team) => {
+    const k = String(key || '').trim().toLowerCase();
+    if (!k || map.has(k)) return;
+    map.set(k, cloneRealTeamV4127(team));
+  };
+  allTeams.forEach((team, i) => {
+    add(team?.name, team);
+    add(team?.displayName, team);
+    add(team?.teamName, team);
+    add(team?.id, team);
+    add(team?.team_id, team);
+    add(team?.teamNo, team);
+    add(team?.team_no, team);
+    add(team?.number, team);
+    add(`Đội ${i + 1}`, team);
+    add(`Doi ${i + 1}`, team);
+    const players = (team?.players || []).map(p => p?.full_name).filter(Boolean).join(' + ');
+    add(players, team);
+  });
+  return map;
+}
+
+function hydrateTeamFromDrawV4127(team, lookup) {
+  if (!team || !lookup?.size) return team;
+  const currentDisplay = realTeamDisplayNameV4127(team);
+  const hasRealPlayers = Array.isArray(team.players) && team.players.some(p => p?.full_name);
+  if (hasRealPlayers && !isPlaceholderTeamNameV4127(currentDisplay)) return cloneRealTeamV4127(team);
+
+  const keys = [team.name, team.displayName, team.teamName, team.id, team.team_id, team.teamNo, team.team_no, team.number];
+  for (const key of keys) {
+    const found = lookup.get(String(key || '').trim().toLowerCase());
+    if (found) return found;
   }
   return team;
 }
 
-function hydrateScheduleTeamsV4126(schedule=[], groups=[]) {
-  const allTeams = flattenDrawTeamsV4126(groups);
-  if (!allTeams.length) return schedule || [];
+function hydrateScheduleTeamsV4127(schedule=[], drawOrGroups=[]) {
+  const lookup = buildTeamLookupV4127(drawOrGroups);
+  if (!lookup.size) return schedule || [];
   let changed = false;
   const next = (schedule || []).map(m => {
-    const home = hydrateTeamFromDrawV4126(m.home, allTeams);
-    const away = hydrateTeamFromDrawV4126(m.away, allTeams);
-    if (home !== m.home || away !== m.away) changed = true;
-    return changed ? {...m, home, away} : m;
+    const home = hydrateTeamFromDrawV4127(m.home, lookup);
+    const away = hydrateTeamFromDrawV4127(m.away, lookup);
+    const aTeam = m.a?.team ? hydrateTeamFromDrawV4127(m.a.team, lookup) : m.a?.row?.team ? hydrateTeamFromDrawV4127(m.a.row.team, lookup) : null;
+    const bTeam = m.b?.team ? hydrateTeamFromDrawV4127(m.b.team, lookup) : m.b?.row?.team ? hydrateTeamFromDrawV4127(m.b.row.team, lookup) : null;
+    const a = aTeam ? {...m.a, team:aTeam, playerNames:realTeamDisplayNameV4127(aTeam), teamName:realTeamDisplayNameV4127(aTeam)} : m.a;
+    const b = bTeam ? {...m.b, team:bTeam, playerNames:realTeamDisplayNameV4127(bTeam), teamName:realTeamDisplayNameV4127(bTeam)} : m.b;
+    if (home !== m.home || away !== m.away || a !== m.a || b !== m.b) changed = true;
+    return (home !== m.home || away !== m.away || a !== m.a || b !== m.b) ? {...m, home, away, a, b} : m;
   });
-  return changed ? next : schedule;
+  return changed ? next : (schedule || []);
 }
 
 
@@ -172,7 +209,11 @@ export default function App() {
       const d = await api("/registrations");
       setAdmin({registrations:d.registrations||[],stats:d.stats||{},loading:false});
       const dr = await api("/draw");
-      if (dr.draw) setDraw(x=>({...x,groups:dr.draw.groups||[],savedStatus:dr.draw.status,teams:(dr.draw.groups||[]).flatMap(g=>g.teams||[])}));
+      if (dr.draw) {
+        setDraw(x=>({...x,groups:dr.draw.groups||[],savedStatus:dr.draw.status,teams:(dr.draw.groups||[]).flatMap(g=>g.teams||[])}));
+        setSchedule(prev => hydrateScheduleTeamsV4127(prev, dr.draw));
+        setKnockout(prev => hydrateScheduleTeamsV4127(prev, dr.draw));
+      }
     } catch(e) { setAdmin(a=>({...a,loading:false})); setMsg(e.message); }
   }
 
@@ -190,12 +231,12 @@ export default function App() {
 
   useEffect(()=>{
     if(!(draw?.groups||[]).length || !(schedule||[]).length) return;
-    const hydrated = hydrateScheduleTeamsV4126(schedule, draw.groups);
+    const hydrated = hydrateScheduleTeamsV4127(schedule, draw);
     if(hydrated !== schedule) {
       setSchedule(hydrated);
       setMsg("Đã tự đồng bộ lại tên VĐV thật cho lịch thi đấu.");
     }
-  },[draw?.groups, schedule]);
+  },[draw, schedule]);
 
 
   async function lookupMemberByPhone(phone){
@@ -343,7 +384,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.12.6 Real Player Names Sync</div>
+      <div className="version">V4.12.7 Real Player Names Fix</div>
     </header>
 
     <nav className="tabs">
