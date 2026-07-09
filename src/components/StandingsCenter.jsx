@@ -13,7 +13,7 @@ function rankLabel(rank){
 }
 function scoreText(m){ return (m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", "); }
 function matchDone(m){ return (m.games||[]).some(g=>g.saved) || m.status==="DONE"; }
-function koName(x){ return koPlayers(x) || x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—"; }
+function koName(x){ return x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—"; }
 function koPlayers(x){ return x?.playerNames || (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
 function slotMatches(slot,winner){
   const w=String(winner||"").trim();

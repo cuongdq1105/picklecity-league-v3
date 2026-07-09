@@ -211,9 +211,7 @@ export default function App() {
     if(!groups.length){ setMsg("Chưa có bảng đấu để gán cặp bổ sung. Hãy bốc thăm/chia bảng trước."); return; }
     let idx=groups.findIndex(g=>g.name===manualPair.group); if(idx<0) idx=0;
     const nextNo=groups.reduce((sum,g)=>sum+(g.teams||[]).length,0)+1;
-    const p1Name = manualPair.p1.trim();
-    const p2Name = manualPair.p2.trim();
-    const team={name:manualPair.teamName.trim()||[p1Name,p2Name].filter(Boolean).join(" + ")||`Cặp bổ sung ${nextNo}`,manual:true,players:[
+    const team={name:manualPair.teamName.trim()||`${manualPair.p1.trim()} + ${manualPair.p2.trim()}`,displayName:manualPair.teamName.trim()||`${manualPair.p1.trim()} + ${manualPair.p2.trim()}`,manual:true,players:[
       {full_name:manualPair.p1.trim(),phone:manualPair.p1phone.trim(),gender:"male",level_group:"SUPPLEMENT"},
       {full_name:manualPair.p2.trim(),phone:manualPair.p2phone.trim(),gender:"male",level_group:"SUPPLEMENT"}
     ]};
@@ -295,7 +293,7 @@ export default function App() {
       <div className="brand">PickleCity League</div>
       <h1>PickleCity Weekly Open</h1>
       <p>Đăng ký • Khóa danh sách • Bốc thăm • Lịch đấu • Kết quả</p>
-      <div className="version">V4.12.3 Stage Gate</div>
+      <div className="version">V4.12.5 Real Player Names</div>
     </header>
 
     <nav className="tabs">

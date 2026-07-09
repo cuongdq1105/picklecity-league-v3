@@ -25,7 +25,7 @@ function duplicateNameSetFromList(list=[]){
   return new Set(Object.entries(counts).filter(([,c])=>c>1).map(([n])=>n));
 }
 
-function koName(x){ return koPlayers(x) || x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—"; }
+function koName(x){ return x?.team?.name || x?.row?.team?.name || x?.teamName || x?.winnerName || x?.slot || "—"; }
 function koPlayers(x){ return x?.playerNames || (x?.team?.players || x?.row?.team?.players || []).map(p=>p.full_name).join(" + "); }
 function cloneSlot(slot,label){
   if(!slot) return {slot:label};

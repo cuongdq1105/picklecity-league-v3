@@ -52,7 +52,7 @@ export default function DrawManager({
       <h3>Đăng ký bổ sung / Gán cặp thủ công</h3>
       <p className="hint">Dùng khi đã chốt danh sách nhưng phát sinh thêm một cặp. BTC nhập tay và chọn bảng để gán cặp đó vào.</p>
       <label>Gán vào bảng<select value={manualPair.group} onChange={e=>setManualPair({...manualPair,group:e.target.value})}>{(draw.groups.length ? draw.groups : [{name:"Bảng A"}]).map(g=><option key={g.name}>{g.name}</option>)}</select></label>
-      <label>Tên cặp / đội<input value={manualPair.teamName} onChange={e=>setManualPair({...manualPair,teamName:e.target.value})} placeholder="Có thể bỏ trống, hệ thống tự lấy tên 2 VĐV"/></label>
+      <label>Tên cặp / đội<input value={manualPair.teamName} onChange={e=>setManualPair({...manualPair,teamName:e.target.value})} placeholder="Ví dụ: Cặp bổ sung"/></label>
       <div className="manualGrid">
         <label>VĐV 1<input value={manualPair.p1} onChange={e=>setManualPair({...manualPair,p1:e.target.value})} placeholder="Họ tên VĐV 1"/></label>
         <label>SĐT VĐV 1<input value={manualPair.p1phone} onChange={e=>setManualPair({...manualPair,p1phone:e.target.value})} placeholder="Số điện thoại"/></label>

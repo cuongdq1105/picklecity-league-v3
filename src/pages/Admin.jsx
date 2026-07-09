@@ -198,13 +198,17 @@ function OverviewPanel({tournament,admin,draw,schedule,knockout,setActive}) {
     </div>
   </section>
 }
-
-function pairName(team){ return (team?.players||[]).map(p=>p.full_name).filter(Boolean).join(" + ") || team?.playerNames || team?.teamName || team?.name || team?.slot || "—"; }
-function matchSideName(match, side){
-  if(side==="home") return pairName(match.home || match.a);
-  return pairName(match.away || match.b);
-}
 function MetricCard({title,value,sub,warn,onClick}) {return <button className={warn?"metricCardV41014 warn":"metricCardV41014"} onClick={onClick}><b>{value}</b><span>{title}</span><em>{sub}</em></button>}
 function Step({done,text}) {return <div className={done?"stepV41014 done":"stepV41014"}><span>{done?"✓":"○"}</span>{text}</div>}
-function MiniMatch({match}) {return <div className="miniMatchV41014"><div><b>{match.time||"--:--"}</b><span>Sân {match.court||"-"}</span></div><p>{match.group||match.round}</p><strong>{matchSideName(match,"home")} <em>vs</em> {matchSideName(match,"away")}</strong></div>}
-function ResultMini({match}) {const score=(match.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ");return <div className="resultMiniV41014"><span>{match.group} · {match.time}</span><b>{matchSideName(match,"home")} vs {matchSideName(match,"away")}</b><strong>{score||"Đã xong"}</strong></div>}
+function teamDisplayName(team){
+  const players = (team?.players || []).map(p=>p.full_name).filter(Boolean).join(" + ");
+  return players || team?.displayName || team?.name || "—";
+}
+function slotDisplayName(slot){
+  const players = slot?.playerNames || (slot?.team?.players || slot?.row?.team?.players || []).map(p=>p.full_name).filter(Boolean).join(" + ");
+  return players || slot?.displayName || slot?.teamName || slot?.winnerName || slot?.team?.name || slot?.row?.team?.name || slot?.slot || "—";
+}
+function matchHomeName(match){ return match?.home ? teamDisplayName(match.home) : slotDisplayName(match?.a); }
+function matchAwayName(match){ return match?.away ? teamDisplayName(match.away) : slotDisplayName(match?.b); }
+function MiniMatch({match}) {return <div className="miniMatchV41014"><div><b>{match.time||"--:--"}</b><span>Sân {match.court||"-"}</span></div><p>{match.group||match.round}</p><strong>{matchHomeName(match)} <em>vs</em> {matchAwayName(match)}</strong></div>}
+function ResultMini({match}) {const score=(match.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ");return <div className="resultMiniV41014"><span>{match.group||match.round} · {match.time||""}</span><b>{matchHomeName(match)} vs {matchAwayName(match)}</b><strong>{score||"Đã xong"}</strong></div>}

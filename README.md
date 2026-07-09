@@ -1,4 +1,4 @@
-# PickleCity Tournament Manager V4.12.3 Stage Gate
+# PickleCity Tournament Manager V4.12.5 Real Player Names
 
 ## Đã sửa
 - Khi chưa có điểm vòng bảng:

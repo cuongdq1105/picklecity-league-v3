@@ -7,12 +7,11 @@ export const LV = { "A+":6, "A":5, "B+":4, "B":3, "C":2, "UNRANKED":1, "SUPPLEME
 export function strength(p) { return LV[p.level_group || "UNRANKED"] || 1; }
 export function shuffle(a) { const arr=[...a]; for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
 export function teamLabel(team){ return (team?.players||[]).map(p=>p.full_name).join(" + ") || team?.name || ""; }
-export function teamDisplayName(team){ return teamLabel(team) || team?.name || "—"; }
 
 export function makeTeams(players, method="balanced") {
   let list=[...players]; const teams=[]; const leftover=[];
-  if(method==="balanced"){ list=shuffle(list).sort((a,b)=>strength(b)-strength(a)); while(list.length>=2){const a=list.shift(), b=list.pop(); teams.push({name:[a.full_name,b.full_name].filter(Boolean).join(" + "),players:[a,b],score:strength(a)+strength(b)});} leftover.push(...list);}
-  else { list=shuffle(list); while(list.length>=2){const a=list.shift(), b=list.shift(); teams.push({name:[a.full_name,b.full_name].filter(Boolean).join(" + "),players:[a,b],score:strength(a)+strength(b)});} leftover.push(...list);}
+  if(method==="balanced"){ list=shuffle(list).sort((a,b)=>strength(b)-strength(a)); while(list.length>=2){const a=list.shift(), b=list.pop(); teams.push({name:`${a.full_name} + ${b.full_name}`,displayName:`${a.full_name} + ${b.full_name}`,players:[a,b],score:strength(a)+strength(b)});} leftover.push(...list);}
+  else { list=shuffle(list); while(list.length>=2){const a=list.shift(), b=list.shift(); teams.push({name:`${a.full_name} + ${b.full_name}`,displayName:`${a.full_name} + ${b.full_name}`,players:[a,b],score:strength(a)+strength(b)});} leftover.push(...list);}
   return {teams,leftover};
 }
 

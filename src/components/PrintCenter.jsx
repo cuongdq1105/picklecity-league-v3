@@ -8,7 +8,6 @@ function todayText(){ const d=new Date(); return `${String(d.getDate()).padStart
 function printNow(){ window.print(); }
 function groupName(g){ return String(g || "").replace("Bảng ","").trim(); }
 function teamPlayers(t){ return (t?.players||[]).map(p => p.full_name + (p.phone ? ` - ${p.phone}` : "")).join(" + "); }
-function teamDisplay(t){ return (t?.players||[]).map(p=>p.full_name).filter(Boolean).join(" + ") || t?.playerNames || t?.teamName || t?.name || t?.slot || "—"; }
 function groupedSchedule(schedule=[]){
   const map={};
   schedule.forEach(m=>{ const g=m.group||"Khác"; if(!map[g]) map[g]=[]; map[g].push(m); });
@@ -111,16 +110,16 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
       </PrintPage>}
 
       {pick.teams && <PrintPage title="Danh sách đội theo bảng" tournament={tournament}>
-        <div className="printGroupGrid">{(groups||[]).map(g=><div className="printGroupBox" key={g.name}><h3>{g.name}</h3>{(g.teams||[]).map((t,i)=><div className="printTeam" key={t.name||i}><b>{teamDisplay(t)}</b><p>{teamPlayers(t)}</p></div>)}</div>)}</div><div className="printBracketGrid printBracketGridLater"><div className="printBracketCard"><h3>Bán kết 1</h3><div>Winner QF1</div><b>vs</b><div>Winner QF4</div><p>Kết quả: ____________________</p></div><div className="printBracketCard"><h3>Bán kết 2</h3><div>Winner QF2</div><b>vs</b><div>Winner QF3</div><p>Kết quả: ____________________</p></div><div className="printBracketCard"><h3>Chung kết</h3><div>Winner BK1</div><b>vs</b><div>Winner BK2</div><p>Kết quả: ____________________</p></div><div className="printBracketCard"><h3>Tranh giải 3</h3><div>Loser BK1</div><b>vs</b><div>Loser BK2</div><p>Kết quả: ____________________</p></div></div>
+        <div className="printGroupGrid">{(groups||[]).map(g=><div className="printGroupBox" key={g.name}><h3>{g.name}</h3>{(g.teams||[]).map((t,i)=><div className="printTeam" key={t.name||i}><b>{teamPlayers(t) || t.name}</b><p>{t.name}</p></div>)}</div>)}</div><div className="printBracketGrid printBracketGridLater"><div className="printBracketCard"><h3>Bán kết 1</h3><div>Winner QF1</div><b>vs</b><div>Winner QF4</div><p>Kết quả: ____________________</p></div><div className="printBracketCard"><h3>Bán kết 2</h3><div>Winner QF2</div><b>vs</b><div>Winner QF3</div><p>Kết quả: ____________________</p></div><div className="printBracketCard"><h3>Chung kết</h3><div>Winner BK1</div><b>vs</b><div>Winner BK2</div><p>Kết quả: ____________________</p></div><div className="printBracketCard"><h3>Tranh giải 3</h3><div>Loser BK1</div><b>vs</b><div>Loser BK2</div><p>Kết quả: ____________________</p></div></div>
       </PrintPage>}
 
       {pick.schedule && scheduleGroups.map(([group,rows])=><PrintPage key={group} title={`Lịch thi đấu ${group}`} tournament={tournament}>
         <div className="printScheduleSummary"><b>{group}</b><span>{rows.length} trận vòng tròn</span></div>
-        <table className="printTable"><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Lượt</th><th>Cặp 1</th><th>Cặp 2</th><th>Kết quả</th></tr></thead>
+        <table className="printTable"><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Lượt</th><th>Cặp/VĐV 1</th><th>Cặp/VĐV 2</th><th>Kết quả</th></tr></thead>
           <tbody>{rows.map((m,i)=><tr key={m.id||i}>
             <td>{i+1}</td><td><b>{m.time || "____"}</b></td><td>{m.court ? "Sân " + m.court : "____"}</td><td>{m.round || ""}</td>
-            <td>{teamDisplay(m.home)}<br/><small>{teamPlayers(m.home)}</small></td>
-            <td>{teamDisplay(m.away)}<br/><small>{teamPlayers(m.away)}</small></td>
+            <td>{teamPlayers(m.home) || m.home?.name}</td>
+            <td>{teamPlayers(m.away) || m.away?.name}</td>
             <td>{matchScoreText(m)}</td>
           </tr>)}</tbody>
         </table>
@@ -128,8 +127,8 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
 
       {pick.scoreSheets && courts.map(court=><PrintPage key={court} title={`Phiếu ghi điểm - Sân ${court}`} tournament={tournament}>
         <div className="scoreSheetList">{(schedule||[]).filter(m=>Number(m.court)===Number(court)).map((m,i)=><div className="scoreSheet" key={m.id||i}>
-          <div><b>{m.time}</b><span>{m.group}</span></div><h3>{teamDisplay(m.home)} vs {teamDisplay(m.away)}</h3>
-          <p className="scorePlayers">{teamPlayers(m.home)}<br/>vs<br/>{teamPlayers(m.away)}</p><div className="scoreLine"><span>{teamDisplay(m.home)}</span><em></em></div><div className="scoreLine"><span>{teamDisplay(m.away)}</span><em></em></div>
+          <div><b>{m.time}</b><span>{m.group}</span></div><h3>{teamPlayers(m.home) || m.home?.name} vs {teamPlayers(m.away) || m.away?.name}</h3>
+          <p className="scorePlayers">{teamPlayers(m.home)}<br/>vs<br/>{teamPlayers(m.away)}</p><div className="scoreLine"><span>{teamPlayers(m.home) || m.home?.name}</span><em></em></div><div className="scoreLine"><span>{teamPlayers(m.away) || m.away?.name}</span><em></em></div>
           <div className="signLine"><span>Trọng tài:</span><span>BTC:</span></div>
         </div>)}</div>
       </PrintPage>)}
@@ -137,7 +136,7 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
       {pick.standings && <PrintPage title="Bảng xếp hạng vòng bảng" tournament={tournament}>
         {Object.entries(standings||{}).map(([group,rows])=><div className="printStanding" key={group}><h3>{group}</h3>
           <table className="printTable"><thead><tr><th>Hạng</th><th>Xét hạng</th><th>Tên đội</th><th>VĐV</th><th>Trận</th><th>Thắng</th><th>HS điểm</th><th>Điểm ghi</th></tr></thead>
-            <tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{printRankLabel(r.rank)}</td><td><b>{r.players || r.name}</b></td><td>{r.players}</td><td>{r.played}</td><td>{r.win}</td><td>{r.diff}</td><td>{r.pf}</td></tr>)}</tbody>
+            <tbody>{rows.map(r=><tr key={r.name}><td>{r.rank}</td><td>{printRankLabel(r.rank)}</td><td><b>{r.players || r.name}</b></td><td>{r.name}</td><td>{r.played}</td><td>{r.win}</td><td>{r.diff}</td><td>{r.pf}</td></tr>)}</tbody>
           </table></div>)}
       </PrintPage>}
 
@@ -148,7 +147,7 @@ export default function PrintCenter({ tournament, registrations=[], groups=[], s
 
       {pick.results && <PrintPage title="Kết quả đã nhập" tournament={tournament}>
         <table className="printTable"><thead><tr><th>#</th><th>Giờ</th><th>Sân</th><th>Bảng</th><th>Trận</th><th>Tỷ số</th></tr></thead>
-          <tbody>{(schedule||[]).filter(m=>(m.games||[]).some(g=>g.saved)).map((m,i)=><tr key={m.id||i}><td>{i+1}</td><td>{m.time}</td><td>Sân {m.court}</td><td>{m.group}</td><td>{teamDisplay(m.home)} vs {teamDisplay(m.away)}</td><td>{(m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ")}</td></tr>)}</tbody>
+          <tbody>{(schedule||[]).filter(m=>(m.games||[]).some(g=>g.saved)).map((m,i)=><tr key={m.id||i}><td>{i+1}</td><td>{m.time}</td><td>Sân {m.court}</td><td>{m.group}</td><td>{teamPlayers(m.home) || m.home?.name} vs {teamPlayers(m.away) || m.away?.name}</td><td>{(m.games||[]).filter(g=>g.saved).map(g=>`${g.home}-${g.away}`).join(", ")}</td></tr>)}</tbody>
         </table>
       </PrintPage>}
 
