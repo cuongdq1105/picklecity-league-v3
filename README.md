@@ -1,17 +1,16 @@
-# PickleCity Tournament Manager V4.12.3 Stage Gate
+# PickleCity Tournament Manager V4.12.4 Final Sync
 
 ## Đã sửa
-- Khi chưa có điểm vòng bảng:
-  - Không hiển thị BXH.
-  - Không hiển thị danh sách đội vào Tứ kết/Bán kết/Chung kết.
-  - Không sinh nhánh từ dữ liệu giả.
-- Khi vòng bảng chưa hoàn thành:
-  - Chưa cho sinh Tứ kết.
-  - Nhánh đấu hiển thị thông báo chờ hoàn thành vòng bảng.
-- Chỉ sau khi toàn bộ trận vòng bảng kết thúc, hệ thống mới cho sinh vòng tiếp theo.
+- BTC → Nhập điểm: sửa lỗi ô tên VĐV bị trống, hiển thị tên cặp giống tab Trọng tài.
+- Đồng bộ hiển thị tên VĐV ở các khu vực còn sót.
+- Chế độ quay bốc thăm:
+  - Bỏ dòng “Không hiển thị phân hạng VĐV trên màn hình quay.”
+  - Thêm nút Start để bắt đầu quay.
+  - Thêm hiệu ứng xúc xắc quay sinh động.
+  - Khi kết thúc hiển thị “Finish”.
 
 ## Cách update
-Commit gợi ý: `V4.12.3 - Stage Gate`
+Commit gợi ý: `V4.12.4 - Final Sync`
 
 ## Test
-/api/ping => version: 4.12.3-stage-gate
+/api/ping => version: 4.12.4-final-sync
